@@ -85,6 +85,8 @@ overrides:
     #extends: 'plugin:@graphql-eslint/schema-recommended'
 
 rules:
+  # Weitere Regeln hier
+
   # https://github.com/typescript-eslint/typescript-eslint/tree/main/packages/eslint-plugin#supported-rules
   # https://github.com/typescript-eslint/typescript-eslint/tree/main/packages/eslint-plugin/docs/rules
   # https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/src/configs/recommended.ts
@@ -153,6 +155,13 @@ rules:
     - selector: typeLike
       format:
         - PascalCase
+    
+    - linebreak-style:
+      - error
+      - windows
+  # Weitere Regeln hier
+
+    
   '@typescript-eslint/no-base-to-string':
     - error
     - ignoredTypeNames: ["RegExp", "boolean", "ObjectID"]
