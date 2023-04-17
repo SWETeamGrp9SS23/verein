@@ -56,7 +56,7 @@ import { JwtAuthGuard } from '../../security/auth/jwt/jwt-auth.guard.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { RolesAllowed } from '../../security/auth/roles/roles-allowed.decorator.js';
 import { RolesGuard } from '../../security/auth/roles/roles.guard.js';
-import { type Titel } from '../entity/titel.entity.js';
+import { type Titel } from '../entity/name.entity.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';

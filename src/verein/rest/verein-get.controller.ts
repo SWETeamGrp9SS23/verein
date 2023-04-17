@@ -50,7 +50,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { Titel } from '../entity/titel.entity.js';
+import { Titel } from '../entity/name.entity.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';

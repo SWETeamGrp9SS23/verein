@@ -25,7 +25,7 @@ import { Buch } from '../entity/buch.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Titel } from '../entity/titel.entity.js';
+import { Titel } from '../entity/name.entity.js';
 import { getLogger } from '../../logger/logger.js';
 import { typeOrmModuleOptions } from '../../config/db.js';
 

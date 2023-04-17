@@ -36,7 +36,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { MailService } from '../../mail/mail.service.js';
 import RE2 from 're2';
-import { Titel } from '../entity/titel.entity.js';
+import { Titel } from '../entity/name.entity.js';
 import { getLogger } from '../../logger/logger.js';
 
 /** Typdefinitionen zum Aktualisieren eines Buches mit `update`. */

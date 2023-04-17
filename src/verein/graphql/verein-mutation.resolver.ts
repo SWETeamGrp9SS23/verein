@@ -29,7 +29,7 @@ import { JwtAuthGraphQlGuard } from '../../security/auth/jwt/jwt-auth-graphql.gu
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { RolesAllowed } from '../../security/auth/roles/roles-allowed.decorator.js';
 import { RolesGraphQlGuard } from '../../security/auth/roles/roles-graphql.guard.js';
-import { type Titel } from '../entity/titel.entity.js';
+import { type Titel } from '../entity/name.entity.js';
 import { getLogger } from '../../logger/logger.js';
 
 // Authentifizierung und Autorisierung durch
