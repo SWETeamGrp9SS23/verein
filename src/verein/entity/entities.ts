@@ -19,7 +19,6 @@
 // Entstehungsdatum, Name, Adresse
 
 import { Verein } from './verein.entity.js';
-import { Name } from './name.entity.js';
 
 // erforderlich in src/config/db.ts und src/verein/verein.module.ts
-export const entities = [Verein, Name];
+export const entities = [Verein];
