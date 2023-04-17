@@ -1,0 +1,11 @@
+{
+  "isbn": "978-0-201-63361-0",
+  "rating": 5,
+  "art": "KINDLE",
+  "preis": 3333,
+  "rabatt": 0.33,
+  "lieferbar": true,
+  "datum": "2022-03-03",
+  "homepage": "https://put.rest",
+  "schlagwoerter": ["JAVASCRIPT"]
+}

@@ -1,0 +1,195 @@
+// Copyright (C) 2020 - present Juergen Zimmermann, Hochschule Karlsruhe
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+//
+// N e t z w e r k   -   V e r b i n d u n g   n o t w e n d i g
+//
+
+### Einloggen in der Rolle "admin", "mitarbeiter" und "kunde"
+// @name login
+POST {{graphQlUrl}}
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  login(username: "admin", password: "p") { token expiresIn roles }
+}
+
+### Einloggen in der Rolle "mitarbeiter" und "kunde"
+// @name login
+POST {{graphQlUrl}}
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  login(username: "alfred.alpha", password: "p") { token expiresIn roles }
+}
+
+### Einloggen in der Rolle "kunde"
+// @name login
+POST {{graphQlUrl}}
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  login(username: "dirk.delta", password: "p") { token expiresIn roles }
+}
+
+### Einloggen mit falschem Passwort
+// @name login
+POST {{graphQlUrl}}
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  login(username: "admin", password: "FALSCH") { token expiresIn roles }
+}
+
+### Neues Buch anlegen
+POST {{graphQlUrl}}
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.data.login.token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  create(
+    input: {
+      isbn: "978-0-321-19368-1",
+      rating: 1,
+      art: KINDLE,
+      preis: 99.99,
+      rabatt: 0.123,
+      lieferbar: true,
+      datum: "2022-01-31",
+      homepage: "https://create.mutation",
+      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
+      titel: {
+        titel: "Titelcreatemutation",
+        untertitel: "untertitelcreatemutation"
+      },
+      abbildungen: [{
+        beschriftung: "Abb. 1",
+        contentType: "img/png"
+      }]
+    }
+  )
+}
+
+### Neues Buch mit ungueltigen Daten anlegen
+POST {{graphQlUrl}}
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.data.login.token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  create(
+    input: {
+      isbn: "falsche-isbn",
+      rating: 999,
+      art: DRUCKAUSGABE,
+      preis: -1,
+      rabatt: 0,
+      lieferbar: true,
+      datum: "12345-123-123",
+      homepage: "anyHomepage",
+      schlagwoerter: ["JAVASCRIPT"],
+      titel: {
+        titel: "?!"
+        untertitel: "mutationinvalid"
+      }
+    }
+  )
+}
+
+### Vorhandenes Buch aktualisieren
+POST {{graphQlUrl}}
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.data.login.token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  update(
+    input: {
+      id: "40",
+      version: 0,
+      isbn: "978-0-007-09732-6",
+      rating: 5,
+      art: KINDLE,
+      preis: 444.44,
+      rabatt: 0.099,
+      lieferbar: false,
+      datum: "2022-04-04",
+      homepage: "https://update.mutation",
+      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"]
+    }
+  )
+}
+
+### Vorhandenes Buch mit ungueltigen Werten aktualisieren
+POST {{graphQlUrl}}
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.data.login.token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  update(
+    input: {
+      id: 40,
+      version: 0,
+      isbn: "falsche-ISBN",
+      rating: -1,
+      art: KINDLE,
+      preis: -1,
+      rabatt: 2,
+      lieferbar: false,
+      datum: "12345-123-123",
+      homepage: "anyHomepage"
+    }
+  )
+}
+
+### Nicht-Vorhandenes Buch aktualisieren
+POST {{graphQlUrl}}
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.data.login.token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  update(
+    input: {
+      id: "999999",
+      version: 0,
+      isbn: "978-0-007-09732-6",
+      rating: 5,
+      art: DRUCKAUSGABE,
+      preis: 99.99,
+      rabatt: 0.099,
+      lieferbar: false,
+      datum: "2022-02-01",
+      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
+      homepage: "https://nicht.vorhanden.de/"
+    }
+  )
+}
+
+### Vorhandenes Buch loeschen
+POST {{graphQlUrl}}
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.$.data.login.token}}
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  delete(id: "60")
+}

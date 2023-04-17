@@ -1,0 +1,19 @@
+{
+  "isbn": "978-0-007-00644-1",
+  "rating": 1,
+  "art": "KINDLE",
+  "preis": 99.99,
+  "rabatt": 0.123,
+  "lieferbar": true,
+  "datum": "2022-01-31",
+  "homepage": "https://post.rest",
+  "schlagwoerter": ["JAVASCRIPT", "TYPESCRIPT"],
+  "titel": {
+    "titel": "Titelpost",
+    "untertitel": "untertitelpost"
+  },
+  "abbildungen": [{
+    "beschriftung": "Abb. 1",
+    "contentType": "img/png"
+  }]
+}
