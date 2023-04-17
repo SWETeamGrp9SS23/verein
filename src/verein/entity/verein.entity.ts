@@ -49,23 +49,17 @@ import {
     UpdateDateColumn,
     VersionColumn,
 } from 'typeorm';
-import { Abbildung } from './abbildung.entity.js';
 import { ApiProperty } from '@nestjs/swagger';
 import { DecimalTransformer } from './decimal-transformer.js';
-import { Titel } from './titel.entity.js';
+import { Name } from './name.entity.js';
 import { dbType } from '../../config/dbtype.js';
-
-/**
- * Alias-Typ für gültige Strings bei der Art eines Buches.
- */
-export type BuchArt = 'DRUCKAUSGABE' | 'KINDLE';
 
 /**
  * Entity-Klasse zu einem relationalen Tabelle
  */
 // https://typeorm.io/entities
 @Entity()
-export class Buch {
+export class Verein {
     @Column('int')
     // https://typeorm.io/entities#primary-columns
     // CAVEAT: zuerst @Column() und erst dann @PrimaryGeneratedColumn()
@@ -74,18 +68,6 @@ export class Buch {
 
     @VersionColumn()
     readonly version: number | undefined;
-
-    @Column('varchar', { unique: true, length: 16 })
-    @ApiProperty({ example: '0-0070-0644-6', type: String })
-    readonly isbn!: string;
-
-    @Column('int')
-    @ApiProperty({ example: 5, type: Number })
-    readonly rating: number | undefined;
-
-    @Column('varchar', { length: 12 })
-    @ApiProperty({ example: 'DRUCKAUSGABE', type: String })
-    readonly art: BuchArt | undefined;
 
     @Column('decimal', {
         precision: 8,
@@ -104,35 +86,24 @@ export class Buch {
     @ApiProperty({ example: 0.1, type: Number })
     readonly rabatt: number | undefined;
 
-    @Column('boolean')
-    @ApiProperty({ example: true, type: Boolean })
-    readonly lieferbar: boolean | undefined;
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
-    @Column('date')
+    @Column('Entstehungsdatum')
     @ApiProperty({ example: '2021-01-31' })
-    readonly datum: Date | string | undefined;
+    readonly entstehungsdatum: Date | string | undefined;
 
     @Column('varchar', { length: 40 })
     @ApiProperty({ example: 'https://test.de/', type: String })
     readonly homepage: string | undefined;
 
-    // https://typeorm.io/entities#simple-array-column-type
-    @Column('simple-array')
-    readonly schlagwoerter: string[] | undefined;
 
     // undefined wegen Updates
-    @OneToOne(() => Titel, (titel) => titel.buch, {
+    @OneToOne(() => Name, (name) => name.verein, {
         cascade: ['insert', 'remove'],
     })
-    readonly titel: Titel | undefined;
+    readonly name: Name | undefined;
 
-    // undefined wegen Updates
-    @OneToMany(() => Abbildung, (abbildung) => abbildung.buch, {
-        cascade: ['insert', 'remove'],
-    })
-    readonly abbildungen: Abbildung[] | undefined;
-
+    
     // https://typeorm.io/entities#special-columns
     // https://typeorm.io/entities#column-types-for-postgres
     // https://typeorm.io/entities#column-types-for-mysql--mariadb

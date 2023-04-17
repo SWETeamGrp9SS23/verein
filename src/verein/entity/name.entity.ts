@@ -15,11 +15,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// was hat alles ein Verein
-// Entstehungsdatum, Name, Adresse
-
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Verein } from './verein.entity.js';
-import { Name } from './name.entity.js';
 
-// erforderlich in src/config/db.ts und src/verein/verein.module.ts
-export const entities = [Verein, Name];
+@Entity()
+export class Name {
+    @Column('int')
+    // https://typeorm.io/entities#primary-columns
+    // CAVEAT: zuerst @Column() und erst dann @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn()
+    id: number | undefined;
+
+    @Column('varchar', { unique: true, length: 40 })
+    readonly name!: string;
+
+    @OneToOne(() => Verein, (verein) => verein.name)
+    @JoinColumn({ name: 'verein_id' })
+    verein: Verein | undefined;
+}
