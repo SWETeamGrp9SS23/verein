@@ -43,15 +43,12 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    OneToMany,
-    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
     VersionColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { DecimalTransformer } from './decimal-transformer.js';
-import { Name } from './name.entity.js';
 import { dbType } from '../../config/dbtype.js';
 
 /**
@@ -86,6 +83,10 @@ export class Verein {
     @ApiProperty({ example: 0.1, type: Number })
     readonly rabatt: number | undefined;
 
+    @Column('Name')
+    @ApiProperty({example: 'FC Bayern'})
+    readonly name: string | undefined;
+
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
     @Column('Entstehungsdatum')
@@ -95,14 +96,6 @@ export class Verein {
     @Column('varchar', { length: 40 })
     @ApiProperty({ example: 'https://test.de/', type: String })
     readonly homepage: string | undefined;
-
-
-    // undefined wegen Updates
-    @OneToOne(() => Name, (name) => name.verein, {
-        cascade: ['insert', 'remove'],
-    })
-    readonly name: Name | undefined;
-
     
     // https://typeorm.io/entities#special-columns
     // https://typeorm.io/entities#column-types-for-postgres
