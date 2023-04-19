@@ -21,18 +21,22 @@
  * @packageDocumentation
  */
 
-import { IsOptional, Matches, MaxLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 /**
- * Entity-Klasse für Titel ohne TypeORM.
+ * Entity-Klasse für Adresse ohne TypeORM.
  */
-export class TitelDTO {
-    @Matches('^\\w.*')
-    @MaxLength(40)
-    readonly titel!: string;
+export class AdresseDTO {
+    @ApiProperty({ example: '76351' })
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(10)
+    readonly plz!: string;
 
+    @ApiProperty({ example: 'Linkenheim-Hochstetten' })
+    @IsString()
     @IsOptional()
-    @MaxLength(40)
-    readonly untertitel: string | undefined;
+    @MaxLength(100)
+    readonly ort?: string;
 }
-/* eslint-enable @typescript-eslint/no-magic-numbers */

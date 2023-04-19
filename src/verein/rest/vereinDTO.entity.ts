@@ -21,96 +21,41 @@
  * @packageDocumentation
  */
 
+import { AdresseDTO } from './adresseDTO.js';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
-    ArrayUnique,
-    IsArray,
-    IsBoolean,
-    IsISBN,
-    IsISO8601,
-    IsInt,
+    IsNotEmpty,
+    IsNumber,
     IsOptional,
-    IsPositive,
-    IsUrl,
-    Matches,
-    Max,
-    Min,
+    IsString,
     ValidateNested,
 } from 'class-validator';
-import { AbbildungDTO } from './abbildungDTO.entity.js';
-import { ApiProperty } from '@nestjs/swagger';
-import { BuchArt } from '../entity/buch.entity.js';
-import { TitelDTO } from './titelDTO.entity.js';
-import { Type } from 'class-transformer';
 
-export const MAX_RATING = 5;
+export class VereinDTO {
+    @ApiProperty({ example: 'FC Bayern' })
+    @IsNotEmpty()
+    @IsString()
+    readonly name!: string;
 
-/**
- * Entity-Klasse für Bücher ohne TypeORM und ohne Referenzen.
- */
-export class BuchDtoOhneRef {
-    // https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s13.html
-    @IsISBN(13)
-    @ApiProperty({ example: '0-007-00644-6', type: String })
-    readonly isbn!: string;
+    @ApiProperty({ example: 1 })
+    @IsNotEmpty()
+    @IsNumber()
+    readonly mitgliedsbeitrag!: number;
 
-    @IsInt()
-    @Min(0)
-    @Max(MAX_RATING)
-    @ApiProperty({ example: 5, type: Number })
-    readonly rating: number | undefined;
-
-    @Matches(/^DRUCKAUSGABE$|^KINDLE$/u)
+    @ApiProperty({ example: '2012-11-21' })
     @IsOptional()
-    @ApiProperty({ example: 'DRUCKAUSGABE', type: String })
-    readonly art: BuchArt | undefined;
+    @IsString()
+    readonly entstehungsdatum?: string;
 
-    @IsPositive()
-    @ApiProperty({ example: 1, type: Number })
-    // statt number ggf. Decimal aus decimal.js analog zu BigDecimal von Java
-    readonly preis!: number;
-
-    @Min(0)
-    @Max(1)
+    @ApiProperty({ example: 'https://test.de/' })
     @IsOptional()
-    @ApiProperty({ example: 0.1, type: Number })
-    readonly rabatt: number | undefined;
+    @IsString()
+    readonly homepage?: string;
 
-    @IsBoolean()
-    @ApiProperty({ example: true, type: Boolean })
-    readonly lieferbar: boolean | undefined;
-
-    @IsISO8601({ strict: true })
-    @IsOptional()
-    @ApiProperty({ example: '2021-01-31' })
-    readonly datum: Date | string | undefined;
-
-    @IsUrl()
-    @IsOptional()
-    @ApiProperty({ example: 'https://test.de/', type: String })
-    readonly homepage: string | undefined;
-
-    @IsOptional()
-    @ArrayUnique()
-    @ApiProperty({ example: ['JAVASCRIPT', 'TYPESCRIPT'] })
-    readonly schlagwoerter: string[] | undefined;
-}
-
-/**
- * Entity-Klasse für Bücher ohne TypeORM.
- */
-export class BuchDTO extends BuchDtoOhneRef {
+    @ApiProperty({ type: AdresseDTO })
+    @IsNotEmpty()
     @ValidateNested()
-    @Type(() => TitelDTO)
-    @ApiProperty({ example: 'Der Titel', type: String })
-    readonly titel!: TitelDTO; //NOSONAR
-
-    @IsOptional()
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => AbbildungDTO)
-    @ApiProperty({ example: 'Die Abbildungen', type: String })
-    readonly abbildungen: AbbildungDTO[] | undefined;
-
-    // AbbildungDTO
+    @Type(() => AdresseDTO)
+    readonly adresse!: AdresseDTO;
 }
-/* eslint-enable max-classes-per-file, @typescript-eslint/no-magic-numbers */
