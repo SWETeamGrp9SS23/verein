@@ -15,12 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { AuthModule } from '../security/auth/auth.module.js';
-import { BuchGetController } from './rest/buch-get.controller.js';
-import { BuchMutationResolver } from './graphql/buch-mutation.resolver.js';
-import { BuchQueryResolver } from './graphql/buch-query.resolver.js';
-import { BuchReadService } from './service/buch-read.service.js';
-import { BuchWriteController } from './rest/buch-write.controller.js';
-import { BuchWriteService } from './service/buch-write.service.js';
+import { VereinGetController } from './rest/verein-get.controller.js';
+import { VereinMutationResolver } from './graphql/verein-mutation.resolver.js';
+import { VereinQueryResolver } from './graphql/verein-query.resolver.js';
+import { VereinReadService } from './service/verein-read.service.js';
+import { VereinWriteController } from './rest/verein-write.controller.js';
+import { VereinWriteService } from './service/verein-write.service.js';
 import { MailModule } from '../mail/mail.module.js';
 import { Module } from '@nestjs/common';
 import { QueryBuilder } from './service/query-builder.js';
@@ -39,16 +39,16 @@ import { entities } from './entity/entities.js';
  */
 @Module({
     imports: [MailModule, TypeOrmModule.forFeature(entities), AuthModule],
-    controllers: [BuchGetController, BuchWriteController],
+    controllers: [VereinGetController, VereinWriteController],
     // Provider sind z.B. Service-Klassen fuer DI
     providers: [
-        BuchReadService,
-        BuchWriteService,
-        BuchQueryResolver,
-        BuchMutationResolver,
+        VereinReadService,
+        VereinWriteService,
+        VereinQueryResolver,
+        VereinMutationResolver,
         QueryBuilder,
     ],
     // Export der Provider fuer DI in anderen Modulen
-    exports: [BuchReadService, BuchWriteService],
+    exports: [VereinReadService, VereinWriteService],
 })
-export class BuchModule {}
+export class VereinModule {}
