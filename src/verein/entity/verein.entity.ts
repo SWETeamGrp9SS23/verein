@@ -52,6 +52,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { DecimalTransformer } from './decimal-transformer.js';
 import { dbType } from '../../config/dbtype.js';
 import { Adresse } from './adresse.entity.js';
+import { Url } from 'url';
 
 /**
  * Entity-Klasse zu einem relationalen Tabelle
@@ -87,8 +88,8 @@ export class Verein {
     readonly entstehungsdatum?: Date | string;
 
     @Column('varchar', { length: 40 })
-    @ApiProperty({ example: 'https://test.de/', type: URL }) //toDo Prüfen: Habe den Type von String in URL geändert.
-    readonly homepage?: string;
+    @ApiProperty({ example: 'https://test.de/', type: URL }) //toDo Prüfen: Habe den Type von String in URL geändert. unten nicht,
+    readonly homepage?: Url;
 
     @OneToOne(() => Adresse, (adresse) => adresse.verein, {
         cascade: ['insert', 'remove'],
