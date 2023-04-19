@@ -32,11 +32,11 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
-import { type Buch, type BuchArt } from '../entity/buch.entity.js';
+import { type Verein } from '../entity/verein.entity.js';
 import {
     BuchReadService,
     type Suchkriterien,
-} from '../service/buch-read.service.js';
+} from '../service/verein-read.service.js';
 import {
     Controller,
     Get,
@@ -50,7 +50,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
-import { Titel } from '../entity/name.entity.js';
+import { Adresse } from '../entity/adresse.entity.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';
@@ -76,23 +76,23 @@ export interface Links {
 }
 
 /** Typedefinition für ein Titel-Objekt ohne Rückwärtsverweis zum Buch */
-export type TitelModel = Omit<Titel, 'buch' | 'id'>;
+export type AdresseModel = Omit<Adresse, 'verein' | 'id'>;
 
 /** Buch-Objekt mit HATEOAS-Links */
-export type BuchModel = Omit<
-    Buch,
-    'abbildungen' | 'aktualisiert' | 'erzeugt' | 'id' | 'titel' | 'version'
+export type VereinModel = Omit<
+    Verein,
+    'abbildungen' | 'aktualisiert' | 'erzeugt' | 'id' | 'adresse' | 'version'
 > & {
-    titel: TitelModel;
+    adresse: AdresseModel;
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _links: Links;
 };
 
 /** Buch-Objekte mit HATEOAS-Links in einem JSON-Array. */
-export interface BuecherModel {
+export interface VereineModel {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _embedded: {
-        buecher: BuchModel[];
+        vereine: VereinModel[];
     };
 }
 
@@ -108,37 +108,22 @@ export interface BuecherModel {
  */
 export class BuchQuery implements Suchkriterien {
     @ApiProperty({ required: false })
-    declare readonly isbn: string;
+    declare readonly name: string;
 
     @ApiProperty({ required: false })
     declare readonly rating: number;
 
     @ApiProperty({ required: false })
-    declare readonly art: BuchArt;
+    declare readonly mitgliedsbeitrag: number;
 
     @ApiProperty({ required: false })
-    declare readonly preis: number;
-
-    @ApiProperty({ required: false })
-    declare readonly rabatt: number;
-
-    @ApiProperty({ required: false })
-    declare readonly lieferbar: boolean;
-
-    @ApiProperty({ required: false })
-    declare readonly datum: string;
+    declare readonly entstehungsdatum: string;
 
     @ApiProperty({ required: false })
     declare readonly homepage: string;
 
     @ApiProperty({ required: false })
-    declare readonly javascript: boolean;
-
-    @ApiProperty({ required: false })
-    declare readonly typescript: boolean;
-
-    @ApiProperty({ required: false })
-    declare readonly titel: string;
+    declare readonly adresse: string;
 }
 
 /**
@@ -150,19 +135,19 @@ export class BuchQuery implements Suchkriterien {
 @Controller(paths.rest)
 // @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(ResponseTimeInterceptor)
-@ApiTags('Buch API')
+@ApiTags('Verein API')
 // @ApiBearerAuth()
 // Klassen ab ES 2015
-export class BuchGetController {
+export class VereinGetController {
     // readonly in TypeScript, vgl. C#
     // private ab ES 2019
     readonly #service: BuchReadService;
 
-    readonly #logger = getLogger(BuchGetController.name);
+    readonly #logger = getLogger(VereinGetController.name);
 
     // Dependency Injection (DI) bzw. Constructor Injection
     // constructor(private readonly service: BuchReadService) {}
-    constructor(service: BuchReadService) {
+    constructor(service: VereinReadService) {
         this.#service = service;
     }
 
@@ -189,7 +174,7 @@ export class BuchGetController {
      */
     // eslint-disable-next-line max-params, max-lines-per-function
     @Get(':id')
-    @ApiOperation({ summary: 'Suche mit der Buch-ID', tags: ['Suchen'] })
+    @ApiOperation({ summary: 'Suche mit der Verein-ID', tags: ['Suchen'] })
     @ApiParam({
         name: 'id',
         description: 'Z.B. 00000000-0000-0000-0000-000000000001',
@@ -199,18 +184,18 @@ export class BuchGetController {
         description: 'Header für bedingte GET-Requests, z.B. "0"',
         required: false,
     })
-    @ApiOkResponse({ description: 'Das Buch wurde gefunden' })
-    @ApiNotFoundResponse({ description: 'Kein Buch zur ID gefunden' })
+    @ApiOkResponse({ description: 'Der Verein wurde gefunden' })
+    @ApiNotFoundResponse({ description: 'Kein Verein zur ID gefunden' })
     @ApiResponse({
         status: HttpStatus.NOT_MODIFIED,
-        description: 'Das Buch wurde bereits heruntergeladen',
+        description: 'Der Verein wurde bereits heruntergeladen',
     })
     async findById(
         @Param('id') id: number,
         @Req() req: Request,
         @Headers('If-None-Match') version: string | undefined,
         @Res() res: Response,
-    ): Promise<Response<BuchModel | undefined>> {
+    ): Promise<Response<VereinModel | undefined>> {
         this.#logger.debug('findById: id=%s, version=%s"', id, version);
 
         if (req.accepts(['json', 'html']) === false) {
@@ -218,10 +203,10 @@ export class BuchGetController {
             return res.sendStatus(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        let buch: Buch | undefined;
+        let verein: Verein | undefined;
         try {
             // vgl. Kotlin: Aufruf einer suspend-Function
-            buch = await this.#service.findById({ id });
+            verein = await this.#service.findById({ id });
         } catch (err) {
             // err ist implizit vom Typ "unknown", d.h. keine Operationen koennen ausgefuehrt werden
             // Exception einer export async function bei der Ausfuehrung fangen:
@@ -230,14 +215,14 @@ export class BuchGetController {
             return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        if (buch === undefined) {
+        if (verein === undefined) {
             this.#logger.debug('findById: NOT_FOUND');
             return res.sendStatus(HttpStatus.NOT_FOUND);
         }
-        this.#logger.debug('findById(): buch=%o', buch);
+        this.#logger.debug('findById(): buch=%o', verein);
 
         // ETags
-        const versionDb = buch.version;
+        const versionDb = verein.version;
         if (version === `"${versionDb}"`) {
             this.#logger.debug('findById: NOT_MODIFIED');
             return res.sendStatus(HttpStatus.NOT_MODIFIED);
@@ -246,9 +231,9 @@ export class BuchGetController {
         res.header('ETag', `"${versionDb}"`);
 
         // HATEOAS mit Atom Links und HAL (= Hypertext Application Language)
-        const buchModel = this.#toModel(buch, req);
-        this.#logger.debug('findById: buchModel=%o', buchModel);
-        return res.json(buchModel);
+        const vereinModel = this.#toModel(verein, req);
+        this.#logger.debug('findById: buchModel=%o', vereinModel);
+        return res.json(vereinModel);
     }
 
     /**
@@ -274,7 +259,7 @@ export class BuchGetController {
         @Query() query: BuchQuery,
         @Req() req: Request,
         @Res() res: Response,
-    ): Promise<Response<BuecherModel | undefined>> {
+    ): Promise<Response<VereineModel | undefined>> {
         this.#logger.debug('find: query=%o', query);
 
         if (req.accepts(['json', 'html']) === false) {
@@ -282,27 +267,27 @@ export class BuchGetController {
             return res.sendStatus(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        const buecher = await this.#service.find(query);
-        this.#logger.debug('find: %o', buecher);
-        if (buecher.length === 0) {
+        const vereine = await this.#service.find(query);
+        this.#logger.debug('find: %o', vereine);
+        if (vereine.length === 0) {
             this.#logger.debug('find: NOT_FOUND');
             return res.sendStatus(HttpStatus.NOT_FOUND);
         }
 
         // HATEOAS: Atom Links je Buch
-        const buecherModel = buecher.map((buch) =>
+        const vereineModel = vereine.map((buch) =>
             this.#toModel(buch, req, false),
         );
-        this.#logger.debug('find: buecherModel=%o', buecherModel);
+        this.#logger.debug('find: buecherModel=%o', vereineModel);
 
-        const result: BuecherModel = { _embedded: { buecher: buecherModel } };
+        const result: VereineModel = { _embedded: { vereine: vereineModel } };
         return res.json(result).send();
     }
 
-    #toModel(buch: Buch, req: Request, all = true) {
+    #toModel(verein: Verein, req: Request, all = true) {
         const baseUri = getBaseUri(req);
         this.#logger.debug('#toModel: baseUri=%s', baseUri);
-        const { id } = buch;
+        const { id } = verein;
         const links = all
             ? {
                   self: { href: `${baseUri}/${id}` },
@@ -313,28 +298,23 @@ export class BuchGetController {
               }
             : { self: { href: `${baseUri}/${id}` } };
 
-        this.#logger.debug('#toModel: buch=%o, links=%o', buch, links);
-        const titelModel: TitelModel = {
-            titel: buch.titel?.titel ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring
-            untertitel: buch.titel?.untertitel ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring
+        this.#logger.debug('#toModel: buch=%o, links=%o', verein, links);
+        const adresseModel: AdresseModel = {
+            plz: verein.adresse?.plz ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring
+            ort: verein.adresse?.ort ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring
         };
         /* eslint-disable unicorn/consistent-destructuring */
-        const buchModel: BuchModel = {
-            isbn: buch.isbn,
-            rating: buch.rating,
-            art: buch.art,
-            preis: buch.preis,
-            rabatt: buch.rabatt,
-            lieferbar: buch.lieferbar,
-            datum: buch.datum,
-            homepage: buch.homepage,
-            schlagwoerter: buch.schlagwoerter,
-            titel: titelModel,
+        const vereinModel: VereinModel = {
+            name: verein.name,
+            mitgliedsbeitrag: verein.mitgliedsbeitrag,
+            entstehungsdatum: verein.entstehungsdatum,
+            homepage: verein.homepage,
+            adresse: adresseModel,
             _links: links,
         };
         /* eslint-enable unicorn/consistent-destructuring */
 
-        return buchModel;
+        return vereinModel;
     }
 }
 /* eslint-enable max-lines */

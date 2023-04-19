@@ -20,7 +20,7 @@
  * @packageDocumentation
  */
 
-import { Buch, type BuchArt } from './../entity/buch.entity.js';
+import { Verein } from './../entity/verein.entity.js';
 import { Injectable } from '@nestjs/common';
 import { QueryBuilder } from './query-builder.js';
 import RE2 from 're2';
@@ -36,17 +36,11 @@ export interface FindByIdParams {
     mitAbbildungen?: boolean;
 }
 export interface Suchkriterien {
-    readonly isbn?: string;
-    readonly rating?: number;
-    readonly art?: BuchArt;
-    readonly preis?: number;
-    readonly rabatt?: number;
-    readonly lieferbar?: boolean;
-    readonly datum?: string;
+    readonly name?: string;
+    readonly mitgliedsbeitrag?: number;
+    readonly entstehungsdatum?: string;
     readonly homepage?: string;
-    readonly javascript?: boolean;
-    readonly typescript?: boolean;
-    readonly titel?: string;
+    readonly adresse?: string;
 }
 
 /**
@@ -54,18 +48,18 @@ export interface Suchkriterien {
  * mit _TypeORM_ auf eine relationale DB zu.
  */
 @Injectable()
-export class BuchReadService {
+export class VereinReadService {
     static readonly ID_PATTERN = new RE2('^[1-9][\\d]*$');
 
-    readonly #buchProps: string[];
+    readonly #vereinProps: string[];
 
     readonly #queryBuilder: QueryBuilder;
 
-    readonly #logger = getLogger(BuchReadService.name);
+    readonly #logger = getLogger(VereinReadService.name);
 
     constructor(queryBuilder: QueryBuilder) {
-        const buchDummy = new Buch();
-        this.#buchProps = Object.getOwnPropertyNames(buchDummy);
+        const vereinDummy = new Verein();
+        this.#vereinProps = Object.getOwnPropertyNames(vereinDummy);
         this.#queryBuilder = queryBuilder;
     }
 

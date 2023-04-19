@@ -1,12 +1,9 @@
 import {
     Column,
-    CreateDateColumn,
     Entity,
     JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn,
-    UpdateDateColumn,
-    VersionColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Verein } from './verein.entity.js';

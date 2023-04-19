@@ -21,7 +21,6 @@
 # https://docs.docker.com/compose/compose-file
 # https://docs.docker.com/compose/compose-file/compose-file-v3
 services:
-
   # ------------------------------------------------------------------------------------
   # P o s t g r e S Q L
   # ------------------------------------------------------------------------------------
@@ -56,7 +55,7 @@ services:
       #PGDATA: /var/lib/postgresql/data
       # https://www.postgresql.org/docs/current/auth-trust.html
       #POSTGRES_HOST_AUTH_METHOD: trust
-    user: "postgres:postgres"
+    user: 'postgres:postgres'
     security_opt:
       - label:user:postgres
       - no-new-privileges:true
@@ -65,18 +64,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2.0"
+          cpus: '2.0'
           memory: 2048M
     healthcheck:
-      test:
-        [
-          CMD,
-          pg_isready,
-          --dbname,
-          postgres,
-          --username,
-          postgres
-        ]
+      test: [CMD, pg_isready, --dbname, postgres, --username, postgres]
       interval: 5s
       timeout: 2s
       start_period: 5s
@@ -101,13 +92,13 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin@acme.com
       PGADMIN_DEFAULT_PASSWORD: p
-    user: "pgadmin:5050"
+    user: 'pgadmin:5050'
     container_name: pgadmin
     hostname: pgadmin
     deploy:
       resources:
         limits:
-          cpus: "2.0"
+          cpus: '2.0'
           memory: 2048M
 
   # ------------------------------------------------------------------------------------
@@ -155,18 +146,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "2.0"
+          cpus: '2.0'
           memory: 2048M
     healthcheck:
-      test:
-        [
-          CMD,
-          mysqladmin,
-          --user=root,
-          --password=p,
-          --host=mysql,
-          ping
-        ]
+      test: [CMD, mysqladmin, --user=root, --password=p, --host=mysql, ping]
       interval: 5s
       timeout: 2s
       start_period: 5s
@@ -176,7 +159,7 @@ services:
   # ------------------------------------------------------------------------------------
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5.2.1
-    links: [ mysql ]
+    links: [mysql]
     ports:
       - published: 8889
         target: 80
@@ -192,7 +175,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: '0.5'
           memory: 768M
 
   # ------------------------------------------------------------------------------------
@@ -201,7 +184,7 @@ services:
   # als User "cbadmin" muss man eine DB-Verbindung und einen User einrichten
   dbeaver:
     image: dbeaver/cloudbeaver:23.0.1
-    links: [ mysql ]
+    links: [mysql]
     ports:
       - published: 8978
         target: 8978
@@ -216,7 +199,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: '0.5'
           memory: 768M
 
   # ------------------------------------------------------------------------------------
@@ -239,14 +222,14 @@ services:
       TZ: Europe/Berlin
       SPRING_OUTPUT_ANSI_ENABLED: ALWAYS
       SPRING_MAIN_BANNER-MODE: LOG
-      SPRING_LAZY-INITIALIZATION: "true"
-      SPRING_JPA_OPEN-IN-VIEW: "true"
+      SPRING_LAZY-INITIALIZATION: 'true'
+      SPRING_JPA_OPEN-IN-VIEW: 'true'
     container_name: fakesmtp
     hostname: fakesmtp
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: '0.5'
           memory: 768M
 
   # ------------------------------------------------------------------------------------
@@ -261,14 +244,14 @@ services:
       - type: bind
         source: C:\Zimmermann\volumes\buch
         target: /opt/app/log
-    env_file: [ "docker-compose.env" ]
+    env_file: ['docker-compose.env']
     environment:
       # https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution
-      USER_PASSWORD_ENCODED: "$$argon2i$$v=19$$m=4096,t=3,p=1$$aaxA2v/9rRSPGkwYN+NQog$$27Huii1XtD3iEd62fog+04G26LRPZMHoYCI6AGKTL8M"
+      USER_PASSWORD_ENCODED: '$$argon2i$$v=19$$m=4096,t=3,p=1$$aaxA2v/9rRSPGkwYN+NQog$$27Huii1XtD3iEd62fog+04G26LRPZMHoYCI6AGKTL8M'
     container_name: buch
     hostname: buch
     deploy:
       resources:
         limits:
-          cpus: "1.0"
+          cpus: '1.0'
           memory: 1024M
