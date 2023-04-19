@@ -43,6 +43,7 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
     VersionColumn,
@@ -50,6 +51,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { DecimalTransformer } from './decimal-transformer.js';
 import { dbType } from '../../config/dbtype.js';
+import { Adresse } from './adresse.entity.js';
 
 /**
  * Entity-Klasse zu einem relationalen Tabelle
@@ -73,20 +75,11 @@ export class Verein {
     })
     @ApiProperty({ example: 1, type: Number })
     // statt number ggf. Decimal aus decimal.js analog zu BigDecimal von Java
-    readonly preis!: number;
-
-    @Column('decimal', {
-        precision: 4,
-        scale: 3,
-        transformer: new DecimalTransformer(),
-    })
-    @ApiProperty({ example: 0.1, type: Number })
-    readonly rabatt: number | undefined;
+    readonly mitgliedsbeitrag!: number;
 
     @Column('Name')
-    @ApiProperty({example: 'FC Bayern'})
+    @ApiProperty({ example: 'FC Bayern' })
     readonly name: string | undefined;
-
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
     @Column('Entstehungsdatum')
@@ -96,7 +89,13 @@ export class Verein {
     @Column('varchar', { length: 40 })
     @ApiProperty({ example: 'https://test.de/', type: String })
     readonly homepage: string | undefined;
-    
+
+    @OneToOne(() => Adresse, (adresse) => adresse.verein, {
+        cascade: ['insert', 'remove'],
+    })
+    @ApiProperty({ example: 'Blumenstraße 21' })
+    readonly adresse: Adresse | undefined;
+
     // https://typeorm.io/entities#special-columns
     // https://typeorm.io/entities#column-types-for-postgres
     // https://typeorm.io/entities#column-types-for-mysql--mariadb
