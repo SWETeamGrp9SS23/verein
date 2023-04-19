@@ -88,8 +88,8 @@ export class Verein {
     readonly entstehungsdatum?: Date | string;
 
     @Column('varchar', { length: 40 })
-    @ApiProperty({ example: 'https://test.de/', type: URL }) //toDo Prüfen: Habe den Type von String in URL geändert. unten nicht,
-    readonly homepage?: Url;
+    @ApiProperty({ example: 'https://test.de/', type: URL })
+    readonly homepage?: Url; //toDo Prüfen: Habe den Type von String in URL geändert. unten nicht,
 
     @OneToOne(() => Adresse, (adresse) => adresse.verein, {
         cascade: ['insert', 'remove'],
