@@ -34,7 +34,7 @@ import {
 } from '@nestjs/swagger';
 import { type Verein } from '../entity/verein.entity.js';
 import {
-    BuchReadService,
+    VereinReadService,
     type Suchkriterien,
 } from '../service/verein-read.service.js';
 import {
@@ -78,7 +78,7 @@ export interface Links {
 /** Typedefinition für ein Titel-Objekt ohne Rückwärtsverweis zum Buch */
 export type AdresseModel = Omit<Adresse, 'verein' | 'id'>;
 
-/** Buch-Objekt mit HATEOAS-Links */
+/** Verein-Objekt mit HATEOAS-Links */
 export type VereinModel = Omit<
     Verein,
     'abbildungen' | 'aktualisiert' | 'erzeugt' | 'id' | 'adresse' | 'version'
@@ -88,7 +88,7 @@ export type VereinModel = Omit<
     _links: Links;
 };
 
-/** Buch-Objekte mit HATEOAS-Links in einem JSON-Array. */
+/** Verein-Objekte mit HATEOAS-Links in einem JSON-Array. */
 export interface VereineModel {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     _embedded: {
@@ -97,14 +97,18 @@ export interface VereineModel {
 }
 
 /**
- * Klasse für `BuchGetController`, um Queries in _OpenAPI_ bzw. Swagger zu
- * formulieren. `BuchController` hat dieselben Properties wie die Basisklasse
- * `Buch` - allerdings mit dem Unterschied, dass diese Properties beim Ableiten
- * so überschrieben sind, dass sie auch nicht gesetzt bzw. undefined sein
- * dürfen, damit die Queries flexibel formuliert werden können. Deshalb ist auch
- * immer der zusätzliche Typ undefined erforderlich.
- * Außerdem muss noch `string` statt `Date` verwendet werden, weil es in OpenAPI
- * den Typ Date nicht gibt.
+ *Die Klasse VereinGetController dient der Formulierung von Abfragen in OpenAPI oder Swagger.
+  Sie erbt von der Basisklasse Verein und überschreibt dabei deren Eigenschaften. 
+  Dabei wird sichergestellt, dass diese Eigenschaften nicht gesetzt oder undefiniert sein können, 
+  um eine flexible Formulierung der Abfragen zu ermöglichen. 
+  Dementsprechend wird bei jeder Eigenschaft auch der Typ undefined angegeben. 
+  In OpenAPI existiert der Datentyp Date nicht, deshalb wird stattdessen der Typ string verwendet.
+ */
+
+/**
+ *Die Klasse 'BuchQuery' implementiert das Interface Suchkriterien und definiert verschiedene Eigenschaften wie name, rating, 
+ mitgliedsbeitrag, entstehungsdatum, homepage und adresse, die in der Abfrage optional sein können und daher 
+ mit { required: false } deklariert werden.
  */
 export class BuchQuery implements Suchkriterien {
     @ApiProperty({ required: false })
@@ -127,7 +131,7 @@ export class BuchQuery implements Suchkriterien {
 }
 
 /**
- * Die Controller-Klasse für die Verwaltung von Bücher.
+ * Die Controller-Klasse für die Verwaltung von Vereinen.
  */
 // Decorator in TypeScript, zur Standardisierung in ES vorgeschlagen (stage 3)
 // https://devblogs.microsoft.com/typescript/announcing-typescript-5-0-beta/#decorators
@@ -141,7 +145,7 @@ export class BuchQuery implements Suchkriterien {
 export class VereinGetController {
     // readonly in TypeScript, vgl. C#
     // private ab ES 2019
-    readonly #service: BuchReadService;
+    readonly #service: VereinReadService;
 
     readonly #logger = getLogger(VereinGetController.name);
 
@@ -152,16 +156,16 @@ export class VereinGetController {
     }
 
     /**
-     * Ein Buch wird asynchron anhand seiner ID als Pfadparameter gesucht.
+     * Ein Verein wird asynchron anhand seiner ID als Pfadparameter gesucht.
      *
-     * Falls es ein solches Buch gibt und `If-None-Match` im Request-Header
+     * Falls es ein solches Verein gibt und `If-None-Match` im Request-Header
      * auf die aktuelle Version des Buches gesetzt war, wird der Statuscode
      * `304` (`Not Modified`) zurückgeliefert. Falls `If-None-Match` nicht
      * gesetzt ist oder eine veraltete Version enthält, wird das gefundene
-     * Buch im Rumpf des Response als JSON-Datensatz mit Atom-Links für HATEOAS
+     * Verein im Rumpf des Response als JSON-Datensatz mit Atom-Links für HATEOAS
      * und dem Statuscode `200` (`OK`) zurückgeliefert.
      *
-     * Falls es kein Buch zur angegebenen ID gibt, wird der Statuscode `404`
+     * Falls es kein Verein zur angegebenen ID gibt, wird der Statuscode `404`
      * (`Not Found`) zurückgeliefert.
      *
      * @param id Pfad-Parameter `id`
@@ -238,11 +242,11 @@ export class VereinGetController {
 
     /**
      * Bücher werden mit Query-Parametern asynchron gesucht. Falls es mindestens
-     * ein solches Buch gibt, wird der Statuscode `200` (`OK`) gesetzt. Im Rumpf
+     * ein solches Verein gibt, wird der Statuscode `200` (`OK`) gesetzt. Im Rumpf
      * des Response ist das JSON-Array mit den gefundenen Büchern, die jeweils
      * um Atom-Links für HATEOAS ergänzt sind.
      *
-     * Falls es kein Buch zu den Suchkriterien gibt, wird der Statuscode `404`
+     * Falls es kein Verein zu den Suchkriterien gibt, wird der Statuscode `404`
      * (`Not Found`) gesetzt.
      *
      * Falls es keine Query-Parameter gibt, werden alle Bücher ermittelt.
@@ -275,8 +279,8 @@ export class VereinGetController {
         }
 
         // HATEOAS: Atom Links je Buch
-        const vereineModel = vereine.map((buch) =>
-            this.#toModel(buch, req, false),
+        const vereineModel = vereine.map((verein) =>
+            this.#toModel(verein, req, false),
         );
         this.#logger.debug('find: buecherModel=%o', vereineModel);
 
@@ -298,7 +302,7 @@ export class VereinGetController {
               }
             : { self: { href: `${baseUri}/${id}` } };
 
-        this.#logger.debug('#toModel: buch=%o, links=%o', verein, links);
+        this.#logger.debug('#toModel: verein=%o, links=%o', verein, links);
         const adresseModel: AdresseModel = {
             plz: verein.adresse?.plz ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring
             ort: verein.adresse?.ort ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring

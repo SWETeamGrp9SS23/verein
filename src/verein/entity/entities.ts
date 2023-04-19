@@ -15,9 +15,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// was hat alles ein Verein
-// Entstehungsdatum, Name, Adresse
-
 import { Verein } from './verein.entity.js';
 
 // erforderlich in src/config/db.ts und src/verein/verein.module.ts

@@ -83,7 +83,7 @@ export class Verein {
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
     @Column('Entstehungsdatum')
-    @ApiProperty({ example: '2021-01-31' })
+    @ApiProperty({ example: '2012-11-21' })
     readonly entstehungsdatum: Date | string | undefined;
 
     @Column('varchar', { length: 40 })
@@ -93,7 +93,7 @@ export class Verein {
     @OneToOne(() => Adresse, (adresse) => adresse.verein, {
         cascade: ['insert', 'remove'],
     })
-    @ApiProperty({ example: 'Blumenstraße 21' })
+    @ApiProperty({ example: 'Baumstraße 12' })
     readonly adresse: Adresse | undefined;
 
     // https://typeorm.io/entities#special-columns

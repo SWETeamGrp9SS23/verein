@@ -16,7 +16,7 @@
  */
 
 /**
- * Das Modul besteht aus der Klasse {@linkcode BuchReadService}.
+ * Das Modul besteht aus der Klasse {@linkcode VereinReadService}.
  * @packageDocumentation
  */
 
@@ -32,8 +32,8 @@ import { getLogger } from '../../logger/logger.js';
 export interface FindByIdParams {
     /** ID des gesuchten Buchs */
     id: number;
-    /** Sollen die Abbildungen mitgeladen werden? */
-    mitAbbildungen?: boolean;
+    /** Soll die Adressen mitgeladen werden? */ //toDo passt das so, 1zu1 Beziehung?
+    mitAdressen?: boolean;
 }
 export interface Suchkriterien {
     readonly name?: string;
