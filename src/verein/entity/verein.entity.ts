@@ -63,10 +63,10 @@ export class Verein {
     // https://typeorm.io/entities#primary-columns
     // CAVEAT: zuerst @Column() und erst dann @PrimaryGeneratedColumn()
     @PrimaryGeneratedColumn()
-    id: number | undefined;
-
+    id!: number;
+    /*eTag*/
     @VersionColumn()
-    readonly version: number | undefined;
+    readonly version?: number;
 
     @Column('decimal', {
         precision: 8,
@@ -79,22 +79,22 @@ export class Verein {
 
     @Column('Name')
     @ApiProperty({ example: 'FC Bayern' })
-    readonly name: string | undefined;
+    readonly name!: string;
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
     @Column('Entstehungsdatum')
     @ApiProperty({ example: '2012-11-21' })
-    readonly entstehungsdatum: Date | string | undefined;
+    readonly entstehungsdatum?: Date | string;
 
     @Column('varchar', { length: 40 })
-    @ApiProperty({ example: 'https://test.de/', type: String })
-    readonly homepage: string | undefined;
+    @ApiProperty({ example: 'https://test.de/', type: URL }) //toDo Prüfen: Habe den Type von String in URL geändert.
+    readonly homepage?: string;
 
     @OneToOne(() => Adresse, (adresse) => adresse.verein, {
         cascade: ['insert', 'remove'],
     })
     @ApiProperty({ example: 'Baumstraße 12' })
-    readonly adresse: Adresse | undefined;
+    readonly adresse!: Adresse;
 
     // https://typeorm.io/entities#special-columns
     // https://typeorm.io/entities#column-types-for-postgres
@@ -106,12 +106,12 @@ export class Verein {
     })
     // SQLite:
     // @CreateDateColumn({ type: 'datetime' })
-    readonly erzeugt: Date | undefined;
+    readonly erzeugt?: Date;
 
     @UpdateDateColumn({
         type: dbType === 'sqlite' ? 'datetime' : 'timestamp',
     })
     // SQLite:
     // @UpdateDateColumn({ type: 'datetime' })
-    readonly aktualisiert: Date | undefined;
+    readonly aktualisiert?: Date;
 }
