@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 /*
  * Copyright (C) 2021 - present Juergen Zimmermann, Hochschule Karlsruhe
  *
@@ -75,7 +74,7 @@ export interface Links {
     remove?: Link;
 }
 
-/** Typedefinition für ein Titel-Objekt ohne Rückwärtsverweis zum Buch */
+/** Typedefinition für ein Titel-Objekt ohne Rückwärtsverweis zum Verein */
 export type AdresseModel = Omit<Adresse, 'verein' | 'id'>;
 
 /** Verein-Objekt mit HATEOAS-Links */
@@ -84,13 +83,11 @@ export type VereinModel = Omit<
     'abbildungen' | 'aktualisiert' | 'erzeugt' | 'id' | 'adresse' | 'version'
 > & {
     adresse: AdresseModel;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     _links: Links;
 };
 
 /** Verein-Objekte mit HATEOAS-Links in einem JSON-Array. */
 export interface VereineModel {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     _embedded: {
         vereine: VereinModel[];
     };
@@ -106,7 +103,7 @@ export interface VereineModel {
  */
 
 /**
- *Die Klasse 'BuchQuery' implementiert das Interface Suchkriterien und definiert verschiedene Eigenschaften wie name, rating, 
+ *Die Klasse 'VereinQuery' implementiert das Interface Suchkriterien und definiert verschiedene Eigenschaften wie name, 
  mitgliedsbeitrag, entstehungsdatum, homepage und adresse, die in der Abfrage optional sein können und daher 
  mit { required: false } deklariert werden.
  */
@@ -130,55 +127,40 @@ export class VereinQuery implements Suchkriterien {
 /**
  * Die Controller-Klasse für die Verwaltung von Vereinen.
  */
-// Decorator in TypeScript, zur Standardisierung in ES vorgeschlagen (stage 3)
-// https://devblogs.microsoft.com/typescript/announcing-typescript-5-0-beta/#decorators
-// https://github.com/tc39/proposal-decorators
+
 @Controller(paths.rest)
-// @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(ResponseTimeInterceptor)
 @ApiTags('Verein API')
-// @ApiBearerAuth()
-// Klassen ab ES 2015
 export class VereinGetController {
-    // readonly in TypeScript, vgl. C#
-    // private ab ES 2019
     readonly #service: VereinReadService;
 
     readonly #logger = getLogger(VereinGetController.name);
 
-    // Dependency Injection (DI) bzw. Constructor Injection
-    // constructor(private readonly service: VereinReadService) {}
     constructor(service: VereinReadService) {
         this.#service = service;
     }
 
     /**
-     * Ein Verein wird asynchron anhand seiner ID als Pfadparameter gesucht.
-     *
-     * Falls es ein solches Verein gibt und `If-None-Match` im Request-Header
-     * auf die aktuelle Version des Buches gesetzt war, wird der Statuscode
-     * `304` (`Not Modified`) zurückgeliefert. Falls `If-None-Match` nicht
-     * gesetzt ist oder eine veraltete Version enthält, wird das gefundene
-     * Verein im Rumpf des Response als JSON-Datensatz mit Atom-Links für HATEOAS
-     * und dem Statuscode `200` (`OK`) zurückgeliefert.
-     *
-     * Falls es kein Verein zur angegebenen ID gibt, wird der Statuscode `404`
-     * (`Not Found`) zurückgeliefert.
-     *
-     * @param id Pfad-Parameter `id`
-     * @param req Request-Objekt von Express mit Pfadparameter, Query-String,
-     *            Request-Header und Request-Body.
-     * @param version Versionsnummer im Request-Header bei `If-None-Match`
-     * @param accept Content-Type bzw. MIME-Type
-     * @param res Leeres Response-Objekt von Express.
-     * @returns Leeres Promise-Objekt.
+    Ein Verein wird asynchron anhand seiner ID als Pfadparameter gesucht.
+    Falls es ein solches Verein gibt und If-None-Match im Request-Header 
+    auf die aktuelle Version des Vereins gesetzt war, wird der Statuscode
+    304 (Not Modified) zurückgeliefert. Falls If-None-Match nicht gesetzt 
+    ist oder eine veraltete Version enthält, wird das gefundene Verein im Rumpf 
+    des Response als JSON-Datensatz mit Atom-Links für HATEOAS und dem Statuscode 200 (OK) zurückgeliefert. 
+    Falls es kein Verein zur angegebenen ID gibt, wird der Statuscode 404 (Not Found) zurückgeliefert.
+
+    @param id Pfad-Parameter id
+    @param req Request-Objekt von Express mit Pfadparameter, Query-String, Request-Header und Request-Body.
+    @param version Versionsnummer im Request-Header bei If-None-Match
+    @param accept Content-Type bzw. MIME-Type
+    @param res Leeres Response-Objekt von Express.
+    @returns Leeres Promise-Objekt.
      */
-    // eslint-disable-next-line max-params, max-lines-per-function
     @Get(':id')
     @ApiOperation({ summary: 'Suche mit der Verein-ID', tags: ['Suchen'] })
     @ApiParam({
         name: 'id',
-        description: 'Z.B. 00000000-0000-0000-0000-000000000001',
+        description: '1',
     })
     @ApiHeader({
         name: 'If-None-Match',
@@ -197,22 +179,18 @@ export class VereinGetController {
         @Headers('If-None-Match') version: string | undefined,
         @Res() res: Response,
     ): Promise<Response<VereinModel | undefined>> {
-        this.#logger.debug('findById: id=%s, version=%s"', id, version);
+        this.#logger.debug(`findById: id=${id}, version=${version}`);
 
         if (req.accepts(['json', 'html']) === false) {
-            this.#logger.debug('findById: accepted=%o', req.accepted);
+            this.#logger.debug(`findById: accepted=${req.accepted}`);
             return res.sendStatus(HttpStatus.NOT_ACCEPTABLE);
         }
 
         let verein: Verein | undefined;
         try {
-            // vgl. Kotlin: Aufruf einer suspend-Function
             verein = await this.#service.findById({ id });
         } catch (err) {
-            // err ist implizit vom Typ "unknown", d.h. keine Operationen koennen ausgefuehrt werden
-            // Exception einer export async function bei der Ausfuehrung fangen:
-            // https://strongloop.com/strongblog/comparing-node-js-promises-trycatch-zone-js-angular
-            this.#logger.error('findById: error=%o', err);
+            this.#logger.debug(`findById: error=${err}`);
             return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -220,7 +198,7 @@ export class VereinGetController {
             this.#logger.debug('findById: NOT_FOUND');
             return res.sendStatus(HttpStatus.NOT_FOUND);
         }
-        this.#logger.debug('findById(): buch=%o', verein);
+        this.#logger.debug(`findById(): buch=${verein}`);
 
         // ETags
         const versionDb = verein.version;
@@ -228,25 +206,25 @@ export class VereinGetController {
             this.#logger.debug('findById: NOT_MODIFIED');
             return res.sendStatus(HttpStatus.NOT_MODIFIED);
         }
-        this.#logger.debug('findById: versionDb=%s', versionDb);
+        this.#logger.debug(`findById: versionDb=${versionDb}`);
         res.header('ETag', `"${versionDb}"`);
 
         // HATEOAS mit Atom Links und HAL (= Hypertext Application Language)
         const vereinModel = this.#toModel(verein, req);
-        this.#logger.debug('findById: buchModel=%o', vereinModel);
+        this.#logger.debug(`findById: verinModel=${vereinModel}`);
         return res.json(vereinModel);
     }
 
     /**
-     * Bücher werden mit Query-Parametern asynchron gesucht. Falls es mindestens
-     * ein solches Verein gibt, wird der Statuscode `200` (`OK`) gesetzt. Im Rumpf
-     * des Response ist das JSON-Array mit den gefundenen Büchern, die jeweils
+     * Vereine werden mit Query-Parametern asynchron gesucht. Falls es mindestens
+     * ein solchen Verein gibt, wird der Statuscode `200` (`OK`) gesetzt. Im Rumpf
+     * des Response ist das JSON-Array mit den gefundenen Vereinen, die jeweils
      * um Atom-Links für HATEOAS ergänzt sind.
      *
      * Falls es kein Verein zu den Suchkriterien gibt, wird der Statuscode `404`
      * (`Not Found`) gesetzt.
      *
-     * Falls es keine Query-Parameter gibt, werden alle Bücher ermittelt.
+     * Falls es keine Query-Parameter gibt, werden alle Verine ermittelt.
      *
      * @param query Query-Parameter von Express.
      * @param req Request-Objekt von Express.
@@ -255,7 +233,7 @@ export class VereinGetController {
      */
     @Get()
     @ApiOperation({ summary: 'Suche mit Suchkriterien', tags: ['Suchen'] })
-    @ApiOkResponse({ description: 'Eine evtl. leere Liste mit Büchern' })
+    @ApiOkResponse({ description: 'Eine evtl. leere Liste mit Vereinen' })
     async find(
         @Query() query: VereinQuery,
         @Req() req: Request,
@@ -275,7 +253,7 @@ export class VereinGetController {
             return res.sendStatus(HttpStatus.NOT_FOUND);
         }
 
-        // HATEOAS: Atom Links je Buch
+        // HATEOAS: Atom Links je Verein
         const vereineModel = vereine.map((verein) =>
             this.#toModel(verein, req, false),
         );
@@ -301,10 +279,9 @@ export class VereinGetController {
 
         this.#logger.debug('#toModel: verein=%o, links=%o', verein, links);
         const adresseModel: AdresseModel = {
-            plz: verein.adresse?.plz ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring
-            ort: verein.adresse?.ort ?? 'N/A', // eslint-disable-line unicorn/consistent-destructuring
+            plz: verein.adresse?.plz ?? 'N/A',
+            ort: verein.adresse?.ort ?? 'N/A',
         };
-        /* eslint-disable unicorn/consistent-destructuring */
         const vereinModel: VereinModel = {
             name: verein.name,
             mitgliedsbeitrag: verein.mitgliedsbeitrag,
@@ -313,9 +290,6 @@ export class VereinGetController {
             adresse: adresseModel,
             _links: links,
         };
-        /* eslint-enable unicorn/consistent-destructuring */
-
         return vereinModel;
     }
 }
-/* eslint-enable max-lines */
