@@ -110,12 +110,9 @@ export interface VereineModel {
  mitgliedsbeitrag, entstehungsdatum, homepage und adresse, die in der Abfrage optional sein können und daher 
  mit { required: false } deklariert werden.
  */
-export class VerinQuery implements Suchkriterien {
+export class VereinQuery implements Suchkriterien {
     @ApiProperty({ required: false })
     declare readonly name: string;
-
-    @ApiProperty({ required: false })
-    declare readonly rating: number;
 
     @ApiProperty({ required: false })
     declare readonly mitgliedsbeitrag: number;
@@ -260,7 +257,7 @@ export class VereinGetController {
     @ApiOperation({ summary: 'Suche mit Suchkriterien', tags: ['Suchen'] })
     @ApiOkResponse({ description: 'Eine evtl. leere Liste mit Büchern' })
     async find(
-        @Query() query: BuchQuery,
+        @Query() query: VereinQuery,
         @Req() req: Request,
         @Res() res: Response,
     ): Promise<Response<VereineModel | undefined>> {
