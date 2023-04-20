@@ -110,7 +110,7 @@ export interface VereineModel {
  mitgliedsbeitrag, entstehungsdatum, homepage und adresse, die in der Abfrage optional sein können und daher 
  mit { required: false } deklariert werden.
  */
-export class BuchQuery implements Suchkriterien {
+export class VerinQuery implements Suchkriterien {
     @ApiProperty({ required: false })
     declare readonly name: string;
 
@@ -150,7 +150,7 @@ export class VereinGetController {
     readonly #logger = getLogger(VereinGetController.name);
 
     // Dependency Injection (DI) bzw. Constructor Injection
-    // constructor(private readonly service: BuchReadService) {}
+    // constructor(private readonly service: VereinReadService) {}
     constructor(service: VereinReadService) {
         this.#service = service;
     }
