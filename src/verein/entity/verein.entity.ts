@@ -85,11 +85,11 @@ export class Verein {
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
     @Column('Entstehungsdatum')
     @ApiProperty({ example: '2012-11-21' })
-    readonly entstehungsdatum?: Date | string;
+    readonly entstehungsdatum: Date | undefined;
 
     @Column('varchar', { length: 40 })
     @ApiProperty({ example: 'https://test.de/', type: URL })
-    readonly homepage?: Url; //toDo Prüfen: Habe den Type von String in URL geändert. unten nicht,
+    readonly homepage: string | undefined; //toDo Prüfen: Habe den Type von String in URL geändert. unten nicht,
 
     @OneToOne(() => Adresse, (adresse) => adresse.verein, {
         cascade: ['insert', 'remove'],
