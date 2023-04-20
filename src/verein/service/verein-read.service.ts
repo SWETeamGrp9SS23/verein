@@ -44,22 +44,18 @@ export interface Suchkriterien {
 }
 
 /**
- * Die Klasse `BuchReadService` implementiert das Lesen für Bücher und greift
+ * Die Klasse `VereinReadService` implementiert das Lesen für Verein und greift
  * mit _TypeORM_ auf eine relationale DB zu.
  */
 @Injectable()
 export class VereinReadService {
     static readonly ID_PATTERN = new RE2('^[1-9][\\d]*$');
 
-    readonly #vereinProps: string[];
-
     readonly #queryBuilder: QueryBuilder;
 
     readonly #logger = getLogger(VereinReadService.name);
 
     constructor(queryBuilder: QueryBuilder) {
-        const vereinDummy = new Verein();
-        this.#vereinProps = Object.getOwnPropertyNames(vereinDummy);
         this.#queryBuilder = queryBuilder;
     }
 
@@ -76,9 +72,9 @@ export class VereinReadService {
     //              Im Promise-Objekt ist dann die Fehlerursache enthalten.
 
     /**
-     * Ein Buch asynchron anhand seiner ID suchen
-     * @param id ID des gesuchten Buches
-     * @returns Das gefundene Buch vom Typ [Buch](buch_entity_buch_entity.Buch.html) oder undefined
+     * Ein Verein asynchron anhand seiner ID suchen
+     * @param id ID des gesuchten Vereins
+     * @returns Der gefundene Verein vom Typ [Verein](verein_entity_verein_entity.Verein.html) oder undefined
      *          in einem Promise aus ES2015 (vgl.: Mono aus Project Reactor oder
      *          Future aus Java)
      */
@@ -89,40 +85,35 @@ export class VereinReadService {
         // https://typeorm.io/working-with-repository
         // Das Resultat ist undefined, falls kein Datensatz gefunden
         // Lesen: Keine Transaktion erforderlich
-        const buch = await this.#queryBuilder.buildId({ id }).getOne();
-        if (buch === null) {
-            this.#logger.debug('findById: Kein Buch gefunden');
+        const verein = await this.#queryBuilder.buildId({ id }).getOne();
+        if (verein === null) {
+            this.#logger.debug('findById: Kein Verein gefunden');
             return;
         }
 
-        this.#logger.debug('findById: buch=%o', buch);
-        return buch;
+        this.#logger.debug('findById: buch=%o', verein);
+        return verein;
     }
 
     /**
-     * Bücher asynchron suchen.
+     * Vereine asynchron suchen.
      * @param suchkriterien JSON-Objekt mit Suchkriterien
-     * @returns Ein JSON-Array mit den gefundenen Büchern. Ggf. ist das Array leer.
+     * @returns Ein JSON-Array mit den gefundenen Vereinen. Ggf. ist das Array leer.
      */
     async find(suchkriterien?: Suchkriterien) {
         this.#logger.debug('find: suchkriterien=%o', suchkriterien);
 
         // Keine Suchkriterien?
         if (suchkriterien === undefined) {
-            const buecher = await this.#queryBuilder.build({}).getMany();
-            return buecher;
+            const vereine = await this.#queryBuilder.build({}).getMany();
+            return vereine;
         }
         const keys = Object.keys(suchkriterien);
         if (keys.length === 0) {
-            const buecher = await this.#queryBuilder
+            const vereine = await this.#queryBuilder
                 .build(suchkriterien)
                 .getMany();
-            return buecher;
-        }
-
-        // Falsche Namen fuer Suchkriterien?
-        if (!this.#checkKeys(keys)) {
-            return [];
+            return vereine;
         }
 
         // QueryBuilder https://typeorm.io/select-query-builder
@@ -132,25 +123,5 @@ export class VereinReadService {
         this.#logger.debug('find: buecher=%o', buecher);
 
         return buecher;
-    }
-
-    #checkKeys(keys: string[]) {
-        // Ist jedes Suchkriterium auch eine Property von Buch oder "schlagwoerter"?
-        let validKeys = true;
-        keys.forEach((key) => {
-            if (
-                !this.#buchProps.includes(key) &&
-                key !== 'javascript' &&
-                key !== 'typescript'
-            ) {
-                this.#logger.debug(
-                    '#find: ungueltiges Suchkriterium "%s"',
-                    key,
-                );
-                validKeys = false;
-            }
-        });
-
-        return validKeys;
     }
 }
