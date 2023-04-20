@@ -20,12 +20,11 @@
  * @packageDocumentation
  */
 
-import { Abbildung } from '../entity/abbildung.entity.js';
-import { Buch } from '../entity/buch.entity.js';
+import { Verein } from '../entity/verein.entity.js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Titel } from '../entity/name.entity.js';
+import { Adresse } from '../entity/adresse.entity.js';
 import { getLogger } from '../../logger/logger.js';
 import { typeOrmModuleOptions } from '../../config/db.js';
 
@@ -33,8 +32,6 @@ import { typeOrmModuleOptions } from '../../config/db.js';
 export interface BuildIdParams {
     /** ID des gesuchten Buchs. */
     id: number;
-    /** Sollen die Abbildungen mitgeladen werden? */
-    mitAbbildungen?: boolean;
 }
 /**
  * Die Klasse `QueryBuilder` implementiert das Lesen für Bücher und greift
@@ -42,23 +39,19 @@ export interface BuildIdParams {
  */
 @Injectable()
 export class QueryBuilder {
-    readonly #buchAlias = `${Buch.name
+    readonly #vereinAlias = `${Verein.name
         .charAt(0)
-        .toLowerCase()}${Buch.name.slice(1)}`;
+        .toLowerCase()}${Verein.name.slice(1)}`;
 
-    readonly #titelAlias = `${Titel.name
+    readonly #adresseAlias = `${Adresse.name
         .charAt(0)
-        .toLowerCase()}${Titel.name.slice(1)}`;
+        .toLowerCase()}${Adresse.name.slice(1)}`;
 
-    readonly #abbildungAlias = `${Abbildung.name
-        .charAt(0)
-        .toLowerCase()}${Abbildung.name.slice(1)}`;
-
-    readonly #repo: Repository<Buch>;
+    readonly #repo: Repository<Verein>;
 
     readonly #logger = getLogger(QueryBuilder.name);
 
-    constructor(@InjectRepository(Buch) repo: Repository<Buch>) {
+    constructor(@InjectRepository(Verein) repo: Repository<Verein>) {
         this.#repo = repo;
     }
 
@@ -67,19 +60,13 @@ export class QueryBuilder {
      * @param id ID des gesuchten Buches
      * @returns QueryBuilder
      */
-    buildId({ id, mitAbbildungen = false }: BuildIdParams) {
-        const queryBuilder = this.#repo.createQueryBuilder(this.#buchAlias);
+    buildId({ id }: BuildIdParams) {
+        const queryBuilder = this.#repo.createQueryBuilder(this.#vereinAlias);
         queryBuilder.innerJoinAndSelect(
-            `${this.#buchAlias}.titel`,
-            this.#titelAlias,
+            `${this.#vereinAlias}.adresse`,
+            this.#adresseAlias,
         );
-        if (mitAbbildungen) {
-            queryBuilder.leftJoinAndSelect(
-                `${this.#buchAlias}.abbildungen`,
-                this.#abbildungAlias,
-            );
-        }
-        queryBuilder.where(`${this.#buchAlias}.id = :id`, { id: id }); // eslint-disable-line object-shorthand
+        queryBuilder.where(`${this.#vereinAlias}.id = :id`, { id: id }); // eslint-disable-line object-shorthand
         return queryBuilder;
     }
 
@@ -92,8 +79,11 @@ export class QueryBuilder {
     build(suchkriterien: Record<string, any>) {
         this.#logger.debug('build: suchkriterien=%o', suchkriterien);
 
-        let queryBuilder = this.#repo.createQueryBuilder(this.#buchAlias);
-        queryBuilder.innerJoinAndSelect(`${this.#buchAlias}.titel`, 'titel');
+        let queryBuilder = this.#repo.createQueryBuilder(this.#vereinAlias);
+        queryBuilder.innerJoinAndSelect(
+            `${this.#vereinAlias}.adresse`,
+            'adresse',
+        );
 
         // z.B. { titel: 'a', rating: 5, javascript: true }
         // "rest properties" fuer anfaengliche WHERE-Klausel: ab ES 2018 https://github.com/tc39/proposal-object-rest-spread

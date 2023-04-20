@@ -83,15 +83,13 @@ export class VereinReadService {
      *          Future aus Java)
      */
     // https://2ality.com/2015/01/es6-destructuring.html#simulating-named-parameters-in-javascript
-    async findById({ id, mitAbbildungen = false }: FindByIdParams) {
+    async findById({ id }: FindByIdParams) {
         this.#logger.debug('findById: id=%d', id);
 
         // https://typeorm.io/working-with-repository
         // Das Resultat ist undefined, falls kein Datensatz gefunden
         // Lesen: Keine Transaktion erforderlich
-        const buch = await this.#queryBuilder
-            .buildId({ id, mitAbbildungen })
-            .getOne();
+        const buch = await this.#queryBuilder.buildId({ id }).getOne();
         if (buch === null) {
             this.#logger.debug('findById: Kein Buch gefunden');
             return;
