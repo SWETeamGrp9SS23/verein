@@ -68,10 +68,10 @@ import { paths } from '../../config/paths.js';
 @UseInterceptors(ResponseTimeInterceptor)
 @ApiTags('Buch API')
 @ApiBearerAuth()
-export class BuchWriteController {
+export class VereinWriteController {
     readonly #service: VereinWriteService;
 
-    readonly #logger = getLogger(BuchWriteController.name);
+    readonly #logger = getLogger(VereinWriteController.name);
 
     constructor(service: VereinWriteService) {
         this.#service = service;

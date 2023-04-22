@@ -52,7 +52,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { DecimalTransformer } from './decimal-transformer.js';
 import { dbType } from '../../config/dbtype.js';
 import { Adresse } from './adresse.entity.js';
-import { Url } from 'url';
 
 /**
  * Entity-Klasse zu einem relationalen Tabelle
