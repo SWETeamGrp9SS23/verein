@@ -34,7 +34,7 @@ export interface BuildIdParams {
     id: number;
 }
 /**
- * Die Klasse `QueryBuilder` implementiert das Lesen für Bücher und greift
+ * Die Klasse `QueryBuilder` implementiert das Lesen für Vereine und greift
  * mit _TypeORM_ auf eine relationale DB zu.
  */
 @Injectable()
@@ -88,38 +88,22 @@ export class QueryBuilder {
         // z.B. { titel: 'a', rating: 5, javascript: true }
         // "rest properties" fuer anfaengliche WHERE-Klausel: ab ES 2018 https://github.com/tc39/proposal-object-rest-spread
         // type-coverage:ignore-next-line
-        const { titel, javascript, typescript, ...props } = suchkriterien;
+        const { adresse } = suchkriterien;
 
         let useWhere = true;
 
         // Titel in der Query: Teilstring des Titels und "case insensitive"
         // CAVEAT: MySQL hat keinen Vergleich mit "case insensitive"
         // type-coverage:ignore-next-line
-        if (titel !== undefined && typeof titel === 'string') {
+        if (adresse !== undefined && typeof adresse === 'string') {
             const ilike =
                 typeOrmModuleOptions.type === 'postgres' ? 'ilike' : 'like';
             queryBuilder = queryBuilder.where(
-                `${this.#vereinAlias}.titel ${ilike} :titel`,
-                { titel: `%${titel}%` },
+                `${this.#vereinAlias}.adresse ${ilike} :adresse`,
+                { adresse: `%${adresse}%` },
             );
             useWhere = false;
         }
-
-        // Restliche Properties als Key-Value-Paare: Vergleiche auf Gleichheit
-        Object.keys(props).forEach((key) => {
-            const param: Record<string, any> = {};
-            param[key] = props[key]; // eslint-disable-line @typescript-eslint/no-unsafe-assignment, security/detect-object-injection
-            queryBuilder = useWhere
-                ? queryBuilder.where(
-                      `${this.#buchAlias}.${key} = :${key}`,
-                      param,
-                  )
-                : queryBuilder.andWhere(
-                      `${this.#buchAlias}.${key} = :${key}`,
-                      param,
-                  );
-            useWhere = false;
-        });
 
         this.#logger.debug('build: sql=%s', queryBuilder.getSql());
         return queryBuilder;
