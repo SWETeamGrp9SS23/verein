@@ -105,7 +105,7 @@ export class VereinWriteController {
         this.#logger.debug('create: vereinDTO=%o', vereinDTO);
 
         const verein = this.#vereinDtoToBuch(vereinDTO);
-        const result = await this.#service.create(buch);
+        const result = await this.#service.create(verein);
         if (Object.prototype.hasOwnProperty.call(result, 'type')) {
             return this.#handleCreateError(result as CreateError, res);
         }
@@ -232,26 +232,27 @@ export class VereinWriteController {
 
         return res.sendStatus(HttpStatus.NO_CONTENT);
     }
-        const adresse = VereinDTO.adresse.map((adresseDTO) => {
+        const adresse = vereinDTO.adresse.map((adresseDTO) => {
             const adresse: Adresse = {
                 id: undefined,
                 plz: adresseDTO.plz,
                 ort: adresseDTO.ort,
                 verein: undefined,
             };
-            return abbildung;
+            return adresse;
         });
         const verein = {
             id: undefined,
             version: undefined,
-            mitgliedsbeitrag: VereinDTO.mitgliedsbeitrag
-            name: VereinDTO
+            mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
+            name: vereinDTO.name,
+            entstehungsdatum: vereinDTO.entstehungsdatum,
+            homepage: vereinDTO.homepage,
             erzeugt: undefined,
             aktualisiert: undefined,
         };
 
         // Rueckwaertsverweise
-        buch.titel.buch = buch;
         buch.abbildungen?.forEach((abbildung) => {
             abbildung.buch = buch;
         });
@@ -282,7 +283,7 @@ export class VereinWriteController {
             .send(msg);
     }
 
-    #buchDtoOhneRefToBuch(buchDTO: BuchDtoOhneRef): Buch {
+    #buchDtoOhneRefToBuch(vereinDTO: BuchDtoOhneRef): Buch {
         return {
             id: undefined,
             version: undefined,
