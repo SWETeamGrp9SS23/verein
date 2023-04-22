@@ -26,7 +26,7 @@
  */
 export interface NameExists {
     readonly type: 'NameExists';
-    readonly isbn: string | null | undefined;
+    readonly name: string | null | undefined;
     readonly id?: number;
 }
 
@@ -57,7 +57,7 @@ export interface VersionOutdated {
  * Klasse für ein nicht-vorhandenes Buch beim Ändern.
  */
 export interface VereinNotExists {
-    readonly type: 'BuchNotExists';
+    readonly type: 'VereinNotExists';
     readonly id: number | undefined;
 }
 

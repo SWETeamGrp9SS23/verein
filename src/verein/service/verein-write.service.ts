@@ -22,7 +22,7 @@
  */
 
 import {
-    type BuchNotExists,
+    type VereinNotExists,
     type CreateError,
     type UpdateError,
     type VersionInvalid,
@@ -117,7 +117,7 @@ export class BuchWriteService {
         );
         if (id === undefined) {
             this.#logger.debug('update: Keine gueltige ID');
-            return { type: 'BuchNotExists', id };
+            return { type: 'VereinNotExists', id };
         }
 
         const validateResult = await this.#validateUpdate(verein, id, version);
@@ -229,11 +229,14 @@ export class BuchWriteService {
     async #findByIdAndCheckVersion(
         id: number,
         version: number,
-    ): Promise<Verein | BuchNotExists | VersionOutdated> {
+    ): Promise<Verein | VereinNotExists | VersionOutdated> {
         const buchDb = await this.#readService.findById({ id });
         if (buchDb === undefined) {
-            const result: BuchNotExists = { type: 'BuchNotExists', id };
-            this.#logger.debug('#checkIdAndVersion: BuchNotExists=%o', result);
+            const result: VereinNotExists = { type: 'VereinNotExists', id };
+            this.#logger.debug(
+                '#checkIdAndVersion: VereinNotExists=%o',
+                result,
+            );
             return result;
         }
 
