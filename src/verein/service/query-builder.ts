@@ -56,7 +56,7 @@ export class QueryBuilder {
     }
 
     /**
-     * Ein Buch mit der ID suchen.
+     * Ein Verein mit der ID suchen.
      * @param id ID des gesuchten Buches
      * @returns QueryBuilder
      */
@@ -71,7 +71,7 @@ export class QueryBuilder {
     }
 
     /**
-     * Bücher asynchron suchen.
+     * Vereine asynchron suchen.
      * @param suchkriterien JSON-Objekt mit Suchkriterien
      * @returns QueryBuilder
      */
@@ -99,31 +99,9 @@ export class QueryBuilder {
             const ilike =
                 typeOrmModuleOptions.type === 'postgres' ? 'ilike' : 'like';
             queryBuilder = queryBuilder.where(
-                `${this.#titelAlias}.titel ${ilike} :titel`,
+                `${this.#vereinAlias}.titel ${ilike} :titel`,
                 { titel: `%${titel}%` },
             );
-            useWhere = false;
-        }
-
-        if (javascript === 'true') {
-            queryBuilder = useWhere
-                ? queryBuilder.where(
-                      `${this.#buchAlias}.schlagwoerter like '%JAVASCRIPT%'`,
-                  )
-                : queryBuilder.andWhere(
-                      `${this.#buchAlias}.schlagwoerter like '%JAVASCRIPT%'`,
-                  );
-            useWhere = false;
-        }
-
-        if (typescript === 'true') {
-            queryBuilder = useWhere
-                ? queryBuilder.where(
-                      `${this.#buchAlias}.schlagwoerter like '%TYPESCRIPT%'`,
-                  )
-                : queryBuilder.andWhere(
-                      `${this.#buchAlias}.schlagwoerter like '%TYPESCRIPT%'`,
-                  );
             useWhere = false;
         }
 

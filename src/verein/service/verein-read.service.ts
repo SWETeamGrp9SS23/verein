@@ -119,9 +119,9 @@ export class VereinReadService {
         // QueryBuilder https://typeorm.io/select-query-builder
         // Das Resultat ist eine leere Liste, falls nichts gefunden
         // Lesen: Keine Transaktion erforderlich
-        const buecher = await this.#queryBuilder.build(suchkriterien).getMany();
-        this.#logger.debug('find: buecher=%o', buecher);
+        const vereine = await this.#queryBuilder.build(suchkriterien).getMany();
+        this.#logger.debug('find: vereine=%o', vereine);
 
-        return buecher;
+        return vereine;
     }
 }
