@@ -32,7 +32,7 @@ import {
     ValidateNested,
 } from 'class-validator';
 
-export class VereinDTO {
+export class VereinDtoOhneRef {
     @ApiProperty({ example: 'FC Bayern' })
     @IsNotEmpty()
     @IsString()
@@ -58,4 +58,11 @@ export class VereinDTO {
     @ValidateNested()
     @Type(() => AdresseDTO)
     readonly adresse!: AdresseDTO;
+}
+
+export class VereinDTO extends VereinDtoOhneRef {
+    @ValidateNested()
+    @Type(() => AdresseDTO)
+    @ApiProperty({ example: 'Der Titel', type: String })
+    readonly titel!: AdresseDTO;
 }

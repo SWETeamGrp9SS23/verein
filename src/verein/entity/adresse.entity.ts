@@ -12,15 +12,15 @@ import { Verein } from './verein.entity.js';
 export class Adresse {
     @Column('int')
     @PrimaryGeneratedColumn()
-    id!: number;
+    id: number | undefined;
 
     @ApiProperty({ example: '76351', type: String })
     @Column({ name: 'postleitzahl', type: 'varchar', length: 10 })
-    readonly plz!: string;
+    readonly plz: string | undefined;
 
     @ApiProperty({ example: 'Linkenheim-Hochstetten', type: String })
     @Column({ name: 'ort', type: 'varchar', length: 100, nullable: true })
-    readonly ort?: string;
+    readonly ort: string | undefined;
 
     @ApiProperty({
         type: () => Verein,
@@ -28,5 +28,5 @@ export class Adresse {
     })
     @OneToOne(() => Verein, (verein) => verein.adresse)
     @JoinColumn({ name: 'verein_id' })
-    verein?: Verein;
+    verein: Verein | undefined;
 }

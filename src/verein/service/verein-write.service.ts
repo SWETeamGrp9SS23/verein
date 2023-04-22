@@ -53,7 +53,7 @@ export interface UpdateParams {
  * Schreiben von Bücher und greift mit _TypeORM_ auf die DB zu.
  */
 @Injectable()
-export class BuchWriteService {
+export class VereinWriteService {
     private static readonly VERSION_PATTERN = new RE2('^"\\d*"');
 
     readonly #repo: Repository<Verein>;
@@ -62,7 +62,7 @@ export class BuchWriteService {
 
     readonly #mailService: MailService;
 
-    readonly #logger = getLogger(BuchWriteService.name);
+    readonly #logger = getLogger(VereinWriteService.name);
 
     constructor(
         @InjectRepository(Verein) repo: Repository<Verein>,
@@ -216,7 +216,7 @@ export class BuchWriteService {
     #validateVersion(version: string | undefined): VersionInvalid | number {
         if (
             version === undefined ||
-            !BuchWriteService.VERSION_PATTERN.test(version)
+            !VereinWriteService.VERSION_PATTERN.test(version)
         ) {
             const error: VersionInvalid = { type: 'VersionInvalid', version };
             this.#logger.debug('#validateVersion: VersionInvalid=%o', error);

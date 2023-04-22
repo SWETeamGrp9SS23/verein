@@ -46,16 +46,16 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { VereinDTO } from './vereinDTO.entity.js';
+import { VereinDTO, VereinDtoOhneRef } from './vereinDTO.entity.js';
 import { type CreateError, type UpdateError } from '../service/errors.js';
 import { Request, Response } from 'express';
-import { type Adresse } from '../entity/adresse.entity.js';
 import { type Verein } from '../entity/verein.entity.js';
 import { VereinWriteService } from '../service/verein-write.service.js';
 import { JwtAuthGuard } from '../../security/auth/jwt/jwt-auth.guard.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { RolesAllowed } from '../../security/auth/roles/roles-allowed.decorator.js';
 import { RolesGuard } from '../../security/auth/roles/roles.guard.js';
+import { type Adresse } from '../entity/adresse.entity.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';
@@ -66,29 +66,29 @@ import { paths } from '../../config/paths.js';
 @Controller(paths.rest)
 @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(ResponseTimeInterceptor)
-@ApiTags('Verein API')
+@ApiTags('Buch API')
 @ApiBearerAuth()
-export class VereinWriteController {
+export class BuchWriteController {
     readonly #service: VereinWriteService;
 
-    readonly #logger = getLogger(VereinWriteController.name);
+    readonly #logger = getLogger(BuchWriteController.name);
 
     constructor(service: VereinWriteService) {
         this.#service = service;
     }
 
     /**
-     * Ein neues Verein wird asynchron angelegt. Das neu anzulegende Buch ist als
+     * Ein neues Buch wird asynchron angelegt. Das neu anzulegende Buch ist als
      * JSON-Datensatz im Request-Objekt enthalten. Wenn es keine
      * Verletzungen von Constraints gibt, wird der Statuscode `201` (`Created`)
      * gesetzt und im Response-Header wird `Location` auf die URI so gesetzt,
-     * dass damit das neu angelegte Verein abgerufen werden kann.
+     * dass damit das neu angelegte Buch abgerufen werden kann.
      *
      * Falls Constraints verletzt sind, wird der Statuscode `400` (`Bad Request`)
      * gesetzt und genauso auch wenn der Titel oder die ISBN-Nummer bereits
      * existieren.
      *
-     * @param verein JSON-Daten für ein Verein im Request-Body.
+     * @param buch JSON-Daten für ein Verein im Request-Body.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
@@ -96,7 +96,7 @@ export class VereinWriteController {
     @RolesAllowed('admin', 'mitarbeiter')
     @ApiOperation({ summary: 'Ein neuen Verein anlegen' })
     @ApiCreatedResponse({ description: 'Erfolgreich neu angelegt' })
-    @ApiBadRequestResponse({ description: 'Fehlerhafte Vereindaten' })
+    @ApiBadRequestResponse({ description: 'Fehlerhafte Vereinsdaten' })
     async create(
         @Body() vereinDTO: VereinDTO,
         @Req() req: Request,
@@ -104,7 +104,7 @@ export class VereinWriteController {
     ): Promise<Response> {
         this.#logger.debug('create: vereinDTO=%o', vereinDTO);
 
-        const verein = this.#vereinDtoToVerein(vereinDTO);
+        const verein = this.#buchDtoToBuch(vereinDTO);
         const result = await this.#service.create(verein);
         if (Object.prototype.hasOwnProperty.call(result, 'type')) {
             return this.#handleCreateError(result as CreateError, res);
@@ -116,11 +116,11 @@ export class VereinWriteController {
     }
 
     /**
-     * Ein vorhandener Verein wird asynchron aktualisiert.
+     * Ein vorhandenes Buch wird asynchron aktualisiert.
      *
-     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Vereins
+     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Buches
      * als Pfad-Parameter enthalten sein. Außerdem muss im Rumpf das zu
-     * aktualisierende Verein als JSON-Datensatz enthalten sein. Damit die
+     * aktualisierende Buch als JSON-Datensatz enthalten sein. Damit die
      * Aktualisierung überhaupt durchgeführt werden kann, muss im Header
      * `If-Match` auf die korrekte Version für optimistische Synchronisation
      * gesetzt sein.
@@ -134,14 +134,14 @@ export class VereinWriteController {
      * Statuscode `400` (`Bad Request`) gesetzt und genauso auch wenn der neue
      * Titel oder die neue ISBN-Nummer bereits existieren.
      *
-     * @param verein Vereindaten im Body des Request-Objekts.
+     * @param buch Buchdaten im Body des Request-Objekts.
      * @param id Pfad-Paramater für die ID.
      * @param version Versionsnummer aus dem Header _If-Match_.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
     // eslint-disable-next-line max-params
-    @Put('id')
+    @Put(':id')
     @RolesAllowed('admin', 'mitarbeiter')
     @ApiOperation({
         summary: 'Ein vorhandenes Verein aktualisieren',
@@ -158,7 +158,7 @@ export class VereinWriteController {
         required: true,
     })
     @ApiNoContentResponse({ description: 'Erfolgreich aktualisiert' })
-    @ApiBadRequestResponse({ description: 'Fehlerhafte Vereindaten' })
+    @ApiBadRequestResponse({ description: 'Fehlerhafte Vereinsdaten' })
     @ApiPreconditionFailedResponse({
         description: 'Falsche Version im Header "If-Match"',
     })
@@ -167,15 +167,15 @@ export class VereinWriteController {
         description: 'Header "If-Match" fehlt',
     })
     async update(
-        @Body() vereinDTO: VereinDTO,
+        @Body() buchDTO: VereinDtoOhneRef,
         @Param('id') id: number,
         @Headers('If-Match') version: string | undefined,
         @Res() res: Response,
     ): Promise<Response> {
         this.#logger.debug(
-            'update: id=%s, vereinDTO=%o, version=%s',
+            'update: id=%s, buchDTO=%o, version=%s',
             id,
-            vereinDTO,
+            buchDTO,
             version,
         );
 
@@ -188,7 +188,7 @@ export class VereinWriteController {
                 .send(msg);
         }
 
-        const verein = this.#vereinDtoOhneRefToBuch(vereinDTO);
+        const verein = this.#buchDtoOhneRefToBuch(buchDTO);
         const result = await this.#service.update({ id, verein, version });
         if (typeof result === 'object') {
             return this.#handleUpdateError(result, res);
@@ -199,23 +199,23 @@ export class VereinWriteController {
     }
 
     /**
-     * Ein Verein wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
+     * Ein Buch wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
      * ist. Der zurückgelieferte Statuscode ist `204` (`No Content`).
      *
      * @param id Pfad-Paramater für die ID.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
-    @Delete('id')
+    @Delete(':id')
     @RolesAllowed('admin')
-    @ApiOperation({ summary: 'Verein mit der ID löschen', tags: ['Loeschen'] })
+    @ApiOperation({ summary: 'Buch mit der ID löschen', tags: ['Loeschen'] })
     @ApiHeader({
         name: 'Authorization',
         description: 'Header für JWT',
         required: true,
     })
     @ApiNoContentResponse({
-        description: 'Das Verein wurde gelöscht oder war nicht vorhanden',
+        description: 'Das Buch wurde gelöscht oder war nicht vorhanden',
     })
     async delete(
         @Param('id') id: number,
@@ -232,31 +232,30 @@ export class VereinWriteController {
 
         return res.sendStatus(HttpStatus.NO_CONTENT);
     }
-        const adresse = vereinDTO.adresse.map((adresseDTO) => {
-            const adresse: Adresse = {
-                id: undefined,
-                plz: adresseDTO.plz,
-                ort: adresseDTO.ort,
-                verein: undefined,
-            };
-            return adresse;
-        });
+
+    #buchDtoToBuch(vereinDTO: VereinDTO): Verein {
+        const adresseDTO = vereinDTO.adresse;
+        const adresse: Adresse = {
+            id: undefined,
+            plz: adresseDTO.plz,
+            ort: adresseDTO.ort,
+            verein: undefined,
+        };
         const verein = {
             id: undefined,
             version: undefined,
-            mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
             name: vereinDTO.name,
+            mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
             entstehungsdatum: vereinDTO.entstehungsdatum,
             homepage: vereinDTO.homepage,
+            adresse,
             erzeugt: undefined,
             aktualisiert: undefined,
         };
 
         // Rueckwaertsverweise
-        buch.abbildungen?.forEach((abbildung) => {
-            abbildung.buch = buch;
-        });
-        return buch;
+        verein.adresse.verein = verein;
+        return verein;
     }
 
     #handleCreateError(err: CreateError, res: Response) {
@@ -283,7 +282,7 @@ export class VereinWriteController {
             .send(msg);
     }
 
-    #buchDtoOhneRefToBuch(vereinDTO: BuchDtoOhneRef): Buch {
+    #buchDtoOhneRefToBuch(buchDTO: BuchDtoOhneRef): Buch {
         return {
             id: undefined,
             version: undefined,
