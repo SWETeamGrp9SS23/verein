@@ -173,28 +173,29 @@ export class BuchWriteService {
     async #validateCreate(verein: Verein): Promise<CreateError | undefined> {
         this.#logger.debug('#validateCreate: buch=%o', verein);
 
-        const { isbn } = buch;
-        const buecher = await this.#readService.find({ isbn: isbn }); // eslint-disable-line object-shorthand
-        if (buecher.length > 0) {
-            return { type: 'IsbnExists', isbn };
+        const { name } = verein;
+        const vereine = await this.#readService.find({ name: name }); // eslint-disable-line object-shorthand
+        if (vereine.length > 0) {
+            return { type: 'NameExists', name };
         }
 
         this.#logger.debug('#validateCreate: ok');
         return undefined;
     }
 
-    async #sendmail(buch: Buch) {
-        const subject = `Neues Buch ${buch.id}`;
-        const titel = buch.titel?.titel ?? 'N/A';
-        const body = `Das Buch mit dem Titel <strong>${titel}</strong> ist angelegt`;
+    async #sendmail(verein: Verein) {
+        const subject = `Neues Buch ${verein.id}`;
+        const ort = verein.adresse?.ort ?? 'N/A';
+        const plz = verein.adresse?.plz ?? 'N/A';
+        const body = `Das Buch mit der Adresse <strong>${plz} - ${ort}</strong> ist angelegt`;
         await this.#mailService.sendmail({ subject, body });
     }
 
     async #validateUpdate(
-        buch: Buch,
+        verein: Verein,
         id: number,
         versionStr: string,
-    ): Promise<Buch | UpdateError> {
+    ): Promise<Verein | UpdateError> {
         const result = this.#validateVersion(versionStr);
         if (typeof result !== 'number') {
             return result;
@@ -203,7 +204,7 @@ export class BuchWriteService {
         const version = result;
         this.#logger.debug(
             '#validateUpdate: buch=%o, version=%s',
-            buch,
+            verein,
             version,
         );
 
@@ -228,7 +229,7 @@ export class BuchWriteService {
     async #findByIdAndCheckVersion(
         id: number,
         version: number,
-    ): Promise<Buch | BuchNotExists | VersionOutdated> {
+    ): Promise<Verein | BuchNotExists | VersionOutdated> {
         const buchDb = await this.#readService.findById({ id });
         if (buchDb === undefined) {
             const result: BuchNotExists = { type: 'BuchNotExists', id };
