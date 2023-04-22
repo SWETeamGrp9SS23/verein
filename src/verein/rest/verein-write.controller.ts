@@ -46,17 +46,16 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { BuchDTO, BuchDtoOhneRef } from './buchDTO.entity.js';
+import { VereinDTO } from './adresse.entity.js';
 import { type CreateError, type UpdateError } from '../service/errors.js';
 import { Request, Response } from 'express';
-import { type Abbildung } from '../entity/abbildung.entity.js';
+import { type Adresse } from '../entity/adresse.entity.js';
 import { type Buch } from '../entity/buch.entity.js';
-import { BuchWriteService } from '../service/buch-write.service.js';
+import { VereinWriteService } from '../service/verein-write.service.js';
 import { JwtAuthGuard } from '../../security/auth/jwt/jwt-auth.guard.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { RolesAllowed } from '../../security/auth/roles/roles-allowed.decorator.js';
 import { RolesGuard } from '../../security/auth/roles/roles.guard.js';
-import { type Titel } from '../entity/name.entity.js';
 import { getBaseUri } from './getBaseUri.js';
 import { getLogger } from '../../logger/logger.js';
 import { paths } from '../../config/paths.js';
@@ -67,45 +66,45 @@ import { paths } from '../../config/paths.js';
 @Controller(paths.rest)
 @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(ResponseTimeInterceptor)
-@ApiTags('Buch API')
+@ApiTags('Verein API')
 @ApiBearerAuth()
-export class BuchWriteController {
-    readonly #service: BuchWriteService;
+export class VereinWriteController {
+    readonly #service: VereinWriteService;
 
-    readonly #logger = getLogger(BuchWriteController.name);
+    readonly #logger = getLogger(VereinWriteController.name);
 
-    constructor(service: BuchWriteService) {
+    constructor(service: VereinWriteService) {
         this.#service = service;
     }
 
     /**
-     * Ein neues Buch wird asynchron angelegt. Das neu anzulegende Buch ist als
+     * Ein neues Verein wird asynchron angelegt. Das neu anzulegende Buch ist als
      * JSON-Datensatz im Request-Objekt enthalten. Wenn es keine
      * Verletzungen von Constraints gibt, wird der Statuscode `201` (`Created`)
      * gesetzt und im Response-Header wird `Location` auf die URI so gesetzt,
-     * dass damit das neu angelegte Buch abgerufen werden kann.
+     * dass damit das neu angelegte Verein abgerufen werden kann.
      *
      * Falls Constraints verletzt sind, wird der Statuscode `400` (`Bad Request`)
      * gesetzt und genauso auch wenn der Titel oder die ISBN-Nummer bereits
      * existieren.
      *
-     * @param buch JSON-Daten für ein Buch im Request-Body.
+     * @param verein JSON-Daten für ein Verein im Request-Body.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
     @Post()
     @RolesAllowed('admin', 'mitarbeiter')
-    @ApiOperation({ summary: 'Ein neues Buch anlegen' })
+    @ApiOperation({ summary: 'Ein neuen Verein anlegen' })
     @ApiCreatedResponse({ description: 'Erfolgreich neu angelegt' })
-    @ApiBadRequestResponse({ description: 'Fehlerhafte Buchdaten' })
+    @ApiBadRequestResponse({ description: 'Fehlerhafte Vereindaten' })
     async create(
-        @Body() buchDTO: BuchDTO,
+        @Body() vereinDTO: VereinDTO,
         @Req() req: Request,
         @Res() res: Response,
     ): Promise<Response> {
-        this.#logger.debug('create: buchDTO=%o', buchDTO);
+        this.#logger.debug('create: vereinDTO=%o', vereinDTO);
 
-        const buch = this.#buchDtoToBuch(buchDTO);
+        const verein = this.#vereinDtoToBuch(vereinDTO);
         const result = await this.#service.create(buch);
         if (Object.prototype.hasOwnProperty.call(result, 'type')) {
             return this.#handleCreateError(result as CreateError, res);
@@ -117,11 +116,11 @@ export class BuchWriteController {
     }
 
     /**
-     * Ein vorhandenes Buch wird asynchron aktualisiert.
+     * Ein vorhandener Verein wird asynchron aktualisiert.
      *
-     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Buches
+     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Vereins
      * als Pfad-Parameter enthalten sein. Außerdem muss im Rumpf das zu
-     * aktualisierende Buch als JSON-Datensatz enthalten sein. Damit die
+     * aktualisierende Verein als JSON-Datensatz enthalten sein. Damit die
      * Aktualisierung überhaupt durchgeführt werden kann, muss im Header
      * `If-Match` auf die korrekte Version für optimistische Synchronisation
      * gesetzt sein.
@@ -135,17 +134,17 @@ export class BuchWriteController {
      * Statuscode `400` (`Bad Request`) gesetzt und genauso auch wenn der neue
      * Titel oder die neue ISBN-Nummer bereits existieren.
      *
-     * @param buch Buchdaten im Body des Request-Objekts.
+     * @param verein Vereindaten im Body des Request-Objekts.
      * @param id Pfad-Paramater für die ID.
      * @param version Versionsnummer aus dem Header _If-Match_.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
     // eslint-disable-next-line max-params
-    @Put(':id')
+    @Put('id')
     @RolesAllowed('admin', 'mitarbeiter')
     @ApiOperation({
-        summary: 'Ein vorhandenes Buch aktualisieren',
+        summary: 'Ein vorhandenes Verein aktualisieren',
         tags: ['Aktualisieren'],
     })
     @ApiHeader({
@@ -159,7 +158,7 @@ export class BuchWriteController {
         required: true,
     })
     @ApiNoContentResponse({ description: 'Erfolgreich aktualisiert' })
-    @ApiBadRequestResponse({ description: 'Fehlerhafte Buchdaten' })
+    @ApiBadRequestResponse({ description: 'Fehlerhafte Vereindaten' })
     @ApiPreconditionFailedResponse({
         description: 'Falsche Version im Header "If-Match"',
     })
@@ -168,15 +167,15 @@ export class BuchWriteController {
         description: 'Header "If-Match" fehlt',
     })
     async update(
-        @Body() buchDTO: BuchDtoOhneRef,
+        @Body() vereinDTO: VereinDTO,
         @Param('id') id: number,
         @Headers('If-Match') version: string | undefined,
         @Res() res: Response,
     ): Promise<Response> {
         this.#logger.debug(
-            'update: id=%s, buchDTO=%o, version=%s',
+            'update: id=%s, vereinDTO=%o, version=%s',
             id,
-            buchDTO,
+            vereinDTO,
             version,
         );
 
@@ -189,8 +188,8 @@ export class BuchWriteController {
                 .send(msg);
         }
 
-        const buch = this.#buchDtoOhneRefToBuch(buchDTO);
-        const result = await this.#service.update({ id, buch, version });
+        const verein = this.#vereinDtoOhneRefToBuch(vereinDTO);
+        const result = await this.#service.update({ id, verein, version });
         if (typeof result === 'object') {
             return this.#handleUpdateError(result, res);
         }
@@ -200,23 +199,23 @@ export class BuchWriteController {
     }
 
     /**
-     * Ein Buch wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
+     * Ein Verein wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
      * ist. Der zurückgelieferte Statuscode ist `204` (`No Content`).
      *
      * @param id Pfad-Paramater für die ID.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
-    @Delete(':id')
+    @Delete('id')
     @RolesAllowed('admin')
-    @ApiOperation({ summary: 'Buch mit der ID löschen', tags: ['Loeschen'] })
+    @ApiOperation({ summary: 'Verein mit der ID löschen', tags: ['Loeschen'] })
     @ApiHeader({
         name: 'Authorization',
         description: 'Header für JWT',
         required: true,
     })
     @ApiNoContentResponse({
-        description: 'Das Buch wurde gelöscht oder war nicht vorhanden',
+        description: 'Das Verein wurde gelöscht oder war nicht vorhanden',
     })
     async delete(
         @Param('id') id: number,
@@ -233,38 +232,20 @@ export class BuchWriteController {
 
         return res.sendStatus(HttpStatus.NO_CONTENT);
     }
-
-    #buchDtoToBuch(buchDTO: BuchDTO): Buch {
-        const titelDTO = buchDTO.titel;
-        const titel: Titel = {
-            id: undefined,
-            titel: titelDTO.titel,
-            untertitel: titelDTO.untertitel,
-            buch: undefined,
-        };
-        const abbildungen = buchDTO.abbildungen?.map((abbildungDTO) => {
-            const abbildung: Abbildung = {
+        const adresse = VereinDTO.adresse.map((adresseDTO) => {
+            const adresse: Adresse = {
                 id: undefined,
-                beschriftung: abbildungDTO.beschriftung,
-                contentType: abbildungDTO.contentType,
-                buch: undefined,
+                plz: adresseDTO.plz,
+                ort: adresseDTO.ort,
+                verein: undefined,
             };
             return abbildung;
         });
-        const buch = {
+        const verein = {
             id: undefined,
             version: undefined,
-            isbn: buchDTO.isbn,
-            rating: buchDTO.rating,
-            art: buchDTO.art,
-            preis: buchDTO.preis,
-            rabatt: buchDTO.rabatt,
-            lieferbar: buchDTO.lieferbar,
-            datum: buchDTO.datum,
-            homepage: buchDTO.homepage,
-            schlagwoerter: buchDTO.schlagwoerter,
-            titel,
-            abbildungen,
+            mitgliedsbeitrag: VereinDTO.mitgliedsbeitrag
+            name: VereinDTO
             erzeugt: undefined,
             aktualisiert: undefined,
         };
