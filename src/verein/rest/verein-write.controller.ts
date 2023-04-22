@@ -260,8 +260,8 @@ export class BuchWriteController {
 
     #handleCreateError(err: CreateError, res: Response) {
         switch (err.type) {
-            case 'IsbnExists': {
-                return this.#handleIsbnExists(err.isbn, res);
+            case 'NameExists': {
+                return this.#handleNameExists(err.name, res);
             }
 
             default: {
@@ -270,11 +270,11 @@ export class BuchWriteController {
         }
     }
 
-    #handleIsbnExists(
-        isbn: string | null | undefined,
+    #handleNameExists(
+        name: string | null | undefined,
         res: Response,
     ): Response {
-        const msg = `Die ISBN-Nummer "${isbn}" existiert bereits.`;
+        const msg = `Der Name "${name}" existiert bereits.`;
         this.#logger.debug('#handleIsbnExists(): msg=%s', msg);
         return res
             .status(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -282,21 +282,15 @@ export class BuchWriteController {
             .send(msg);
     }
 
-    #buchDtoOhneRefToBuch(buchDTO: BuchDtoOhneRef): Buch {
+    #buchDtoOhneRefToBuch(vereinDTO: VereinDtoOhneRef): Verein {
         return {
             id: undefined,
             version: undefined,
-            isbn: buchDTO.isbn,
-            rating: buchDTO.rating,
-            art: buchDTO.art,
-            preis: buchDTO.preis,
-            rabatt: buchDTO.rabatt,
-            lieferbar: buchDTO.lieferbar,
-            datum: buchDTO.datum,
-            homepage: buchDTO.homepage,
-            schlagwoerter: buchDTO.schlagwoerter,
-            titel: undefined,
-            abbildungen: undefined,
+            name: vereinDTO.name,
+            mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
+            entstehungsdatum: vereinDTO.entstehungsdatum,
+            homepage: vereinDTO.homepage,
+            adresse: undefined,
             erzeugt: undefined,
             aktualisiert: undefined,
         };
@@ -304,9 +298,9 @@ export class BuchWriteController {
 
     #handleUpdateError(err: UpdateError, res: Response): Response {
         switch (err.type) {
-            case 'BuchNotExists': {
+            case 'VereinNotExists': {
                 const { id } = err;
-                const msg = `Es gibt kein Buch mit der ID "${id}".`;
+                const msg = `Es gibt kein Verein mit der ID "${id}".`;
                 this.#logger.debug('#handleUpdateError: msg=%s', msg);
                 return res
                     .status(HttpStatus.PRECONDITION_FAILED)

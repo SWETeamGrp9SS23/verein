@@ -95,7 +95,7 @@ export class Verein {
         cascade: ['insert', 'remove'],
     })
     @ApiProperty({ example: 'Baumstraße 12' })
-    readonly adresse!: Adresse;
+    readonly adresse: Adresse | undefined;
 
     // https://typeorm.io/entities#special-columns
     // https://typeorm.io/entities#column-types-for-postgres
