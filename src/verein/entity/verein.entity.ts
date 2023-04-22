@@ -64,10 +64,10 @@ export class Verein {
     // https://typeorm.io/entities#primary-columns
     // CAVEAT: zuerst @Column() und erst dann @PrimaryGeneratedColumn()
     @PrimaryGeneratedColumn()
-    id!: number;
+    id: number | undefined;
     /*eTag*/
     @VersionColumn()
-    readonly version?: number;
+    readonly version: number | undefined;
 
     @Column('decimal', {
         precision: 8,
@@ -76,11 +76,11 @@ export class Verein {
     })
     @ApiProperty({ example: 1, type: Number })
     // statt number ggf. Decimal aus decimal.js analog zu BigDecimal von Java
-    readonly mitgliedsbeitrag!: number;
+    readonly mitgliedsbeitrag: number | undefined;
 
     @Column('Name')
     @ApiProperty({ example: 'FC Bayern' })
-    readonly name!: string;
+    readonly name: string | undefined;
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
     @Column('Entstehungsdatum')
@@ -95,7 +95,7 @@ export class Verein {
         cascade: ['insert', 'remove'],
     })
     @ApiProperty({ example: 'Baumstraße 12' })
-    readonly adresse!: Adresse;
+    readonly adresse: Adresse | undefined;
 
     // https://typeorm.io/entities#special-columns
     // https://typeorm.io/entities#column-types-for-postgres
@@ -107,12 +107,12 @@ export class Verein {
     })
     // SQLite:
     // @CreateDateColumn({ type: 'datetime' })
-    readonly erzeugt?: Date;
+    readonly erzeugt: Date | undefined;
 
     @UpdateDateColumn({
         type: dbType === 'sqlite' ? 'datetime' : 'timestamp',
     })
     // SQLite:
     // @UpdateDateColumn({ type: 'datetime' })
-    readonly aktualisiert?: Date;
+    readonly aktualisiert: Date | undefined;
 }
