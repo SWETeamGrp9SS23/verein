@@ -46,11 +46,11 @@ import {
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
-import { VereinDTO } from './adresse.entity.js';
+import { VereinDTO } from './vereinDTO.entity.js';
 import { type CreateError, type UpdateError } from '../service/errors.js';
 import { Request, Response } from 'express';
 import { type Adresse } from '../entity/adresse.entity.js';
-import { type Buch } from '../entity/buch.entity.js';
+import { type Verein } from '../entity/verein.entity.js';
 import { VereinWriteService } from '../service/verein-write.service.js';
 import { JwtAuthGuard } from '../../security/auth/jwt/jwt-auth.guard.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
@@ -104,7 +104,7 @@ export class VereinWriteController {
     ): Promise<Response> {
         this.#logger.debug('create: vereinDTO=%o', vereinDTO);
 
-        const verein = this.#vereinDtoToBuch(vereinDTO);
+        const verein = this.#vereinDtoToVerein(vereinDTO);
         const result = await this.#service.create(verein);
         if (Object.prototype.hasOwnProperty.call(result, 'type')) {
             return this.#handleCreateError(result as CreateError, res);
