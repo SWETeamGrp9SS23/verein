@@ -46,7 +46,7 @@ export class VereinDtoOhneRef {
     @ApiProperty({ example: '2012-11-21' })
     @IsOptional()
     @IsString()
-    readonly entstehungsdatum?: string;
+    readonly entstehungsdatum: Date | string | undefined;
 
     @ApiProperty({ example: 'https://test.de/' })
     @IsOptional()

@@ -76,16 +76,16 @@ export class Verein {
     })
     @ApiProperty({ example: 1, type: Number })
     // statt number ggf. Decimal aus decimal.js analog zu BigDecimal von Java
-    readonly mitgliedsbeitrag: number | undefined;
+    readonly mitgliedsbeitrag!: number;
 
     @Column('Name')
     @ApiProperty({ example: 'FC Bayern' })
-    readonly name: string | undefined;
+    readonly name!: string;
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
     @Column('Entstehungsdatum')
     @ApiProperty({ example: '2012-11-21' })
-    readonly entstehungsdatum: Date | undefined;
+    readonly entstehungsdatum: string | Date | undefined;
 
     @Column('varchar', { length: 40 })
     @ApiProperty({ example: 'https://test.de/', type: URL })
@@ -95,7 +95,7 @@ export class Verein {
         cascade: ['insert', 'remove'],
     })
     @ApiProperty({ example: 'Baumstraße 12' })
-    readonly adresse: Adresse | undefined;
+    readonly adresse!: Adresse;
 
     // https://typeorm.io/entities#special-columns
     // https://typeorm.io/entities#column-types-for-postgres
