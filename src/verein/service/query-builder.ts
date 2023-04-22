@@ -85,22 +85,22 @@ export class QueryBuilder {
             'adresse',
         );
 
-        // z.B. { titel: 'a', rating: 5, javascript: true }
+        // z.B. { postleitzahl: '76351' }
         // "rest properties" fuer anfaengliche WHERE-Klausel: ab ES 2018 https://github.com/tc39/proposal-object-rest-spread
         // type-coverage:ignore-next-line
-        const { adresse } = suchkriterien;
+        const { postleitzahl } = suchkriterien;
 
         let useWhere = true;
 
         // Titel in der Query: Teilstring des Titels und "case insensitive"
         // CAVEAT: MySQL hat keinen Vergleich mit "case insensitive"
         // type-coverage:ignore-next-line
-        if (adresse !== undefined && typeof adresse === 'string') {
+        if (postleitzahl !== undefined && typeof postleitzahl === 'string') {
             const ilike =
                 typeOrmModuleOptions.type === 'postgres' ? 'ilike' : 'like';
             queryBuilder = queryBuilder.where(
-                `${this.#vereinAlias}.adresse ${ilike} :adresse`,
-                { adresse: `%${adresse}%` },
+                `${this.#adresseAlias}.postleitzahl ${ilike} :postleitzahl`,
+                { postleitzahl: `%${postleitzahl}%` },
             );
             useWhere = false;
         }

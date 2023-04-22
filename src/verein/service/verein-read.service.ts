@@ -20,7 +20,6 @@
  * @packageDocumentation
  */
 
-import { Verein } from './../entity/verein.entity.js';
 import { Injectable } from '@nestjs/common';
 import { QueryBuilder } from './query-builder.js';
 import RE2 from 're2';
@@ -32,8 +31,6 @@ import { getLogger } from '../../logger/logger.js';
 export interface FindByIdParams {
     /** ID des gesuchten Buchs */
     id: number;
-    /** Soll die Adressen mitgeladen werden? */ //toDo passt das so, 1zu1 Beziehung?
-    mitAdressen?: boolean;
 }
 export interface Suchkriterien {
     readonly name?: string;
