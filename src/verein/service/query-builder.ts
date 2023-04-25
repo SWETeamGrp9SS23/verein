@@ -28,9 +28,9 @@ import { Adresse } from '../entity/adresse.entity.js';
 import { getLogger } from '../../logger/logger.js';
 import { typeOrmModuleOptions } from '../../config/db.js';
 
-/** Typdefinitionen für die Suche mit der Buch-ID. */
+/** Typdefinitionen für die Suche mit der Verein-ID. */
 export interface BuildIdParams {
-    /** ID des gesuchten Buchs. */
+    /** ID des gesuchten Vereins. */
     id: number;
 }
 /**
@@ -57,7 +57,7 @@ export class QueryBuilder {
 
     /**
      * Ein Verein mit der ID suchen.
-     * @param id ID des gesuchten Buches
+     * @param id ID des gesuchten Vereins
      * @returns QueryBuilder
      */
     buildId({ id }: BuildIdParams) {
