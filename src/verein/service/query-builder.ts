@@ -90,6 +90,7 @@ export class QueryBuilder {
         // type-coverage:ignore-next-line
         const { postleitzahl } = suchkriterien;
 
+        //toDo Warning loswerden
         let useWhere = true;
 
         // Titel in der Query: Teilstring des Titels und "case insensitive"
