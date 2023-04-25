@@ -16,7 +16,7 @@
  */
 
 /**
- * Das Modul besteht aus der Klasse {@linkcode BuchWriteService} für die
+ * Das Modul besteht aus der Klasse {@linkcode VereinWriteService} für die
  * Schreiboperationen im Anwendungskern.
  * @packageDocumentation
  */
@@ -38,18 +38,18 @@ import RE2 from 're2';
 import { Adresse } from '../entity/adresse.entity.js';
 import { getLogger } from '../../logger/logger.js';
 
-/** Typdefinitionen zum Aktualisieren eines Buches mit `update`. */
+/** Typdefinitionen zum Aktualisieren eines Vereins mit `update`. */
 export interface UpdateParams {
-    /** ID des zu aktualisierenden Buches. */
+    /** ID des zu aktualisierenden Vereins. */
     id: number | undefined;
-    /** Buch-Objekt mit den aktualisierten Werten. */
+    /** Verein-Objekt mit den aktualisierten Werten. */
     verein: Verein;
-    /** Versionsnummer für die aktualisierenden Werte. */
+    /** Versionsnummer für die aktualisierenden Werte. (ETAG) */
     version: string;
 }
 
 /**
- * Die Klasse `BuchWriteService` implementiert den Anwendungskern für das
+ * Die Klasse `VereinWriteService` implementiert den Anwendungskern für das
  * Schreiben von Bücher und greift mit _TypeORM_ auf die DB zu.
  */
 @Injectable()
@@ -76,19 +76,19 @@ export class VereinWriteService {
 
     /**
      * Ein neuer Verein soll angelegt werden.
-     * @param buch Das neu abzulegende Verein
+     * @param verein Das neu abzulegende Verein
      * @returns Die ID des neu angelegten Vereines oder im Fehlerfall
      * [CreateError](../types/verein_service_errors.CreateError.html)
      */
     async create(verein: Verein): Promise<CreateError | number> {
-        this.#logger.debug('create: buch=%o', verein);
+        this.#logger.debug('create: verein=%o', verein);
         const validateResult = await this.#validateCreate(verein);
         if (validateResult !== undefined) {
             return validateResult;
         }
 
         const vereinDb = await this.#repo.save(verein); // implizite Transaktion
-        this.#logger.debug('create: buchDb=%o', vereinDb);
+        this.#logger.debug('create: vereinDb=%o', vereinDb);
 
         await this.#sendmail(vereinDb);
 
@@ -96,12 +96,12 @@ export class VereinWriteService {
     }
 
     /**
-     * Ein vorhandenes Buch soll aktualisiert werden.
-     * @param buch Das zu aktualisierende Buch
-     * @param id ID des zu aktualisierenden Buchs
+     * Ein vorhandener Verein soll aktualisiert werden.
+     * @param verein Der zu aktualisierende Verein
+     * @param id ID des zu aktualisierenden Vereins
      * @param version Die Versionsnummer für optimistische Synchronisation
      * @returns Die neue Versionsnummer gemäß optimistischer Synchronisation
-     *  oder im Fehlerfall [UpdateError](../types/buch_service_errors.UpdateError.html)
+     *  oder im Fehlerfall [UpdateError](../types/verein_service_errors.UpdateError.html)
      */
     // https://2ality.com/2015/01/es6-destructuring.html#simulating-named-parameters-in-javascript
     async update({
@@ -110,7 +110,7 @@ export class VereinWriteService {
         version,
     }: UpdateParams): Promise<UpdateError | number> {
         this.#logger.debug(
-            'update: id=%d, buch=%o, version=%s',
+            'update: id=%d, verein=%o, version=%s',
             id,
             verein,
             version,
@@ -126,8 +126,8 @@ export class VereinWriteService {
             return validateResult;
         }
 
-        const buchNeu = validateResult;
-        const merged = this.#repo.merge(buchNeu, verein);
+        const vereinNeu = validateResult;
+        const merged = this.#repo.merge(vereinNeu, verein);
         this.#logger.debug('update: merged=%o', merged);
         const updated = await this.#repo.save(merged); // implizite Transaktion
         this.#logger.debug('update: updated=%o', updated);
@@ -136,25 +136,22 @@ export class VereinWriteService {
     }
 
     /**
-     * Ein Buch wird asynchron anhand seiner ID gelöscht.
+     * Ein Verein wird asynchron anhand seiner ID gelöscht.
      *
-     * @param id ID des zu löschenden Buches
-     * @returns true, falls das Buch vorhanden war und gelöscht wurde. Sonst false.
+     * @param id ID des zu löschenden Vereins
+     * @returns true, falls der Verein vorhanden war und gelöscht wurde. Sonst false.
      */
     async delete(id: number) {
         this.#logger.debug('delete: id=%d', id);
-        const buch = await this.#readService.findById({
-            id,
-        });
-        if (buch === undefined) {
+        const verein = await this.#readService.findById({ id });
+        if (verein === undefined) {
             return false;
         }
 
         let deleteResult: DeleteResult | undefined;
         await this.#repo.manager.transaction(async (transactionalMgr) => {
             // Den Verein zur gegebenen ID mit Adresse asynchron loeschen
-
-            const adresseId = buch.adresse?.id;
+            const adresseId = verein.adresse?.id;
             if (adresseId !== undefined) {
                 await transactionalMgr.delete(Adresse, adresseId);
             }
@@ -171,10 +168,10 @@ export class VereinWriteService {
     }
 
     async #validateCreate(verein: Verein): Promise<CreateError | undefined> {
-        this.#logger.debug('#validateCreate: buch=%o', verein);
+        this.#logger.debug('#validateCreate: verein=%o', verein);
 
         const { name } = verein;
-        const vereine = await this.#readService.find({ name: name }); // eslint-disable-line object-shorthand
+        const vereine = await this.#readService.find({ name }); // eslint-disable-line object-shorthand
         if (vereine.length > 0) {
             return { type: 'NameExists', name };
         }
@@ -184,10 +181,10 @@ export class VereinWriteService {
     }
 
     async #sendmail(verein: Verein) {
-        const subject = `Neues Buch ${verein.id}`;
+        const subject = `Neue Verein ${verein.id}`;
         const ort = verein.adresse?.ort ?? 'N/A';
         const plz = verein.adresse?.plz ?? 'N/A';
-        const body = `Das Buch mit der Adresse <strong>${plz} - ${ort}</strong> ist angelegt`;
+        const body = `Das Verein mit der Adresse <strong>${plz} - ${ort}</strong> ist angelegt`;
         await this.#mailService.sendmail({ subject, body });
     }
 
@@ -203,7 +200,7 @@ export class VereinWriteService {
 
         const version = result;
         this.#logger.debug(
-            '#validateUpdate: buch=%o, version=%s',
+            '#validateUpdate: verein=%o, version=%s',
             verein,
             version,
         );
@@ -230,8 +227,8 @@ export class VereinWriteService {
         id: number,
         version: number,
     ): Promise<Verein | VereinNotExists | VersionOutdated> {
-        const buchDb = await this.#readService.findById({ id });
-        if (buchDb === undefined) {
+        const vereinDb = await this.#readService.findById({ id });
+        if (vereinDb === undefined) {
             const result: VereinNotExists = { type: 'VereinNotExists', id };
             this.#logger.debug(
                 '#checkIdAndVersion: VereinNotExists=%o',
@@ -241,7 +238,7 @@ export class VereinWriteService {
         }
 
         // nullish coalescing
-        const versionDb = buchDb.version!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
+        const versionDb = vereinDb.version!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
         if (version < versionDb) {
             const result: VersionOutdated = {
                 type: 'VersionOutdated',
@@ -255,6 +252,6 @@ export class VereinWriteService {
             return result;
         }
 
-        return buchDb;
+        return vereinDb;
     }
 }

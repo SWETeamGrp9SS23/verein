@@ -29,7 +29,7 @@ import { getLogger } from '../../logger/logger.js';
  * Typdefinition für `findById`
  */
 export interface FindByIdParams {
-    /** ID des gesuchten Buchs */
+    /** ID des gesuchten Vereins */
     id: number;
 }
 export interface Suchkriterien {
@@ -88,7 +88,7 @@ export class VereinReadService {
             return;
         }
 
-        this.#logger.debug('findById: buch=%o', verein);
+        this.#logger.debug('findById: verein=%o', verein);
         return verein;
     }
 
