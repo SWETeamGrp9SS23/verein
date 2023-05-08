@@ -15,93 +15,71 @@
 
 # siehe app.module.ts
 
+# fehlt adresse
+
 schema {
   query: Query
   mutation: Mutation
 }
 
-"Funktionen, um Bücherdaten zu lesen"
+"Funktionen, um Vereinsdaten zu lesen"
 type Query {
-  buecher(titel: String): [Buch!]
+  # hier wird der verein nach den namen gefiltert es wird die liste verein gefiltert
+  vereine(name: String): [Verein!]
 
-  buch(id: ID!): Buch
+  verein(id: ID!): Verein
 }
 
-"Funktionen, um Bücher neu anzulegen, zu aktualisieren oder zu löschen"
+"Funktionen, um Vereine neu anzulegen, zu aktualisieren oder zu löschen"
 type Mutation {
-  create(input: BuchInput!): String
+  create(input: VereinInput!): String
 
-  update(input: BuchUpdateInput!): Int
+  update(input: VereinUpdateInput!): Int
 
   delete(id: ID!): Boolean
 }
 
-"Daten zum Titel eines Buches"
-type Titel {
-  titel: String!
-  untertitel: String
+"Daten zu Adresse eines Vereins"
+type # nochmal checken wann muss es einzeln da steheen und wann nicht
+Adresse {
+  plz: String!
+  ort: String!
 }
 
-"Datenschema zu einem Buch, das gelesen wird"
-type Buch {
+"Datenschema zu einem Verein, das gelesen wird"
+type Verein {
   id: ID!
   version: Int!
-  isbn: String!
-  rating: Int
-  art: Art
-  preis: Float!
-  rabatt: Float
-  lieferbar: Boolean
-  datum: String
+  name: String!
+  mitgliedsbeitrag: Float!
+  entstehungsdatum: String
   homepage: String
   schlagwoerter: [String]
-  titel: Titel!
 }
 
-"Enum-Typ für die Art eines Buches"
-enum Art {
-  DRUCKAUSGABE
-  KINDLE
+"Daten zu Adresse eines neuen Vereins"
+type # nochmal checken wann muss es einzeln da steheen und wann nicht
+Adresse {
+  plz: String!
+  ort: String!
 }
 
-"Daten zum Titel eines neuen Buches"
-input TitelInput {
-  titel: String!
-  untertitel: String
-}
-
-"Daten zu den Abbildungen eines Buches"
-input AbbildungInput {
-  beschriftung: String!
-  contentType: String!
-}
-
-"Daten für ein neues Buch"
-input BuchInput {
-  isbn: String
-  rating: Int
-  art: Art
-  preis: Float
-  rabatt: Float
-  lieferbar: Boolean
-  datum: String
+"Daten für ein neuen Verein"
+input VereinInput {
+  mitgliedsbeitrag: Float
+  entstehungsdatum: String
   homepage: String
   schlagwoerter: [String]
-  titel: TitelInput!
-  abbildungen: [AbbildungInput!]
+  name: String!
 }
 
-"Daten für ein zu änderndes Buch"
-input BuchUpdateInput {
+"Daten für ein zu ändernden Verein"
+input VereinUpdateInput {
   id: ID
   version: Int
-  isbn: String
-  rating: Int
-  art: Art
-  preis: Float
-  rabatt: Float
-  lieferbar: Boolean
-  datum: String
+  mitgliedsbeitrag: Float
+  entstehungsdatum: String
   homepage: String
   schlagwoerter: [String]
+  name: String
 }
