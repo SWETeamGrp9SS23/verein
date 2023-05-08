@@ -39,9 +39,8 @@ type Mutation {
   delete(id: ID!): Boolean
 }
 
-"Daten zu Adresse eines Vereins"
-type # nochmal checken wann muss es einzeln da steheen und wann nicht
-Adresse {
+"Daten zu Adresse eines Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
+type Adresse {
   plz: String!
   ort: String!
 }
@@ -57,9 +56,8 @@ type Verein {
   schlagwoerter: [String]
 }
 
-"Daten zu Adresse eines neuen Vereins"
-type # nochmal checken wann muss es einzeln da steheen und wann nicht
-Adresse {
+"Daten zu Adresse eines neuen Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
+type Adresse {
   plz: String!
   ort: String!
 }
