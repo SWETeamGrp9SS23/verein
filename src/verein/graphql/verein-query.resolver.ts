@@ -16,74 +16,69 @@
  */
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { BadUserInputError } from './errors.js';
-import { type Buch } from '../entity/buch.entity.js';
-import { BuchReadService } from '../service/buch-read.service.js';
+import { type Verein } from '../entity/verein.entity.js';
+import { VereinReadService } from '../service/verein-read.service.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { UseInterceptors } from '@nestjs/common';
 import { getLogger } from '../../logger/logger.js';
 
-export type BuchDTO = Omit<Buch, 'abbildungen' | 'aktualisiert' | 'erzeugt'>;
+export type VereinDTO = Omit<Verein, 'abbildungen' | 'aktualisiert' | 'erzeugt'>;
 export interface IdInput {
     id: number;
 }
 
 @Resolver()
 @UseInterceptors(ResponseTimeInterceptor)
-export class BuchQueryResolver {
-    readonly #service: BuchReadService;
+export class VereinQueryResolver {
+    readonly #service: VereinReadService;
 
-    readonly #logger = getLogger(BuchQueryResolver.name);
+    readonly #logger = getLogger(VereinQueryResolver.name);
 
-    constructor(service: BuchReadService) {
+    constructor(service: VereinReadService) {
         this.#service = service;
     }
 
     @Query()
-    async buch(@Args() idInput: IdInput) {
+    async verein(@Args() idInput: IdInput) {
         const { id } = idInput;
         this.#logger.debug('findById: id=%d', id);
 
-        const buch = await this.#service.findById({ id });
-        if (buch === undefined) {
+        const verein = await this.#service.findById({ id });
+        if (verein === undefined) {
             // https://www.apollographql.com/docs/apollo-server/data/errors
             throw new BadUserInputError(
-                `Es wurde kein Buch mit der ID ${id} gefunden.`,
+                `Es wurde kein Verein mit der ID ${id} gefunden.`,
             );
         }
-        const buchDTO = this.#toBuchDTO(buch);
-        this.#logger.debug('findById: buchDTO=%o', buchDTO);
-        return buchDTO;
+        const vereinDTO = this.#toVereinDTO(verein);
+        this.#logger.debug('findById: vereinDTO=%o', vereinDTO);
+        return vereinDTO;
     }
 
     @Query()
-    async buecher(@Args() titel: { titel: string } | undefined) {
-        const titelStr = titel?.titel;
-        this.#logger.debug('find: titel=%s', titelStr);
-        const suchkriterium = titelStr === undefined ? {} : { titel: titelStr };
-        const buecher = await this.#service.find(suchkriterium);
-        if (buecher.length === 0) {
-            throw new BadUserInputError('Es wurden keine Buecher gefunden.');
+    async vereine(@Args() name: { name: string } | undefined) {
+        const nameStr = name?.name;
+        this.#logger.debug('find: name=%s', nameStr);
+        const suchkriterium = nameStr === undefined ? {} : { name: nameStr };
+        const vereine = await this.#service.find(suchkriterium);
+        if (vereine.length === 0) {
+            throw new BadUserInputError('Es wurden keine Vereine gefunden.');
         }
 
-        const buecherDTO = buecher.map((buch) => this.#toBuchDTO(buch));
-        this.#logger.debug('find: buecherDTO=%o', buecherDTO);
-        return buecherDTO;
+        const vereineDTO = vereine.map((buch) => this.#toVereinDTO(buch));
+        this.#logger.debug('find: buecherDTO=%o', vereineDTO);
+        return vereineDTO;
     }
 
-    #toBuchDTO(buch: Buch): BuchDTO {
+    #toVereinDTO(verein: Verein): VereinDTO {
         return {
-            id: buch.id,
-            version: buch.version,
-            isbn: buch.isbn,
-            rating: buch.rating,
-            art: buch.art,
-            preis: buch.preis,
-            rabatt: buch.rabatt,
-            lieferbar: buch.lieferbar,
-            datum: buch.datum,
-            homepage: buch.homepage,
-            schlagwoerter: buch.schlagwoerter,
-            titel: buch.titel,
+            id: verein.id,
+            version: verein.version,
+            mitgliedsbeitrag: verein.mitgliedsbeitrag,
+            entstehungsdatum: verein.entstehungsdatum,
+            homepage: verein.homepage,
+            name: verein.name,
+            adresse: verein.adresse,
         };
     }
 }
