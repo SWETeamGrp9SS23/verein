@@ -25,7 +25,7 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type BuecherModel } from '../../src/buch/rest/buch-get.controller.js';
+import { type VereineModel } from '../../src/verein/rest/verein-get.controller.js';
 import { HttpStatus } from '@nestjs/common';
 
 // -----------------------------------------------------------------------------
@@ -59,11 +59,11 @@ describe('GET /rest', () => {
         await shutdownServer();
     });
 
-    test('Alle Buecher', async () => {
+    test('Alle Vereine', async () => {
         // given
 
         // when
-        const response: AxiosResponse<BuecherModel> = await client.get('/');
+        const response: AxiosResponse<VereineModel> = await client.get('/');
 
         // then
         const { status, headers, data } = response;
@@ -72,22 +72,22 @@ describe('GET /rest', () => {
         expect(headers['content-type']).toMatch(/json/iu);
         expect(data).toBeDefined();
 
-        const { buecher } = data._embedded;
+        const { vereine } = data._embedded;
 
-        buecher
-            .map((buch) => buch._links.self.href)
+        vereine
+            .map((verein) => verein._links.self.href)
             .forEach((selfLink) => {
                 // eslint-disable-next-line security/detect-non-literal-regexp, security-node/non-literal-reg-expr
                 expect(selfLink).toMatch(new RegExp(`^${baseURL}`, 'u'));
             });
     });
 
-    test('Buecher mit einem Teil-Titel suchen', async () => {
+    test('Vereine mit einem Teil-Titel suchen', async () => {
         // given
         const params = { titel: titelVorhanden };
 
         // when
-        const response: AxiosResponse<BuecherModel> = await client.get('/', {
+        const response: AxiosResponse<VereineModel> = await client.get('/', {
             params,
         });
 
@@ -98,21 +98,21 @@ describe('GET /rest', () => {
         expect(headers['content-type']).toMatch(/json/iu);
         expect(data).toBeDefined();
 
-        const { buecher } = data._embedded;
+        const { vereine } = data._embedded;
 
         // Jedes Buch hat einen Titel mit dem Teilstring 'a'
-        buecher
-            .map((buch) => buch.titel)
+        vereine
+            .map((verein) => verein.name)
             .forEach((titel) =>
-                expect(titel.titel.toLowerCase()).toEqual(
+                expect(titel.name.toLowerCase()).toEqual(
                     expect.stringContaining(titelVorhanden),
                 ),
             );
     });
 
-    test('Buecher zu einem nicht vorhandenen Teil-Titel suchen', async () => {
+    test('Vereine zu einem nicht vorhandenen Teil-Titel suchen', async () => {
         // given
-        const params = { titel: titelNichtVorhanden };
+        const params = { name: nameNichtVorhanden };
 
         // when
         const response: AxiosResponse<string> = await client.get('/', {
@@ -126,12 +126,12 @@ describe('GET /rest', () => {
         expect(data).toMatch(/^not found$/iu);
     });
 
-    test('Mind. 1 Buch mit vorhandenem Schlagwort', async () => {
+    test('Mind. 1 Verein mit vorhandenem Schlagwort', async () => {
         // given
         const params = { [schlagwortVorhanden]: 'true' };
 
         // when
-        const response: AxiosResponse<BuecherModel> = await client.get('/', {
+        const response: AxiosResponse<VereineModel> = await client.get('/', {
             params,
         });
 
@@ -143,11 +143,11 @@ describe('GET /rest', () => {
         // JSON-Array mit mind. 1 JSON-Objekt
         expect(data).toBeDefined();
 
-        const { buecher } = data._embedded;
+        const { vereine } = data._embedded;
 
         // Jedes Buch hat im Array der Schlagwoerter z.B. "javascript"
-        buecher
-            .map((buch) => buch.schlagwoerter)
+        vereine
+            .map((verein) => verein.schlagwoerter)
             .forEach((schlagwoerter) =>
                 expect(schlagwoerter).toEqual(
                     expect.arrayContaining([schlagwortVorhanden.toUpperCase()]),
@@ -155,7 +155,7 @@ describe('GET /rest', () => {
             );
     });
 
-    test('Keine Buecher zu einem nicht vorhandenen Schlagwort', async () => {
+    test('Keine Vereine zu einem nicht vorhandenen Schlagwort', async () => {
         // given
         const params = { [schlagwortNichtVorhanden]: 'true' };
 
@@ -171,7 +171,7 @@ describe('GET /rest', () => {
         expect(data).toMatch(/^not found$/iu);
     });
 
-    test('Keine Buecher zu einer nicht-vorhandenen Property', async () => {
+    test('Keine Vereine zu einer nicht-vorhandenen Property', async () => {
         // given
         const params = { foo: 'bar' };
 

@@ -42,7 +42,7 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type BuchModel } from '../../src/buch/rest/buch-get.controller.js';
+import { type VereinModel } from '../../src/verein/rest/verein-get.controller.js';
 import { HttpStatus } from '@nestjs/common';
 
 // -----------------------------------------------------------------------------
@@ -75,12 +75,12 @@ describe('GET /rest/:id', () => {
         await shutdownServer();
     });
 
-    test('Buch zu vorhandener ID', async () => {
+    test('Verein zu vorhandener ID', async () => {
         // given
         const url = `/${idVorhanden}`;
 
         // when
-        const response: AxiosResponse<BuchModel> = await client.get(url);
+        const response: AxiosResponse<VereinModel> = await client.get(url);
 
         // then
         const { status, headers, data } = response;
@@ -95,7 +95,7 @@ describe('GET /rest/:id', () => {
         expect(selfLink).toMatch(new RegExp(`${url}$`, 'u'));
     });
 
-    test('Kein Buch zu nicht-vorhandener ID', async () => {
+    test('Kein Verein zu nicht-vorhandener ID', async () => {
         // given
         const url = `/${idNichtVorhanden}`;
 
@@ -109,7 +109,7 @@ describe('GET /rest/:id', () => {
         expect(data).toMatch(/^not found$/iu);
     });
 
-    test('Buch zu vorhandener ID mit ETag', async () => {
+    test('Verein zu vorhandener ID mit ETag', async () => {
         // given
         const url = `/${idVorhandenETag}`;
 
