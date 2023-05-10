@@ -144,7 +144,7 @@ export class VereinMutationResolver {
     #errorMsgCreateVerein(err: CreateError) {
         switch (err.type) {
             case 'NameExists': {
-                return `Der Verein ${err.name} existiert bereits`;
+                return `Der Name des Vereins ${err.name} existiert bereits`;
             }
             default: {
                 return 'Unbekannter Fehler';
