@@ -19,17 +19,15 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { type CreateError, type UpdateError } from '../service/errors.js';
 import { IsInt, IsNumberString, Min } from 'class-validator';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Abbildung } from '../entity/abbildung.entity.js';
 import { BadUserInputError } from './errors.js';
-import { Buch } from '../entity/buch.entity.js';
-import { BuchDTO } from '../rest/buchDTO.entity.js';
-import { BuchWriteService } from '../service/buch-write.service.js';
-import { type IdInput } from './buch-query.resolver.js';
+import { Verein } from '../entity/verein.entity.js';
+import { VereinDTO } from '../rest/vereinDTO.entity.js';
+import { VereinWriteService } from '../service/verein-write.service.js';
+import { type IdInput } from './verein-query.resolver.js';
 import { JwtAuthGraphQlGuard } from '../../security/auth/jwt/jwt-auth-graphql.guard.js';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { RolesAllowed } from '../../security/auth/roles/roles-allowed.decorator.js';
 import { RolesGraphQlGuard } from '../../security/auth/roles/roles-graphql.guard.js';
-import { type Titel } from '../entity/name.entity.js';
 import { getLogger } from '../../logger/logger.js';
 
 // Authentifizierung und Autorisierung durch
@@ -42,7 +40,7 @@ import { getLogger } from '../../logger/logger.js';
 //      https://github.com/AstrumU/graphql-authz
 //      https://www.the-guild.dev/blog/graphql-authz
 
-export class BuchUpdateDTO extends BuchDTO {
+export class VereinUpdateDTO extends VereinDTO {
     @IsNumberString()
     readonly id!: string;
 
@@ -54,27 +52,27 @@ export class BuchUpdateDTO extends BuchDTO {
 // alternativ: globale Aktivierung der Guards https://docs.nestjs.com/security/authorization#basic-rbac-implementation
 @UseGuards(JwtAuthGraphQlGuard, RolesGraphQlGuard)
 @UseInterceptors(ResponseTimeInterceptor)
-export class BuchMutationResolver {
-    readonly #service: BuchWriteService;
+export class VereinMutationResolver {
+    readonly #service: VereinWriteService;
 
-    readonly #logger = getLogger(BuchMutationResolver.name);
+    readonly #logger = getLogger(VereinMutationResolver.name);
 
-    constructor(service: BuchWriteService) {
+    constructor(service: VereinWriteService) {
         this.#service = service;
     }
 
     @Mutation()
     @RolesAllowed('admin', 'mitarbeiter')
-    async create(@Args('input') buchDTO: BuchDTO) {
-        this.#logger.debug('create: buchDTO=%o', buchDTO);
+    async create(@Args('input') vereinDTO: VereinDTO) {
+        this.#logger.debug('create: vereinDTO=%o', vereinDTO);
 
-        const buch = this.#buchDtoToBuch(buchDTO);
-        const result = await this.#service.create(buch);
-        this.#logger.debug('createBuch: result=%o', result);
+        const verein = this.#vereinDtoToVerein(vereinDTO);
+        const result = await this.#service.create(verein);
+        this.#logger.debug('createVerein: result=%o', result);
 
         if (Object.prototype.hasOwnProperty.call(result, 'type')) {
             throw new BadUserInputError(
-                this.#errorMsgCreateBuch(result as CreateError),
+                this.#errorMsgCreateVerein(result as CreateError),
             );
         }
         return result;
@@ -82,21 +80,21 @@ export class BuchMutationResolver {
 
     @Mutation()
     @RolesAllowed('admin', 'mitarbeiter')
-    async update(@Args('input') buchDTO: BuchUpdateDTO) {
-        this.#logger.debug('update: buch=%o', buchDTO);
+    async update(@Args('input') vereinDTO: VereinUpdateDTO) {
+        this.#logger.debug('update: verein=%o', vereinDTO);
 
-        const buch = this.#buchUpdateDtoToBuch(buchDTO);
-        const versionStr = `"${buchDTO.version.toString()}"`;
+        const verein = this.#vereinUpdateDtoToVerein(vereinDTO);
+        const versionStr = `"${vereinDTO.version.toString()}"`;
 
         const result = await this.#service.update({
-            id: Number.parseInt(buchDTO.id, 10),
-            buch,
+            id: Number.parseInt(vereinDTO.id, 10),
+            verein: verein,
             version: versionStr,
         });
         if (typeof result === 'object') {
-            throw new BadUserInputError(this.#errorMsgUpdateBuch(result));
+            throw new BadUserInputError(this.#errorMsgUpdateVerein(result));
         }
-        this.#logger.debug('updateBuch: result=%d', result);
+        this.#logger.debug('updateVerein: result=%d', result);
         return result;
     }
 
@@ -106,74 +104,47 @@ export class BuchMutationResolver {
         const idStr = id.id;
         this.#logger.debug('delete: id=%s', idStr);
         const result = await this.#service.delete(idStr);
-        this.#logger.debug('deleteBuch: result=%s', result);
+        this.#logger.debug('deleteVerein: result=%s', result);
         return result;
     }
 
-    #buchDtoToBuch(buchDTO: BuchDTO): Buch {
-        const titelDTO = buchDTO.titel;
-        const titel: Titel = {
-            id: undefined,
-            titel: titelDTO.titel,
-            untertitel: titelDTO.untertitel,
-            buch: undefined,
-        };
-        const abbildungen = buchDTO.abbildungen?.map((abbildungDTO) => {
-            const abbildung: Abbildung = {
-                id: undefined,
-                beschriftung: abbildungDTO.beschriftung,
-                contentType: abbildungDTO.contentType,
-                buch: undefined,
-            };
-            return abbildung;
-        });
-        const buch = {
+    #vereinDtoToVerein(vereinDTO: VereinDTO): Verein {
+       
+       
+        const verein = {
             id: undefined,
             version: undefined,
-            isbn: buchDTO.isbn,
-            rating: buchDTO.rating,
-            art: buchDTO.art,
-            preis: buchDTO.preis,
-            rabatt: buchDTO.rabatt,
-            lieferbar: buchDTO.lieferbar,
-            datum: buchDTO.datum,
-            homepage: buchDTO.homepage,
-            schlagwoerter: buchDTO.schlagwoerter,
-            titel,
-            abbildungen,
+            mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
+            entstehungsdatum: vereinDTO.entstehungsdatum,
+            homepage: vereinDTO.homepage,
+            name: vereinDTO.name,
+            adresse: undefined,
             erzeugt: undefined,
             aktualisiert: undefined,
         };
 
-        // Rueckwaertsverweis
-        buch.titel.buch = buch;
-        return buch;
+        
+        return verein;
     }
 
-    #buchUpdateDtoToBuch(buchDTO: BuchUpdateDTO): Buch {
+    #vereinUpdateDtoToVerein(vereinDTO: VereinUpdateDTO): Verein {
         return {
             id: undefined,
             version: undefined,
-            isbn: buchDTO.isbn,
-            rating: buchDTO.rating,
-            art: buchDTO.art,
-            preis: buchDTO.preis,
-            rabatt: buchDTO.rabatt,
-            lieferbar: buchDTO.lieferbar,
-            datum: buchDTO.datum,
-            homepage: buchDTO.homepage,
-            schlagwoerter: buchDTO.schlagwoerter,
-            titel: undefined,
-            abbildungen: undefined,
+            mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
+            entstehungsdatum: vereinDTO.entstehungsdatum,
+            homepage: vereinDTO.homepage,
+            name: vereinDTO.name,
+            adresse: undefined,
             erzeugt: undefined,
             aktualisiert: undefined,
         };
     }
 
-    #errorMsgCreateBuch(err: CreateError) {
+    #errorMsgCreateVerein(err: CreateError) {
         switch (err.type) {
-            case 'IsbnExists': {
-                return `Die ISBN ${err.isbn} existiert bereits`;
+            case 'NameExists': {
+                return `Der Verein ${err.name} existiert bereits`;
             }
             default: {
                 return 'Unbekannter Fehler';
@@ -181,10 +152,10 @@ export class BuchMutationResolver {
         }
     }
 
-    #errorMsgUpdateBuch(err: UpdateError) {
+    #errorMsgUpdateVerein(err: UpdateError) {
         switch (err.type) {
-            case 'BuchNotExists': {
-                return `Es gibt kein Buch mit der ID ${err.id}`;
+            case 'VereinNotExists': {
+                return `Es gibt kein Verein mit der ID ${err.id}`;
             }
             case 'VersionInvalid': {
                 return `"${err.version}" ist keine gueltige Versionsnummer`;

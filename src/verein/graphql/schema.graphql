@@ -53,7 +53,6 @@ type Verein {
   mitgliedsbeitrag: Float!
   entstehungsdatum: String
   homepage: String
-  schlagwoerter: [String]
 }
 
 "Daten zu Adresse eines neuen Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
@@ -67,7 +66,6 @@ input VereinInput {
   mitgliedsbeitrag: Float
   entstehungsdatum: String
   homepage: String
-  schlagwoerter: [String]
   name: String!
 }
 
@@ -78,6 +76,5 @@ input VereinUpdateInput {
   mitgliedsbeitrag: Float
   entstehungsdatum: String
   homepage: String
-  schlagwoerter: [String]
   name: String
 }
