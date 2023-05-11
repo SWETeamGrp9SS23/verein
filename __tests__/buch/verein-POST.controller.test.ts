@@ -43,35 +43,15 @@ const neuerVerein: VereinDTO = {
     },
    
 };
-const neuesBuchInvalid: Record<string, unknown> = {
-    isbn: 'falsche-ISBN',
-    rating: -1,
-    art: 'UNSICHTBAR',
-    preis: -1,
-    rabatt: 2,
-    lieferbar: true,
-    datum: '12345-123-123',
+const neuerVereinInvalid: Record<string, unknown> = {
+    name: 'anyName',
+    mitgliedsbeitrag: -1,
+    entstehungsdatum: '12345-123-123',
     homepage: 'anyHomepage',
-    titel: {
-        titel: '?!',
-        untertitel: 'Untertitelinvalid',
+    adresse: {
+        ort: '?!',
+        plz: 'Plzinvalide',
     },
-};
-const neuerVereinIsbnExistiert: VereinDTO = {
-    isbn: '978-3-897-22583-1',
-    rating: 1,
-    art: 'DRUCKAUSGABE',
-    preis: 99.99,
-    rabatt: 0.099,
-    lieferbar: true,
-    datum: '2022-02-28',
-    homepage: 'https://post.isbn/',
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
-    titel: {
-        plz: 'Titelpostisbn',
-        ort: 'Untertitelpostisbn',
-    },
-    abbildungen: undefined,
 };
 
 // -----------------------------------------------------------------------------
@@ -100,7 +80,7 @@ describe('POST /rest', () => {
         await shutdownServer();
     });
 
-    test('Neues Buch', async () => {
+    test('Neuer Verein', async () => {
         // given
         const token = await loginRest(client);
         headers.Authorization = `Bearer ${token}`;
@@ -139,20 +119,17 @@ describe('POST /rest', () => {
         const token = await loginRest(client);
         headers.Authorization = `Bearer ${token}`;
         const expectedMsg = [
-            expect.stringMatching(/^isbn /u),
-            expect.stringMatching(/^rating /u),
-            expect.stringMatching(/^art /u),
-            expect.stringMatching(/^preis /u),
-            expect.stringMatching(/^rabatt /u),
-            expect.stringMatching(/^datum /u),
+            expect.stringMatching(/^name /u),
+            expect.stringMatching(/^mitgliedsbeitrag /u),
+            expect.stringMatching(/^entstehungsdatum /u),
             expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^titel.titel /u),
+            expect.stringMatching(/^adresse.adresse /u),
         ];
 
         // when
         const response: AxiosResponse<Record<string, any>> = await client.post(
             '/rest',
-            neuesBuchInvalid,
+            neuerVereinInvalid,
             { headers },
         );
 
@@ -169,24 +146,6 @@ describe('POST /rest', () => {
         expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
 
-    test('Neuer Verein, aber die ISBN existiert bereits', async () => {
-        // given
-        const token = await loginRest(client);
-        headers.Authorization = `Bearer ${token}`;
-
-        // when
-        const response: AxiosResponse<string> = await client.post(
-            '/rest',
-            neuesVereinIsbnExistiert,
-            { headers },
-        );
-
-        // then
-        const { status, data } = response;
-
-        expect(status).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
-        expect(data).toEqual(expect.stringContaining('ISBN'));
-    });
 
     test('Neue Verein, aber ohne Token', async () => {
         // when

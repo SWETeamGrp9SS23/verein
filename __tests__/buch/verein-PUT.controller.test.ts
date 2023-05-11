@@ -24,61 +24,46 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type BuchDtoOhneRef } from '../../src/buch/rest/buchDTO.entity.js';
+import { type VereinDtoOhneRef } from '../../src/verein/rest/vereinDTO.entity.js';
 import { HttpStatus } from '@nestjs/common';
 import { loginRest } from '../login.js';
 
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const geaendertesBuch: BuchDtoOhneRef = {
-    isbn: '978-0-201-63361-0',
-    rating: 5,
-    art: 'KINDLE',
-    preis: 3333,
-    rabatt: 0.33,
-    lieferbar: true,
-    datum: '2022-03-03',
+const geaenderterVerein: VereinDtoOhneRef = {
+    name: 'Fc Barcelona',
+    mitgliedsbeitrag: 3333,
+    entstehungsdatum: '2022-03-03',
     homepage: 'https://geaendert.put.rest',
-    schlagwoerter: ['JAVASCRIPT'],
+    
 };
 const idVorhanden = '30';
 
-const geaendertesBuchIdNichtVorhanden: BuchDtoOhneRef = {
-    isbn: '978-0-007-09732-6',
-    rating: 4,
-    art: 'DRUCKAUSGABE',
-    preis: 44.4,
-    rabatt: 0.044,
-    lieferbar: true,
-    datum: '2022-02-04',
+const geaenderterVereinIdNichtVorhanden: VereinDtoOhneRef = {
+    name: 'Fc Barcelona',
+    mitgliedsbeitrag: 44.4,
+    entstehungsdatum: '2022-02-04',
     homepage: 'https://acme.de',
-    schlagwoerter: ['JAVASCRIPT'],
 };
 const idNichtVorhanden = '999999';
 
-const geaendertesBuchInvalid: Record<string, unknown> = {
-    isbn: 'falsche-ISBN',
-    rating: -1,
-    art: 'UNSICHTBAR',
-    preis: -1,
-    rabatt: 2,
-    lieferbar: true,
-    datum: '12345-123-123',
-    titel: '?!',
+const geaenderterVereinInvalid: Record<string, unknown> = {
+    name: 'anyName',
+    mitgliedsbeitrag: -1,
+    entstehungsdatum: '12345-123-123',
+    adresse: '?!',
     homepage: 'anyHomepage',
 };
 
-const veraltesBuch: BuchDtoOhneRef = {
-    isbn: '978-0-007-09732-6',
-    rating: 1,
-    art: 'DRUCKAUSGABE',
-    preis: 44.4,
+const veralteterVerein = {
+    name: 'Dortmund',
+    mitgliedsbeitrag: 44.4,
     rabatt: 0.044,
-    lieferbar: true,
-    datum: '2022-02-04',
+    entstehungsdatum: '2022-02-04',
     homepage: 'https://acme.de',
-    schlagwoerter: ['JAVASCRIPT'],
+    // muss ich hier noch adresse einfügen?
+
 };
 
 // -----------------------------------------------------------------------------
@@ -108,7 +93,7 @@ describe('PUT /rest/:id', () => {
         await shutdownServer();
     });
 
-    test('Vorhandenes Buch aendern', async () => {
+    test('Vorhandenen Verein aendern', async () => {
         // given
         const url = `/rest/${idVorhanden}`;
         const token = await loginRest(client);
@@ -118,7 +103,7 @@ describe('PUT /rest/:id', () => {
         // when
         const response: AxiosResponse<string> = await client.put(
             url,
-            geaendertesBuch,
+            geaenderterVerein,
             { headers },
         );
 
@@ -129,7 +114,7 @@ describe('PUT /rest/:id', () => {
         expect(data).toBe('');
     });
 
-    test('Nicht-vorhandenes Buch aendern', async () => {
+    test('Nicht-vorhandenen Verein aendern', async () => {
         // given
         const url = `/rest/${idNichtVorhanden}`;
         const token = await loginRest(client);
@@ -139,7 +124,7 @@ describe('PUT /rest/:id', () => {
         // when
         const response: AxiosResponse<string> = await client.put(
             url,
-            geaendertesBuchIdNichtVorhanden,
+            geaenderterVereinIdNichtVorhanden,
             { headers },
         );
 
@@ -148,30 +133,28 @@ describe('PUT /rest/:id', () => {
 
         expect(status).toBe(HttpStatus.PRECONDITION_FAILED);
         expect(data).toBe(
-            `Es gibt kein Buch mit der ID "${idNichtVorhanden}".`,
+            `Es gibt kein Verein mit der ID "${idNichtVorhanden}".`,
         );
     });
 
-    test('Vorhandenes Buch aendern, aber mit ungueltigen Daten', async () => {
+    test('Vorhandener Verein aendern, aber mit ungueltigen Daten', async () => {
         // given
         const url = `/rest/${idVorhanden}`;
         const token = await loginRest(client);
         headers.Authorization = `Bearer ${token}`;
         headers['If-Match'] = '"0"';
         const expectedMsg = [
-            expect.stringMatching(/^isbn /u),
-            expect.stringMatching(/^rating /u),
-            expect.stringMatching(/^art /u),
-            expect.stringMatching(/^preis /u),
-            expect.stringMatching(/^rabatt /u),
-            expect.stringMatching(/^datum /u),
+            expect.stringMatching(/^name /u),
+            expect.stringMatching(/^mitgliedsbeitrag /u),
+            expect.stringMatching(/^entstehungsdatum /u),
             expect.stringMatching(/^homepage /u),
+            expect.stringMatching(/^adresse.adresse /u),
         ];
 
         // when
         const response: AxiosResponse<Record<string, any>> = await client.put(
             url,
-            geaendertesBuchInvalid,
+            geaenderterVereinInvalid,
             { headers },
         );
 
@@ -188,7 +171,7 @@ describe('PUT /rest/:id', () => {
         expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
 
-    test('Vorhandenes Buch aendern, aber ohne Versionsnummer', async () => {
+    test('Vorhandener Verein aendern, aber ohne Versionsnummer', async () => {
         // given
         const url = `/rest/${idVorhanden}`;
         const token = await loginRest(client);
@@ -198,7 +181,7 @@ describe('PUT /rest/:id', () => {
         // when
         const response: AxiosResponse<string> = await client.put(
             url,
-            geaendertesBuch,
+            geaenderterVerein,
             { headers },
         );
 
@@ -209,7 +192,7 @@ describe('PUT /rest/:id', () => {
         expect(data).toBe('Header "If-Match" fehlt');
     });
 
-    test('Vorhandenes Buch aendern, aber mit alter Versionsnummer', async () => {
+    test('Vorhandener Verein aendern, aber mit alter Versionsnummer', async () => {
         // given
         const url = `/rest/${idVorhanden}`;
         const token = await loginRest(client);
@@ -219,7 +202,7 @@ describe('PUT /rest/:id', () => {
         // when
         const response: AxiosResponse<string> = await client.put(
             url,
-            veraltesBuch,
+            veralteterVerein,
             { headers },
         );
 
@@ -230,7 +213,7 @@ describe('PUT /rest/:id', () => {
         expect(data).toEqual(expect.stringContaining('Die Versionsnummer'));
     });
 
-    test('Vorhandenes Buch aendern, aber ohne Token', async () => {
+    test('Vorhandener Verein aendern, aber ohne Token', async () => {
         // given
         const url = `/rest/${idVorhanden}`;
         delete headers.Authorization;
@@ -239,7 +222,7 @@ describe('PUT /rest/:id', () => {
         // when
         const response: AxiosResponse<Record<string, any>> = await client.put(
             url,
-            geaendertesBuch,
+            geaenderterVerein,
             { headers },
         );
 
@@ -250,7 +233,7 @@ describe('PUT /rest/:id', () => {
         expect(data.statusCode).toBe(HttpStatus.FORBIDDEN);
     });
 
-    test('Vorhandenes Buch aendern, aber mit falschem Token', async () => {
+    test('Vorhandener Verein aendern, aber mit falschem Token', async () => {
         // given
         const url = `/rest/${idVorhanden}`;
         const token = 'FALSCH';
@@ -259,7 +242,7 @@ describe('PUT /rest/:id', () => {
         // when
         const response: AxiosResponse<Record<string, any>> = await client.put(
             url,
-            geaendertesBuch,
+            geaenderterVerein,
             { headers },
         );
 
