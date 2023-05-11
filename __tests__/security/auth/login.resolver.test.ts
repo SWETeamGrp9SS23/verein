@@ -19,7 +19,7 @@
 import {
     type GraphQLQuery,
     type GraphQLResponseBody,
-} from '../../buch/buch-query.resolver.test.js';
+} from '../../buch/verein-query.resolver.test.js';
 import { afterAll, beforeAll, describe, test } from '@jest/globals';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import {

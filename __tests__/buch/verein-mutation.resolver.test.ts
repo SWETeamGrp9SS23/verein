@@ -19,7 +19,7 @@
 import {
     type GraphQLQuery,
     type GraphQLResponseBody,
-} from './buch-query.resolver.test.js';
+} from './verein-query.resolver.test.js';
 import { afterAll, beforeAll, describe, test } from '@jest/globals';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import {
@@ -29,7 +29,7 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { BuchReadService } from '../../src/buch/service/buch-read.service.js';
+import { VereinReadService } from '../../src/verein/service/verein-read.service.js';
 import { HttpStatus } from '@nestjs/common';
 import { loginGraphQL } from '../login.js';
 
@@ -62,7 +62,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Neues Buch', async () => {
+    test('Neuer Verein', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -112,12 +112,12 @@ describe('GraphQL Mutations', () => {
 
         // Der Wert der Mutation ist die generierte ObjectID
         expect(create).toBeDefined();
-        expect(BuchReadService.ID_PATTERN.test(create as string)).toBe(true);
+        expect(VereinReadService.ID_PATTERN.test(create as string)).toBe(true);
     });
 
     // -------------------------------------------------------------------------
     // eslint-disable-next-line max-lines-per-function
-    test('Buch mit ungueltigen Werten neu anlegen', async () => {
+    test('Verein mit ungueltigen Werten neu anlegen', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -183,7 +183,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Neues Buch nur als "admin"/"mitarbeiter"', async () => {
+    test('Neuer Verein nur als "admin"/"mitarbeiter"', async () => {
         // given
         const token = await loginGraphQL(client, 'dirk.delta', 'p');
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -237,7 +237,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Buch aktualisieren', async () => {
+    test('Verein aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -285,7 +285,7 @@ describe('GraphQL Mutations', () => {
 
     // -------------------------------------------------------------------------
     // eslint-disable-next-line max-lines-per-function
-    test('Buch mit ungueltigen Werten aktualisieren', async () => {
+    test('Verein mit ungueltigen Werten aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -351,7 +351,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Nicht-vorhandenes Buch aktualisieren', async () => {
+    test('Nicht-vorhandenen Verein aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
@@ -400,7 +400,7 @@ describe('GraphQL Mutations', () => {
         const { message, path, extensions } = error!;
 
         expect(message).toBe(
-            `Es gibt kein Buch mit der ID ${id.toLowerCase()}`,
+            `Es gibt kein Verein mit der ID ${id.toLowerCase()}`,
         );
         expect(path).toBeDefined();
         expect(path!![0]).toBe('update');
@@ -409,7 +409,7 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    test('Buch loeschen', async () => {
+    test('Verein loeschen', async () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention

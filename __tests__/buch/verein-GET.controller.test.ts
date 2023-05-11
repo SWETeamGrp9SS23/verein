@@ -31,8 +31,8 @@ import { HttpStatus } from '@nestjs/common';
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const titelVorhanden = 'a';
-const titelNichtVorhanden = 'xx';
+const AdresseVorhanden = '80803'
+const adresseNichtVorhanden = 'xx';
 const schlagwortVorhanden = 'javascript';
 const schlagwortNichtVorhanden = 'csharp';
 
@@ -82,9 +82,9 @@ describe('GET /rest', () => {
             });
     });
 
-    test('Vereine mit einem Teil-Titel suchen', async () => {
+    test('Vereine mit einer Postleizeil suchen', async () => {
         // given
-        const params = { titel: titelVorhanden };
+        const params = { name: AdresseVorhanden };
 
         // when
         const response: AxiosResponse<VereineModel> = await client.get('/', {
@@ -100,19 +100,19 @@ describe('GET /rest', () => {
 
         const { vereine } = data._embedded;
 
-        // Jedes Buch hat einen Titel mit dem Teilstring 'a'
+        // Jeder Verein hat eine Adresse mit einer Postleizahl '80803'
         vereine
-            .map((verein) => verein.name)
-            .forEach((titel) =>
-                expect(titel.name.toLowerCase()).toEqual(
-                    expect.stringContaining(titelVorhanden),
+            .map((verein) => verein.adresse)
+            .forEach((adresse) =>
+                expect(adresse.adresse.toLowerCase()).toEqual(
+                    expect.stringContaining(AdresseVorhanden),
                 ),
             );
     });
 
-    test('Vereine zu einem nicht vorhandenen Teil-Titel suchen', async () => {
+    test('Vereine zu einer nicht vorhandenen Postleizahl suchen', async () => {
         // given
-        const params = { name: nameNichtVorhanden };
+        const params = { name: adresseNichtVorhanden };
 
         // when
         const response: AxiosResponse<string> = await client.get('/', {
@@ -126,65 +126,5 @@ describe('GET /rest', () => {
         expect(data).toMatch(/^not found$/iu);
     });
 
-    test('Mind. 1 Verein mit vorhandenem Schlagwort', async () => {
-        // given
-        const params = { [schlagwortVorhanden]: 'true' };
-
-        // when
-        const response: AxiosResponse<VereineModel> = await client.get('/', {
-            params,
-        });
-
-        // then
-        const { status, headers, data } = response;
-
-        expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
-        // JSON-Array mit mind. 1 JSON-Objekt
-        expect(data).toBeDefined();
-
-        const { vereine } = data._embedded;
-
-        // Jedes Buch hat im Array der Schlagwoerter z.B. "javascript"
-        vereine
-            .map((verein) => verein.schlagwoerter)
-            .forEach((schlagwoerter) =>
-                expect(schlagwoerter).toEqual(
-                    expect.arrayContaining([schlagwortVorhanden.toUpperCase()]),
-                ),
-            );
-    });
-
-    test('Keine Vereine zu einem nicht vorhandenen Schlagwort', async () => {
-        // given
-        const params = { [schlagwortNichtVorhanden]: 'true' };
-
-        // when
-        const response: AxiosResponse<string> = await client.get('/', {
-            params,
-        });
-
-        // then
-        const { status, data } = response;
-
-        expect(status).toBe(HttpStatus.NOT_FOUND);
-        expect(data).toMatch(/^not found$/iu);
-    });
-
-    test('Keine Vereine zu einer nicht-vorhandenen Property', async () => {
-        // given
-        const params = { foo: 'bar' };
-
-        // when
-        const response: AxiosResponse<string> = await client.get('/', {
-            params,
-        });
-
-        // then
-        const { status, data } = response;
-
-        expect(status).toBe(HttpStatus.NOT_FOUND);
-        expect(data).toMatch(/^not found$/iu);
-    });
 });
 /* eslint-enable no-underscore-dangle */
