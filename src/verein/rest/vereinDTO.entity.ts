@@ -35,16 +35,12 @@ export class VereinDtoOhneRef {
     @IsString()
     readonly homepage?: string;
 
-    @ApiProperty({ type: AdresseDTO })
-    @IsNotEmpty()
-    @ValidateNested()
-    @Type(() => AdresseDTO)
-    readonly adresse!: AdresseDTO;
+
 }
 
 export class VereinDTO extends VereinDtoOhneRef {
     @ValidateNested()
     @Type(() => AdresseDTO)
-    @ApiProperty({ example: 'Der Titel', type: String })
-    readonly titel!: AdresseDTO;
+    @ApiProperty({ example: 'Die Adresse', type: String })
+    readonly adresse!: AdresseDTO;
 }
