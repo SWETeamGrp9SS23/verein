@@ -26,7 +26,7 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type BuchDTO } from '../../src/buch/graphql/buch-query.resolver.js';
+import { type VereinDTO } from '../../src/verein/graphql/verein-query.resolver.js';
 import { HttpStatus } from '@nestjs/common';
 
 /* eslint-disable jest/no-export */
@@ -39,11 +39,11 @@ export type GraphQLResponseBody = Pick<GraphQLResponse, 'data' | 'errors'>;
 // -----------------------------------------------------------------------------
 const idVorhanden = '1';
 
-const titelVorhanden = 'Alpha';
+const adresseVorhanden = 'Alpha';
 
-const teilTitelVorhanden = 'a';
+const ortVorhanden = 'a';
 
-const teilTitelNichtVorhanden = 'abc';
+const ortNichtVorhanden = 'abc';
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -68,12 +68,12 @@ describe('GraphQL Queries', () => {
         await shutdownServer();
     });
 
-    test('Buch zu vorhandener ID', async () => {
+    test('Verein zu vorhandener ID', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    buch(id: "${idVorhanden}") {
+                    verein(id: "${idVorhanden}") {
                         version
                         isbn
                         art
@@ -99,21 +99,21 @@ describe('GraphQL Queries', () => {
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 
-        const { buch } = data.data!;
-        const result: BuchDTO = buch;
+        const { verein } = data.data!;
+        const result: VereinDTO = verein;
 
         expect(result.titel?.titel).toMatch(/^\w/u);
         expect(result.version).toBeGreaterThan(-1);
         expect(result.id).toBeUndefined();
     });
 
-    test('Buch zu nicht-vorhandener ID', async () => {
+    test('Verein zu nicht-vorhandener ID', async () => {
         // given
         const id = '999999';
         const body: GraphQLRequest = {
             query: `
                 {
-                    buch(id: "${id}") {
+                    verein(id: "${id}") {
                         titel {
                             titel
                         }
@@ -133,7 +133,7 @@ describe('GraphQL Queries', () => {
 
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
-        expect(data.data!.buch).toBeNull();
+        expect(data.data!.verein).toBeNull();
 
         const { errors } = data;
 
@@ -142,22 +142,21 @@ describe('GraphQL Queries', () => {
         const [error] = errors!;
         const { message, path, extensions } = error!;
 
-        expect(message).toBe(`Es wurde kein Buch mit der ID ${id} gefunden.`);
+        expect(message).toBe(`Es wurde kein Verein mit der ID ${id} gefunden.`);
         expect(path).toBeDefined();
-        expect(path!![0]).toBe('buch');
+        expect(path!![0]).toBe('verein');
         expect(extensions).toBeDefined();
         expect(extensions!.code).toBe('BAD_USER_INPUT');
     });
 
-    test('Buch zu vorhandenem Titel', async () => {
+    test('Verein zu vorhandener Adresse', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    buecher(titel: "${titelVorhanden}") {
-                        art
-                        titel {
-                            titel
+                    vereine(adresse: "${adresseVorhanden}") {
+                        adresse {
+                            adresse
                         }
                     }
                 }
@@ -183,21 +182,21 @@ describe('GraphQL Queries', () => {
 
         expect(buecher).not.toHaveLength(0);
 
-        const buecherArray: BuchDTO[] = buecher;
+        const buecherArray: VereinDTO[] = buecher;
 
         expect(buecherArray).toHaveLength(1);
 
-        const [buch] = buecherArray;
+        const [verein] = buecherArray;
 
-        expect(buch!.titel?.titel).toBe(titelVorhanden);
+        expect(verein!.titel?.titel).toBe(adresseVorhanden);
     });
 
-    test('Buch zu vorhandenem Teil-Titel', async () => {
+    test('Verein zu vorhandenem Teil-Titel', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    buecher(titel: "${teilTitelVorhanden}") {
+                    buecher(titel: "${ortVorhanden}") {
                         art
                         titel {
                             titel
@@ -221,13 +220,13 @@ describe('GraphQL Queries', () => {
         expect(data.errors).toBeUndefined();
         expect(data.data).toBeDefined();
 
-        const { buecher } = data.data!;
+        const { vereine } = data.data!;
 
-        expect(buecher).not.toHaveLength(0);
+        expect(vereine).not.toHaveLength(0);
 
-        const buecherArray: BuchDTO[] = buecher;
+        const buecherArray: VereinDTO[] = vereine;
         buecherArray
-            .map((buch) => buch.titel)
+            .map((verein) => verein.titel)
             .forEach((titel) =>
                 expect(titel?.titel.toLowerCase()).toEqual(
                     expect.stringContaining(teilTitelVorhanden),
@@ -235,12 +234,12 @@ describe('GraphQL Queries', () => {
             );
     });
 
-    test('Buch zu nicht vorhandenem Titel', async () => {
+    test('Verein zu nicht vorhandenem Titel', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    buecher(titel: "${teilTitelNichtVorhanden}") {
+                    vereine(titel: "${ortNichtVorhanden}") {
                         art
                         titel {
                             titel

@@ -91,7 +91,6 @@ export class QueryBuilder {
         const { postleitzahl } = suchkriterien;
 
         //toDo Warning loswerden
-        let useWhere = true;
 
         // Titel in der Query: Teilstring des Titels und "case insensitive"
         // CAVEAT: MySQL hat keinen Vergleich mit "case insensitive"
@@ -103,7 +102,6 @@ export class QueryBuilder {
                 `${this.#adresseAlias}.postleitzahl ${ilike} :postleitzahl`,
                 { postleitzahl: `%${postleitzahl}%` },
             );
-            useWhere = false;
         }
 
         this.#logger.debug('build: sql=%s', queryBuilder.getSql());
