@@ -126,7 +126,7 @@ services:
         source: C:/Zimmermann/volumes/mysql/tmp
         target: /tmp
       - type: bind
-        source: C:/Zimmermann/volumes/mysql/csv/buch
+        source: C:/Zimmermann/volumes/mysql/csv/verein
         # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_secure_file_priv
         # SHOW VARIABLES LIKE "secure_file_priv";
         target: /var/lib/mysql-files
@@ -233,23 +233,23 @@ services:
           memory: 768M
 
   # ------------------------------------------------------------------------------------
-  # b u c h
+  # v e r e i n
   # ------------------------------------------------------------------------------------
-  buch:
-    image: juergenzimmermann/buch:2023.1.0
+  verein:
+    image: vereing9/verein:2023.1.0
     ports:
       - published: 3000
         target: 3000
     volumes:
       - type: bind
-        source: C:\Zimmermann\volumes\buch
+        source: C:\Zimmermann\volumes\verein
         target: /opt/app/log
     env_file: ['docker-compose.env']
     environment:
       # https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution
       USER_PASSWORD_ENCODED: '$$argon2i$$v=19$$m=4096,t=3,p=1$$aaxA2v/9rRSPGkwYN+NQog$$27Huii1XtD3iEd62fog+04G26LRPZMHoYCI6AGKTL8M'
-    container_name: buch
-    hostname: buch
+    container_name: verein
+    hostname: verein
     deploy:
       resources:
         limits:
