@@ -3,40 +3,43 @@ schema {
   mutation: Mutation
 }
 
-"Funktionen, um Vereinsdaten zu lesen"
+"""
+Funktionen, um Vereinsdaten zu lesen
+"""
 type Query {
   # hier wird der verein nach den namen gefiltert es wird die liste verein gefiltert
   vereine(name: String): [Verein!]
-
   verein(id: ID!): Verein
 }
 
-"""Daten zu Adresse eines Vereins"""
+"""
+Daten zu Adresse eines Vereins
+"""
 type Adresse {
   plz: String!
   ort: String
 }
 
-"""Daten zu Adresse eines neuen Vereins"""
-type AdresseInput {
+"""
+Daten zu Adresse eines neuen Vereins
+"""
+input AdresseInput {
   plz: String!
   ort: String
 }
 
-"""Funktionen, um Vereine neu anzulegen, zu aktualisieren oder zu löschen"""
+"""
+Funktionen, um Vereine neu anzulegen, zu aktualisieren oder zu löschen
+"""
 type Mutation {
   create(input: VereinInput!): String
   update(input: VereinUpdateInput!): Boolean
   delete(id: ID!): Boolean
 }
 
-"""Funktionen, um Vereinsdaten zu lesen"""
-type Query {
-  vereine(name: String): [Verein!]
-  verein(id: ID!): Verein
-}
-
-"""Datenschema zu einem Verein, das gelesen wird"""
+"""
+Datenschema zu einem Verein, das gelesen wird
+"""
 type Verein {
   id: ID!
   version: Int!
@@ -44,58 +47,12 @@ type Verein {
   mitgliedsbeitrag: Float!
   entstehungsdatum: String
   homepage: String
-  adresse: AdresseInput
+  adresse: Adresse
 }
 
-"""Daten für ein neuen Verein"""
-input VereinInput {
-  name: String!
-  mitgliedsbeitrag: Float
-  entstehungsdatum: String
-  homepage: String
-  adresse: AdresseInput
-}
-
-"""Daten für ein zu ändernden Verein"""
-input VereinUpdateInput {
-  id: ID
-  version: Int
-  mitgliedsbeitrag: Float
-  entstehungsdatum: String
-  homepage: String
-  name: String
-}
-
-
-  update(input: VereinUpdateInput!): Boolean
-
-  delete(id: ID!): Boolean
-}
-
-"Daten zu Adresse eines Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
-type Adresse {
-  plz: String!
-  ort: String
-}
-
-"Datenschema zu einem Verein, das gelesen wird"
-type Verein {
-  id: ID!
-  version: Int!
-  name: String!
-  mitgliedsbeitrag: Float!
-  entstehungsdatum: String
-  homepage: String
-  adresse: AdresseInput
-}
-
-"Daten zu Adresse eines neuen Vereins"
-type AdresseInput {
-  plz: String!
-  ort: String
-}
-
-"Daten für ein neuen Verein"
+"""
+Daten für ein neuen Verein
+"""
 input VereinInput {
   name: String!
   mitgliedsbeitrag: Float!
@@ -104,7 +61,9 @@ input VereinInput {
   adresse: AdresseInput!
 }
 
-"Daten für ein zu ändernden Verein"
+"""
+Daten für ein zu ändernden Verein
+"""
 input VereinUpdateInput {
   id: ID
   version: Int
