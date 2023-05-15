@@ -11,11 +11,63 @@ type Query {
   verein(id: ID!): Verein
 }
 
-"Funktionen, um Vereine neu anzulegen, zu aktualisieren oder zu löschen"
+"""Daten zu Adresse eines Vereins"""
+type Adresse {
+  plz: String!
+  ort: String
+}
+
+"""Daten zu Adresse eines neuen Vereins"""
+type AdresseInput {
+  plz: String!
+  ort: String
+}
+
+"""Funktionen, um Vereine neu anzulegen, zu aktualisieren oder zu löschen"""
 type Mutation {
   create(input: VereinInput!): String
+  update(input: VereinUpdateInput!): Boolean
+  delete(id: ID!): Boolean
+}
 
-  update(input: VereinUpdateInput!): Int
+"""Funktionen, um Vereinsdaten zu lesen"""
+type Query {
+  vereine(name: String): [Verein!]
+  verein(id: ID!): Verein
+}
+
+"""Datenschema zu einem Verein, das gelesen wird"""
+type Verein {
+  id: ID!
+  version: Int!
+  name: String!
+  mitgliedsbeitrag: Float!
+  entstehungsdatum: String
+  homepage: String
+  adresse: AdresseInput
+}
+
+"""Daten für ein neuen Verein"""
+input VereinInput {
+  name: String!
+  mitgliedsbeitrag: Float
+  entstehungsdatum: String
+  homepage: String
+  adresse: AdresseInput
+}
+
+"""Daten für ein zu ändernden Verein"""
+input VereinUpdateInput {
+  id: ID
+  version: Int
+  mitgliedsbeitrag: Float
+  entstehungsdatum: String
+  homepage: String
+  name: String
+}
+
+
+  update(input: VereinUpdateInput!): Boolean
 
   delete(id: ID!): Boolean
 }
@@ -34,10 +86,10 @@ type Verein {
   mitgliedsbeitrag: Float!
   entstehungsdatum: String
   homepage: String
-  adresse: Adresse
+  adresse: AdresseInput
 }
 
-"Daten zu Adresse eines neuen Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
+"Daten zu Adresse eines neuen Vereins"
 type AdresseInput {
   plz: String!
   ort: String
@@ -46,10 +98,10 @@ type AdresseInput {
 "Daten für ein neuen Verein"
 input VereinInput {
   name: String!
-  mitgliedsbeitrag: Float
+  mitgliedsbeitrag: Float!
   entstehungsdatum: String
   homepage: String
-  adresse: AdresseInput
+  adresse: AdresseInput!
 }
 
 "Daten für ein zu ändernden Verein"
