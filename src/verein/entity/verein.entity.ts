@@ -77,12 +77,12 @@ export class Verein {
     // statt number ggf. Decimal aus decimal.js analog zu BigDecimal von Java
     readonly mitgliedsbeitrag!: number;
 
-    @Column('Name')
+    @Column('varchar')
     @ApiProperty({ example: 'FC Bayern' })
     readonly name!: string;
 
     // das Temporal-API ab ES2022 wird von TypeORM noch nicht unterstuetzt
-    @Column('Entstehungsdatum')
+    @Column('date')
     @ApiProperty({ example: '2012-11-21' })
     readonly entstehungsdatum: string | Date | undefined;
 
@@ -93,7 +93,6 @@ export class Verein {
     @OneToOne(() => Adresse, (adresse) => adresse.verein, {
         cascade: ['insert', 'remove'],
     })
-    @ApiProperty({ example: 'Baumstraße 12' })
     readonly adresse: Adresse | undefined;
 
     // https://typeorm.io/entities#special-columns

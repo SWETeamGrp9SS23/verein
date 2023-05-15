@@ -15,7 +15,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { Adresse } from './adresse.entity.js';
 import { Verein } from './verein.entity.js';
 
 // erforderlich in src/config/db.ts und src/verein/verein.module.ts
-export const entities = [Verein];
+export const entities = [Verein, Adresse];

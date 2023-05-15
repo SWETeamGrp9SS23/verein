@@ -37,17 +37,18 @@ type Verein {
 }
 
 "Daten zu Adresse eines neuen Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
-type Adresse {
+type AdresseInput {
   plz: String!
   ort: String!
 }
 
 "Daten für ein neuen Verein"
 input VereinInput {
+  name: String!
   mitgliedsbeitrag: Float
   entstehungsdatum: String
   homepage: String
-  name: String!
+  adresse: AdresseInput
 }
 
 "Daten für ein zu ändernden Verein"

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS verein (
     version  integer NOT NULL DEFAULT 0,
     mitgliedsbeitrag    decimal(8,2) NOT NULL,
     name     varchar(40) NOT NULL,
-    entstehungsdatum    timestamp NOT NULL DEFAULT NOW(),
+    entstehungsdatum    date,
     homepage    varchar(40),
     erzeugt     timestamp NOT NULL DEFUALT NOW(),
     aktualisiert     timestamp NOT NULL DEFAULT NOW()
