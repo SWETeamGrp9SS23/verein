@@ -49,37 +49,37 @@ package express {
   Response .[hidden].> Controller
 }
 
-package buch {
+package verein {
   package entity #FFFFFF {
-    class Buch <<entity>>
+    class Verein <<entity>>
 
-    Buch .[hidden].> Promise
-    Buch .[hidden].> Request
+    Verein .[hidden].> Promise
+    Verein .[hidden].> Request
   }
 
   package service {
-    class BuchReadService << control >>
+    class VereinReadService << control >>
   }
 
   package rest #DDDDDD {
-    BuchQuery -up-|> Buch
+    VereinQuery -up-|> Verein
 
-    class BuchGetController << control >> << @Controller() >> << @UseGuards() >> << @UseInterceptors() >> {
-      + @Get() async findById(@Param() id: number, @Req() req: Request, @Headers() version: string, @Res() res: Response): Promise<Response<BuchModel | undefined>>
-      + @Get() async find(@Query() query: BuchQuery, @Req() req: Request,  @Res() res: Response): Promise<Response<BuecherModel | undefined>>
+    class VereinGetController << control >> << @Controller() >> << @UseGuards() >> << @UseInterceptors() >> {
+      + @Get() async findById(@Param() id: number, @Req() req: Request, @Headers() version: string, @Res() res: Response): Promise<Response<VereinModel | undefined>>
+      + @Get() async find(@Query() query: VereinQuery, @Req() req: Request,  @Res() res: Response): Promise<Response<VereineModel | undefined>>
     }
 
-    BuchGetController o--> "1" BuchReadService : service
+    VereinGetController o--> "1" VereinReadService : service
 
-    BuchGetController ..> Controller
-    BuchGetController ..> Request
-    BuchGetController ..> Response
-    BuchGetController ..> Promise
-    BuchGetController .up.> BuchModel
-    BuchGetController .up.> BuchQuery
+    VereinGetController ..> Controller
+    VereinGetController ..> Request
+    VereinGetController ..> Response
+    VereinGetController ..> Promise
+    VereinGetController .up.> VereinModel
+    VereinGetController .up.> VereinQuery
 
-    BuchReadService .[hidden].> Request
-    BuchReadService .[hidden].> Promise
+    VereinReadService .[hidden].> Request
+    VereinReadService .[hidden].> Promise
     Response .right[hidden].> Controller
   }
 }
