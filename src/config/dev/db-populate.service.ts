@@ -86,6 +86,7 @@ export class DbPopulateService implements OnApplicationBootstrap {
                 await this.#populateSQLite(basePath);
                 break;
             }
+            // deepcode ignore DuplicateCaseBody: <please specify a reason of ignoring this>
             default: {
                 await this.#populatePostgres(basePath);
                 break;
