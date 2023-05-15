@@ -28,8 +28,13 @@ import { hostname } from 'node:os';
 import { k8sConfig } from './kubernetes.js';
 import { resolve } from 'node:path';
 
-const { NODE_ENV, PORT, BUCH_SERVICE_HOST, BUCH_SERVICE_PORT, LOG_DEFAULT } =
-    env;
+const {
+    NODE_ENV,
+    PORT,
+    VEREIN_SERVICE_HOST,
+    VEREIN_SERVICE_PORT,
+    LOG_DEFAULT,
+} = env;
 
 const computername = hostname();
 let port = Number.NaN;
@@ -107,6 +112,6 @@ export const nodeConfig = {
         | 'production'
         | 'test'
         | undefined,
-    serviceHost: BUCH_SERVICE_HOST,
-    servicePort: BUCH_SERVICE_PORT,
+    serviceHost: VEREIN_SERVICE_HOST,
+    servicePort: VEREIN_SERVICE_PORT,
 } as const;
