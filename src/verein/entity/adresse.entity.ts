@@ -14,18 +14,14 @@ export class Adresse {
     @PrimaryGeneratedColumn()
     id: number | undefined;
 
-    @ApiProperty({ example: '76351', type: String })
     @Column({ name: 'postleitzahl', type: 'varchar', length: 10 })
+    @ApiProperty({ example: '76351', type: String })
     readonly plz: string | undefined;
 
-    @ApiProperty({ example: 'Linkenheim-Hochstetten', type: String })
     @Column({ name: 'ort', type: 'varchar', length: 100, nullable: true })
+    @ApiProperty({ example: 'Linkenheim-Hochstetten', type: String })
     readonly ort: string | undefined;
 
-    @ApiProperty({
-        type: () => Verein,
-        description: 'Der Verein, dem diese Adresse zugeordnet ist.',
-    })
     @OneToOne(() => Verein, (verein) => verein.adresse)
     @JoinColumn({ name: 'verein_id' })
     verein: Verein | undefined;
