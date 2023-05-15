@@ -40,5 +40,6 @@ CREATE TABLE IF NOT EXISTS verein (
 CREATE TABLE IF NOT EXISTS adresse(
     id  integer GENERATED ALWAYS AS IDENTITY(START WITH 1000) PRIMARY KEY USING INDEX TABLESPACE vereinspace,
     postleitzahl    varchar(5) NOT NULL,
-    ort varchar(40)
+    ort varchar(40),
+    verein_id integer NOT NULL
 ) TABLESPACE vereinspace;

@@ -33,18 +33,13 @@ if (!fs.existsSync(dist)) {
 
 const configSrc = join(src, 'config');
 const configDist = join(dist, src, 'config');
-
 // DB-Skripte kopieren
 const devSrc = join(configSrc, 'dev');
 const postgresSrc = join(devSrc, 'postgres');
-const mysqlSrc = join(devSrc, 'mysql');
 const devDist = join(configDist, 'dev');
 const postgresDist = join(devDist, 'postgres');
-const mysqlDist = join(devDist, 'mysql');
 mkdirSync(postgresDist, { recursive: true });
-mkdirSync(mysqlDist, { recursive: true });
 copySync(postgresSrc, postgresDist);
-copySync(mysqlSrc, mysqlDist);
 
 // PEM-Dateien fuer TLS kopieren
 const tlsPemSrc = join(configSrc, 'tls');
