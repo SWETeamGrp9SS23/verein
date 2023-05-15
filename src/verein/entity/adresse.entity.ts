@@ -16,7 +16,7 @@ export class Adresse {
 
     @ApiProperty({ example: '76351', type: String })
     @Column({ name: 'postleitzahl', type: 'varchar', length: 10 })
-    readonly plz: string | undefined;
+    readonly plz!: string;
 
     @ApiProperty({ example: 'Linkenheim-Hochstetten', type: String })
     @Column({ name: 'ort', type: 'varchar', length: 100, nullable: true })

@@ -31,10 +31,8 @@ import { HttpStatus } from '@nestjs/common';
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const AdresseVorhanden = '80803'
+const PlzVorhanden = '80803';
 const adresseNichtVorhanden = 'xx';
-const schlagwortVorhanden = 'javascript';
-const schlagwortNichtVorhanden = 'csharp';
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -84,7 +82,7 @@ describe('GET /rest', () => {
 
     test('Vereine mit einer Postleizeil suchen', async () => {
         // given
-        const params = { name: AdresseVorhanden };
+        const params = { name: PlzVorhanden };
 
         // when
         const response: AxiosResponse<VereineModel> = await client.get('/', {
@@ -104,8 +102,8 @@ describe('GET /rest', () => {
         vereine
             .map((verein) => verein.adresse)
             .forEach((adresse) =>
-                expect(adresse.adresse.toLowerCase()).toEqual(
-                    expect.stringContaining(AdresseVorhanden),
+                expect(adresse.plz.toLowerCase()).toEqual(
+                    expect.stringContaining(PlzVorhanden),
                 ),
             );
     });
@@ -125,6 +123,5 @@ describe('GET /rest', () => {
         expect(status).toBe(HttpStatus.NOT_FOUND);
         expect(data).toMatch(/^not found$/iu);
     });
-
 });
 /* eslint-enable no-underscore-dangle */
