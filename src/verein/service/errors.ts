@@ -63,7 +63,7 @@ export interface VereinNotExists {
 
 /**
  * Union-Type für Fehler beim Ändern eines Buches:
- * - {@linkcode BuchNotExists}
+ * - {@linkcode VereinNotExists}
  * - {@linkcode ConstraintViolations}
  * - {@linkcode VersionInvalid}
  * - {@linkcode VersionOutdated}
