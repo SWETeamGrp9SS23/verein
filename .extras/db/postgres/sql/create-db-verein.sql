@@ -1,3 +1,4 @@
+-- (0) Ornder Tabelspace Verein einfügen
 -- (1) user "postgres" in docker-compose.yaml auskommentieren,
 --     damit der PostgreSQL-Server implizit mit dem Linux-User "root" gestartet wird
 -- (2) PowerShell:
@@ -12,13 +13,17 @@
 --     docker compose down
 -- (3) in docker-compose.yaml den User "postgres" wieder aktivieren, d.h. Kommentar entfernen
 -- (4) 1. PowerShell:
---     docker compose up
+--     docker compose up postgres
 -- (5) 2. PowerShell:
 --     docker compose exec postgres bash
 --        psql --dbname=postgres --username=postgres --file=/sql/create-db-verein.sql
 --        psql --dbname=verein --username=verein --file=/sql/create-schema-verein.sql
 --        exit
 --     docker compose down
+-- (ReDO)
+-- docker compose exec postgres bash
+-- del db: psql --dbname=postgres --username=postgres --file=/sql/delete-db-verein.sql
+-- exit
 CREATE ROLE verein LOGIN PASSWORD 'p';
 CREATE DATABASE verein;
 GRANT ALL ON DATABASE verein TO verein;
