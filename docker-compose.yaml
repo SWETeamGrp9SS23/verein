@@ -1,25 +1,3 @@
-# Copyright (C) 2022 - present Juergen Zimmermann, Hochschule Karlsruhe
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-# Aufruf:   docker compose up postgres pgadmin fakesmtp buch
-#           docker compose down
-
-# Netzwerk "buch_default" für die Container durch den Verzeichnisnamen
----
-# https://docs.docker.com/compose/compose-file
-# https://docs.docker.com/compose/compose-file/compose-file-v3
 services:
   # ------------------------------------------------------------------------------------
   # P o s t g r e S Q L
@@ -41,7 +19,7 @@ services:
         source: C:/Zimmermann/volumes/postgres/tablespace
         target: /var/lib/postgresql/tablespace
       - type: bind
-        source: C:/Zimmermann/volumes/postgres/csv/buch
+        source: C:/Zimmermann/volumes/postgres/csv/verein
         target: /csv
         read_only: true
       - type: bind
@@ -52,9 +30,6 @@ services:
       POSTGRES_PASSWORD: p
       TZ: Europe/Berlin
       PGTZ: Europe/Berlin
-      #PGDATA: /var/lib/postgresql/data
-      # https://www.postgresql.org/docs/current/auth-trust.html
-      #POSTGRES_HOST_AUTH_METHOD: trust
     user: 'postgres:postgres'
     security_opt:
       - label:user:postgres
@@ -75,7 +50,7 @@ services:
   # ------------------------------------------------------------------------------------
   # p g a d m i n
   # ------------------------------------------------------------------------------------
-  # http://localhost:8888 mit Emailadresse "pgadmin@acme.com" und Passwort "p"
+  # http://localhost:88288 mit Emailadresse "pgadmin@acme.com" und Passwort "p"
   pgadmin:
     image: dpage/pgadmin4:6.21
     ports:
@@ -100,108 +75,6 @@ services:
         limits:
           cpus: '2.0'
           memory: 2048M
-
-  # ------------------------------------------------------------------------------------
-  # M y S Q L
-  # ------------------------------------------------------------------------------------
-  mysql:
-    image: mysql:8.0.32-oracle
-    ports:
-      - published: 3306
-        target: 3306
-    volumes:
-      - type: bind
-        source: C:/Zimmermann/volumes/mysql/db
-        target: /var/lib/mysql
-      - type: bind
-        source: C:/Zimmermann/volumes/mysql/mysqld
-        target: /var/run/mysqld
-      - type: bind
-        source: C:/Zimmermann/volumes/mysql/run-mysqld
-        target: /run/mysqld
-      - type: bind
-        source: C:/Zimmermann/volumes/mysql/log
-        target: /var/log
-      - type: bind
-        source: C:/Zimmermann/volumes/mysql/tmp
-        target: /tmp
-      - type: bind
-        source: C:/Zimmermann/volumes/mysql/csv/verein
-        # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_secure_file_priv
-        # SHOW VARIABLES LIKE "secure_file_priv";
-        target: /var/lib/mysql-files
-      - type: bind
-        source: C:/Zimmermann/volumes/mysql/sql
-        target: /sql
-        read_only: true
-    environment:
-      PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: p
-      TZ: Europe/Berlin
-    security_opt:
-      - label:user:mysql
-      - no-new-privileges:true
-    container_name: mysql
-    hostname: mysql
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2048M
-    healthcheck:
-      test: [CMD, mysqladmin, --user=root, --password=p, --host=mysql, ping]
-      interval: 5s
-      timeout: 2s
-      start_period: 5s
-
-  # ------------------------------------------------------------------------------------
-  # p h p M y A d m i n
-  # ------------------------------------------------------------------------------------
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.2.1
-    links: [mysql]
-    ports:
-      - published: 8889
-        target: 80
-    environment:
-      MYSQL_ROOT_PASSWORD: p
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
-    # kein dedizierter User im Image vorhanden
-    container_name: phpmyadmin
-    # https://github.com/phpmyadmin/docker/issues/293
-    hostname: phpmyadmin.mysql.docker
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 768M
-
-  # ------------------------------------------------------------------------------------
-  # D B e a v e r
-  # ------------------------------------------------------------------------------------
-  # als User "cbadmin" muss man eine DB-Verbindung und einen User einrichten
-  dbeaver:
-    image: dbeaver/cloudbeaver:23.0.1
-    links: [mysql]
-    ports:
-      - published: 8978
-        target: 8978
-    volumes:
-      - type: bind
-        source: C:/Zimmermann/volumes/dbeaver
-        target: /opt/cloudbeaver/workspace
-    environment:
-      TZ: Europe/Berlin
-    container_name: dbeaver
-    hostname: dbeaver
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 768M
-
   # ------------------------------------------------------------------------------------
   # f a k e s m t p
   # ------------------------------------------------------------------------------------
