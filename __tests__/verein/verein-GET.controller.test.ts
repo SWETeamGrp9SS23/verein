@@ -108,6 +108,7 @@ describe('GET /rest', () => {
             );
     });
 
+    //.
     test('Vereine zu einer nicht vorhandenen Postleizahl suchen', async () => {
         // given
         const params = { name: adresseNichtVorhanden };

@@ -50,7 +50,7 @@ services:
   # ------------------------------------------------------------------------------------
   # p g a d m i n
   # ------------------------------------------------------------------------------------
-  # http://localhost:88288 mit Emailadresse "pgadmin@acme.com" und Passwort "p"
+  # http://localhost:8888 mit Emailadresse "pgadmin@acme.com" und Passwort "p"
   pgadmin:
     image: dpage/pgadmin4:6.21
     ports:
@@ -75,6 +75,7 @@ services:
         limits:
           cpus: '2.0'
           memory: 2048M
+  
   # ------------------------------------------------------------------------------------
   # f a k e s m t p
   # ------------------------------------------------------------------------------------

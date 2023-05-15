@@ -41,9 +41,9 @@ const idVorhanden = '1';
 
 const adresseVorhanden = 'Alpha';
 
-const ortVorhanden = 'a';
+const plzVorhanden = 'a';
 
-const ortNichtVorhanden = 'abc';
+const plzNichtVorhanden = 'abc';
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -75,10 +75,8 @@ describe('GraphQL Queries', () => {
                 {
                     verein(id: "${idVorhanden}") {
                         version
-                        isbn
-                        art
-                        titel {
-                            titel
+                        adresse {
+                            adresse
                         }
                     }
                 }
@@ -102,7 +100,7 @@ describe('GraphQL Queries', () => {
         const { verein } = data.data!;
         const result: VereinDTO = verein;
 
-        expect(result.titel?.titel).toMatch(/^\w/u);
+        expect(result.adresse?.plz).toMatch(/^\w/u);
         expect(result.version).toBeGreaterThan(-1);
         expect(result.id).toBeUndefined();
     });
@@ -114,8 +112,8 @@ describe('GraphQL Queries', () => {
             query: `
                 {
                     verein(id: "${id}") {
-                        titel {
-                            titel
+                        adresse {
+                            adresse
                         }
                     }
                 }
@@ -178,28 +176,27 @@ describe('GraphQL Queries', () => {
 
         expect(data.data).toBeDefined();
 
-        const { buecher } = data.data!;
+        const { vereine } = data.data!;
 
-        expect(buecher).not.toHaveLength(0);
+        expect(vereine).not.toHaveLength(0);
 
-        const buecherArray: VereinDTO[] = buecher;
+        const vereineArray: VereinDTO[] = vereine;
 
-        expect(buecherArray).toHaveLength(1);
+        expect(vereineArray).toHaveLength(1);
 
-        const [verein] = buecherArray;
+        const [verein] = vereineArray;
 
-        expect(verein!.titel?.titel).toBe(adresseVorhanden);
+        expect(verein!.adresse?.plz).toBe(adresseVorhanden);
     });
 
-    test('Verein zu vorhandenem Teil-Titel', async () => {
+    test('Verein zu vorhandenen Postleizahl', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    buecher(titel: "${ortVorhanden}") {
-                        art
-                        titel {
-                            titel
+                    vereine(adresse: "${plzVorhanden}") {
+                        adresse {
+                            adresse
                         }
                     }
                 }
@@ -224,25 +221,25 @@ describe('GraphQL Queries', () => {
 
         expect(vereine).not.toHaveLength(0);
 
-        const buecherArray: VereinDTO[] = vereine;
-        buecherArray
-            .map((verein) => verein.titel)
-            .forEach((titel) =>
-                expect(titel?.titel.toLowerCase()).toEqual(
-                    expect.stringContaining(teilTitelVorhanden),
+        const vereineArray: VereinDTO[] = vereine;
+        vereineArray
+            .map((verein) => verein.adresse)
+            .forEach((adresse) =>
+                expect(adresse?.plz.toLowerCase()).toEqual(
+                    expect.stringContaining(plzVorhanden),
                 ),
             );
     });
 
-    test('Verein zu nicht vorhandenem Titel', async () => {
+    test('Verein zu nicht vorhandener Adresse', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    vereine(titel: "${ortNichtVorhanden}") {
+                    vereine(adresse: "${plzNichtVorhanden}") {
                         art
-                        titel {
-                            titel
+                        adresse {
+                            adresse
                         }
                     }
                 }
@@ -260,7 +257,7 @@ describe('GraphQL Queries', () => {
 
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
-        expect(data.data!.buecher).toBeNull();
+        expect(data.data!.vereine).toBeNull();
 
         const { errors } = data;
 
@@ -269,9 +266,9 @@ describe('GraphQL Queries', () => {
         const [error] = errors!;
         const { message, path, extensions } = error!;
 
-        expect(message).toBe('Es wurden keine Buecher gefunden.');
+        expect(message).toBe('Es wurden keine Vereine gefunden.');
         expect(path).toBeDefined();
-        expect(path!![0]).toBe('buecher');
+        expect(path!![0]).toBe('vereine');
         expect(extensions).toBeDefined();
         expect(extensions!.code).toBe('BAD_USER_INPUT');
     });
