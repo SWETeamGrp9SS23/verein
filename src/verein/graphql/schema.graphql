@@ -23,7 +23,7 @@ type Mutation {
 "Daten zu Adresse eines Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
 type Adresse {
   plz: String!
-  ort: String!
+  ort: String
 }
 
 "Datenschema zu einem Verein, das gelesen wird"
@@ -34,12 +34,13 @@ type Verein {
   mitgliedsbeitrag: Float!
   entstehungsdatum: String
   homepage: String
+  adresse: Adresse
 }
 
 "Daten zu Adresse eines neuen Vereins" # nochmal checken wann muss es einzeln da steheen und wann nicht
 type AdresseInput {
   plz: String!
-  ort: String!
+  ort: String
 }
 
 "Daten für ein neuen Verein"
