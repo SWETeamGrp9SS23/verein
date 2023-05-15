@@ -29,6 +29,7 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { RolesAllowed } from '../../security/auth/roles/roles-allowed.decorator.js';
 import { RolesGraphQlGuard } from '../../security/auth/roles/roles-graphql.guard.js';
 import { getLogger } from '../../logger/logger.js';
+import { Adresse } from '../entity/adresse.entity.js';
 
 // Authentifizierung und Autorisierung durch
 //  GraphQL Shield
@@ -109,21 +110,25 @@ export class VereinMutationResolver {
     }
 
     #vereinDtoToVerein(vereinDTO: VereinDTO): Verein {
-       
-       
+        const adresseDTO = vereinDTO.adresse;
+        const adresse: Adresse = {
+            id: undefined,
+            plz: adresseDTO.plz,
+            ort: adresseDTO.ort,
+            verein: undefined,
+        };
         const verein = {
             id: undefined,
             version: undefined,
+            name: vereinDTO.name,
             mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
             entstehungsdatum: vereinDTO.entstehungsdatum,
             homepage: vereinDTO.homepage,
-            name: vereinDTO.name,
-            adresse: undefined,
+            adresse,
             erzeugt: undefined,
             aktualisiert: undefined,
         };
-
-        
+        verein.adresse.verein = verein;
         return verein;
     }
 
@@ -131,10 +136,10 @@ export class VereinMutationResolver {
         return {
             id: undefined,
             version: undefined,
+            name: vereinDTO.name,
             mitgliedsbeitrag: vereinDTO.mitgliedsbeitrag,
             entstehungsdatum: vereinDTO.entstehungsdatum,
             homepage: vereinDTO.homepage,
-            name: vereinDTO.name,
             adresse: undefined,
             erzeugt: undefined,
             aktualisiert: undefined,
