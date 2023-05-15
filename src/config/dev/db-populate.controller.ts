@@ -34,16 +34,19 @@ import { Response } from 'express';
 import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.js';
 import { RolesAllowed } from '../../security/auth/roles/roles-allowed.decorator.js';
 import { RolesGuard } from '../../security/auth/roles/roles.guard.js';
+import { Logger } from '@nestjs/common';
 
 /**
  * Die Controller-Klasse für das Neuladen der DB.
  */
+
 @Controller('dbPopulate')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @RolesAllowed('admin')
 @UseInterceptors(ResponseTimeInterceptor)
 export class DbPopulateController {
     readonly #service: DbPopulateService;
+    private readonly logger = new Logger(DbPopulateController.name);
 
     constructor(service: DbPopulateService) {
         this.#service = service;
@@ -51,7 +54,16 @@ export class DbPopulateController {
 
     @Post()
     async dbPopulate(@Res() res: Response): Promise<Response> {
-        await this.#service.populateTestdaten();
-        return res.sendStatus(HttpStatus.OK);
+        try {
+            await this.#service.populateTestdaten();
+            this.logger.log('Database population completed successfully.');
+            return res.sendStatus(HttpStatus.OK);
+        } catch (error) {
+            this.logger.error(
+                'An error occurred while populating the database.',
+                error,
+            );
+            return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

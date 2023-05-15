@@ -46,6 +46,7 @@ import { typeOrmModuleOptions } from './config/db.js';
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {
+        // Middleware `RequestLoggerMiddleware` wird auf die folgenden Routen angewendet
         consumer
             .apply(RequestLoggerMiddleware)
             .forRoutes(

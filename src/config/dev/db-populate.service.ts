@@ -59,6 +59,7 @@ export class DbPopulateService implements OnApplicationBootstrap {
      * Die Test-DB wird im Development-Modus neu geladen.
      */
     async onApplicationBootstrap() {
+        this.#logger.info('onApplicationBootstrap: Start');
         await this.populateTestdaten();
     }
 
@@ -96,6 +97,7 @@ export class DbPopulateService implements OnApplicationBootstrap {
     }
 
     async #populatePostgres(basePath: string) {
+        this.#logger.info('#populatePostgres: Start');
         const dropScript = resolve(basePath, 'drop.sql');
         // https://nodejs.org/api/fs.html#fs_fs_readfilesync_path_options
         const dropStatements = readFileSync(dropScript, 'utf8'); // eslint-disable-line security/detect-non-literal-fs-filename
