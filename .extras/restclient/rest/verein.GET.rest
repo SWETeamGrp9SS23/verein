@@ -35,13 +35,13 @@ If-None-Match: 0
 GET https://localhost:3000/rest/999999
 
 ### Suche mit vorhandenem Titel
-GET https://localhost:3000/rest?name=a
+GET https://localhost:3000/rest?plz=12345
 
 ### Suche mit nicht-vorhandenem Titel
-GET https://localhost:3000/rest?titel=xxx
+GET https://localhost:3000/rest?plz=xxx
 
 ### Suche mit vorhandener ISBN
-GET https://localhost:3000/rest?isbn=978-3-897-22583-1
+GET https://localhost:3000/rest?name=FC Bayern
 
 ### Suche mit vorhandenem Schlagwort "JAVASCRIPT"
 GET https://localhost:3000/rest?javascript=true
