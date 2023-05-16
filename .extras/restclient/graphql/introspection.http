@@ -20,7 +20,7 @@
 // https://graphql.org/learn/introspection
 
 ### Welche Typen sind verfuegbar?
-POST {{https://localhost:3000/graphql}}
+POST https://localhost:3000/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -33,7 +33,7 @@ X-REQUEST-TYPE: GraphQL
 }
 
 ### Details zum Typ "Buch": Felder und deren Typen
-POST {{https://localhost:3000/graphql}}
+POST https://localhost:3000/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -54,18 +54,5 @@ X-REQUEST-TYPE: GraphQL
         }
       }
     }
-  }
-}
-
-### Details zum Enum-Typ "Art"
-POST {{https://localhost:3000/graphql}}
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-
-{
-  __type(name: "Art") {
-    name
-    kind
-    description
   }
 }
