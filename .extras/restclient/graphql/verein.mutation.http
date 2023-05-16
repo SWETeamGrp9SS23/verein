@@ -19,7 +19,7 @@
 
 ### Einloggen in der Rolle "admin", "mitarbeiter" und "kunde"
 // @name login
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -29,7 +29,7 @@ mutation {
 
 ### Einloggen in der Rolle "mitarbeiter" und "kunde"
 // @name login
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -39,7 +39,7 @@ mutation {
 
 ### Einloggen in der Rolle "kunde"
 // @name login
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -49,7 +49,7 @@ mutation {
 
 ### Einloggen mit falschem Passwort
 // @name login
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -57,8 +57,8 @@ mutation {
   login(username: "admin", password: "FALSCH") { token expiresIn roles }
 }
 
-### Neuer Verein anlegen
-POST https://localhost:3000/graphql
+### Neues Buch anlegen
+POST {{graphQlUrl}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -66,20 +66,29 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   create(
     input: {
-      name: "FC Augsburg",
-      mitgliedsbeitrag: 99.99,
-      entstehungsdatum: "2022-01-31",
-      homepage: "https://augsburg.mutation",
-      adresse: {
-        plz: "76543",
-        ort: "Augsburg"
+      isbn: "978-0-321-19368-1",
+      rating: 1,
+      art: KINDLE,
+      preis: 99.99,
+      rabatt: 0.123,
+      lieferbar: true,
+      datum: "2022-01-31",
+      homepage: "https://create.mutation",
+      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
+      titel: {
+        titel: "Titelcreatemutation",
+        untertitel: "untertitelcreatemutation"
       },
+      abbildungen: [{
+        beschriftung: "Abb. 1",
+        contentType: "img/png"
+      }]
     }
   )
 }
 
-### Neuen Verein mit ungueltigen Daten anlegen
-POST https://localhost:3000/graphql
+### Neues Buch mit ungueltigen Daten anlegen
+POST {{graphQlUrl}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -87,20 +96,25 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   create(
     input: {
-      name: "derder",
-      mitgliedsbeitrag: 100,
-      entstehungsdatum: "12345-123-123",
+      isbn: "falsche-isbn",
+      rating: 999,
+      art: DRUCKAUSGABE,
+      preis: -1,
+      rabatt: 0,
+      lieferbar: true,
+      datum: "12345-123-123",
       homepage: "anyHomepage",
-      adresse: {
-        plz: "?!"
-        ort: "mutationinvalid"
+      schlagwoerter: ["JAVASCRIPT"],
+      titel: {
+        titel: "?!"
+        untertitel: "mutationinvalid"
       }
     }
   )
 }
 
 ### Vorhandenes Buch aktualisieren
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -108,18 +122,23 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   update(
     input: {
-      id: "1",
+      id: "40",
       version: 0,
-      name: "FC Eins",
-      mitgliedsbeitrag: 444.44,
-      entstehungsdatum: "2022-04-04",
+      isbn: "978-0-007-09732-6",
+      rating: 5,
+      art: KINDLE,
+      preis: 444.44,
+      rabatt: 0.099,
+      lieferbar: false,
+      datum: "2022-04-04",
       homepage: "https://update.mutation",
+      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"]
     }
   )
 }
 
 ### Vorhandenes Buch mit ungueltigen Werten aktualisieren
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -127,10 +146,14 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   update(
     input: {
-      id: 3,
+      id: 40,
       version: 0,
-      name: "falscher-name",
-      mitgliedsbeitrag: -1,
+      isbn: "falsche-ISBN",
+      rating: -1,
+      art: KINDLE,
+      preis: -1,
+      rabatt: 2,
+      lieferbar: false,
       datum: "12345-123-123",
       homepage: "anyHomepage"
     }
@@ -138,7 +161,7 @@ mutation {
 }
 
 ### Nicht-Vorhandenes Buch aktualisieren
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -148,20 +171,25 @@ mutation {
     input: {
       id: "999999",
       version: 0,
-      name: "derVereinsname",
-      mitgliedsbeitrag: 99.99,
-      entstehungsdatum: "2022-02-01",
+      isbn: "978-0-007-09732-6",
+      rating: 5,
+      art: DRUCKAUSGABE,
+      preis: 99.99,
+      rabatt: 0.099,
+      lieferbar: false,
+      datum: "2022-02-01",
+      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
       homepage: "https://nicht.vorhanden.de/"
     }
   )
 }
 
 ### Vorhandenes Buch loeschen
-POST https://localhost:3000/graphql
+POST {{graphQlUrl}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
 
 mutation {
-  delete(id: "4")
+  delete(id: "60")
 }

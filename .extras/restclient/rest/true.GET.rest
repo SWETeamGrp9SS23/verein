@@ -1,0 +1,62 @@
+// Copyright (C) 2020 - present Juergen Zimmermann, Hochschule Karlsruhe
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+//
+// N e t z w e r k   -  V e r b i n d u n g   n o t w e n d i g
+//
+
+### Suche alle Buecher
+GET https://localhost:3000/rest
+
+### Suche mit vorhandener Buch-ID
+GET https://localhost:3000/rest/1
+
+### Suche mit vorhandener Buch-ID und Versionsnummer
+GET https://localhost:3000/rest/1
+If-None-Match: "0"
+
+### Suche mit vorhandener Buch-ID und falscher Versionsnummer
+GET https://localhost:3000/rest/1
+If-None-Match: 0
+
+### Suche mit nicht-vorhandener Buch-ID
+GET https://localhost:3000/rest/999999
+
+### Suche mit vorhandenem Titel
+GET https://localhost:3000/rest?name=a
+
+### Suche mit nicht-vorhandenem Titel
+GET https://localhost:3000/rest?titel=xxx
+
+### Suche mit vorhandener ISBN
+GET https://localhost:3000/rest?isbn=978-3-897-22583-1
+
+### Suche mit vorhandenem Schlagwort "JAVASCRIPT"
+GET https://localhost:3000/rest?javascript=true
+
+### Suche mit vorhandenem Schlagwort "TYPESCRIPT"
+GET https://localhost:3000/rest?typescript=true
+
+### Suche mit vorhandenen Schlagwoertern
+GET https://localhost:3000/rest?javascript=true&typescript=true
+
+### Suche mit nicht-vorhandener Property
+GET https://localhost:3000/rest?php=true
+
+### Suche mit gueltiger Buchart
+GET https://localhost:3000/rest?art=KINDLE
+
+### Suche mit gueltigem Rating
+GET https://localhost:3000/rest?rating=1
