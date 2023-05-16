@@ -1,0 +1,10 @@
+{
+  "mitgliedsbeitrag": -1,
+  "name": "anyName",
+  "entstehungsdatum": "2022-02-30",
+  "homepage": "anyHomepage",
+  "adresse": {
+    "plz": "?!",
+    "ort": "Ortinvalid"
+  }
+}
