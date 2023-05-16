@@ -41,7 +41,6 @@ const neuerVerein: VereinDTO = {
         ort: 'München',
         plz: '80803',
     },
-   
 };
 const neuerVereinInvalid: Record<string, unknown> = {
     name: 'anyName',
@@ -145,7 +144,6 @@ describe('POST /rest', () => {
         expect(messages).toHaveLength(expectedMsg.length);
         expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
-
 
     test('Neue Verein, aber ohne Token', async () => {
         // when

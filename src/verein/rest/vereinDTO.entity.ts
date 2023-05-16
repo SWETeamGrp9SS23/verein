@@ -34,8 +34,6 @@ export class VereinDtoOhneRef {
     @IsOptional()
     @IsString()
     readonly homepage?: string;
-
-
 }
 
 export class VereinDTO extends VereinDtoOhneRef {
