@@ -18,7 +18,7 @@
 //
 
 ### Einloggen
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -31,7 +31,7 @@ mutation {
 }
 
 ### Einloggen mit falschem Passwort
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 

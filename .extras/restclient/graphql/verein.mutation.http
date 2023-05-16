@@ -19,7 +19,7 @@
 
 ### Einloggen in der Rolle "admin", "mitarbeiter" und "kunde"
 // @name login
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -29,7 +29,7 @@ mutation {
 
 ### Einloggen in der Rolle "mitarbeiter" und "kunde"
 // @name login
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -39,7 +39,7 @@ mutation {
 
 ### Einloggen in der Rolle "kunde"
 // @name login
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -49,7 +49,7 @@ mutation {
 
 ### Einloggen mit falschem Passwort
 // @name login
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
@@ -58,7 +58,7 @@ mutation {
 }
 
 ### Neues Buch anlegen
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -88,7 +88,7 @@ mutation {
 }
 
 ### Neues Buch mit ungueltigen Daten anlegen
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -114,7 +114,7 @@ mutation {
 }
 
 ### Vorhandenes Buch aktualisieren
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -138,7 +138,7 @@ mutation {
 }
 
 ### Vorhandenes Buch mit ungueltigen Werten aktualisieren
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -161,7 +161,7 @@ mutation {
 }
 
 ### Nicht-Vorhandenes Buch aktualisieren
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -185,7 +185,7 @@ mutation {
 }
 
 ### Vorhandenes Buch loeschen
-POST {{graphQlUrl}}
+POST {{https://localhost:3000/graphql}}
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
