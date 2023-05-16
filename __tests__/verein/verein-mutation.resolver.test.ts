@@ -50,7 +50,7 @@ describe('GraphQL Mutations', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
         await startServer();
-        const baseURL = `https://${host}:${port}/`;
+        const baseURL = `https://localhost:3000/`;
         client = axios.create({
             baseURL,
             httpsAgent,

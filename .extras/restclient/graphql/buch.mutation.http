@@ -57,7 +57,7 @@ mutation {
   login(username: "admin", password: "FALSCH") { token expiresIn roles }
 }
 
-### Neues Buch anlegen
+### Neuer Verein anlegen
 POST https://localhost:3000/graphql
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
@@ -69,10 +69,10 @@ mutation {
       name: "FC Augsburg",
       mitgliedsbeitrag: 99.99,
       entstehungsdatum: "2022-01-31",
-      homepage: "https://magdeburg.mutation",
+      homepage: "https://augsburg.mutation",
       adresse: {
         plz: "76543",
-        ort: "magdeburg"
+        ort: "Augsburg"
       },
     }
   )
