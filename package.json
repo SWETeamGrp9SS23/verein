@@ -74,7 +74,7 @@
     "Jest",
     "ts-jest"
   ],
-   "dependencies": {
+  "dependencies": {
     "@apollo/server": "4.7.1",
     "@js-temporal/polyfill": "0.4.3",
     "@nestjs/apollo": "11.0.5",
@@ -120,7 +120,7 @@
     "uuid": "9.0.0",
     "xss": "1.0.14"
   },
- "devDependencies": {
+  "devDependencies": {
     "@asciidoctor/reveal.js": "5.0.0-rc.1",
     "@graphql-eslint/eslint-plugin": "3.18.0",
     "@jest/globals": "29.5.0",
