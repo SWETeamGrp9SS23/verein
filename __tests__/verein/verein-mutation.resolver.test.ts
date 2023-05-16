@@ -71,23 +71,15 @@ describe('GraphQL Mutations', () => {
                 mutation {
                     create(
                         input: {
-                            isbn: "978-0-321-19368-1",
-                            rating: 1,
-                            art: KINDLE,
-                            preis: 99.99,
-                            rabatt: 0.123,
-                            lieferbar: true,
-                            datum: "2022-02-28",
+                            mitgliedsbeitrag: 99.99,
+                            name: "Testverein",
+                            entstehungsdatum: "2022-02-28",
                             homepage: "https://create.mutation",
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
-                            titel: {
-                                titel: "Titelcreatemutation",
-                                untertitel: "untertitelcreatemutation"
-                            },
-                            abbildungen: [{
-                                beschriftung: "Abb. 1",
-                                contentType: "img/png"
-                            }]
+                            adresse: {
+                                plz: "71311",
+                                ort: "Karlsruhe"
+                            }
+                            
                         }
                     )
                 }
@@ -126,16 +118,12 @@ describe('GraphQL Mutations', () => {
                 mutation {
                     create(
                         input: {
-                            isbn: "falsche-ISBN",
-                            rating: -1,
-                            art: KINDLE,
-                            preis: -1,
-                            rabatt: 2,
-                            lieferbar: false,
-                            datum: "12345-123-123",
+                            mitgliedsbeitrag: -1,
+                            name: "anyName",
+                            entstehungsdatum: "12345-123-123",
                             homepage: "anyHomepage",
-                            titel: {
-                                titel: "?!"
+                            adresse: {
+                                plz: "?!"
                             }
                         }
                     )
@@ -143,13 +131,11 @@ describe('GraphQL Mutations', () => {
             `,
         };
         const expectedMsg = [
-            expect.stringMatching(/^isbn /u),
-            expect.stringMatching(/^rating /u),
-            expect.stringMatching(/^preis /u),
-            expect.stringMatching(/^rabatt /u),
-            expect.stringMatching(/^datum /u),
+            expect.stringMatching(/^mitgliedsbeitrag /u),
+            expect.stringMatching(/^name /u),
+            expect.stringMatching(/^entstehungsdatum /u),
             expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^titel.titel /u),
+            expect.stringMatching(/^adresse.plz /u),
         ];
 
         // when
@@ -192,18 +178,13 @@ describe('GraphQL Mutations', () => {
                 mutation {
                     create(
                         input: {
-                            isbn: "978-3-663-08746-5",
-                            rating: 1,
-                            art: KINDLE,
-                            preis: 11.1,
-                            rabatt: 0.011,
-                            lieferbar: true,
-                            datum: "2021-01-31",
+                            mitgliedsbeitrag: 11.1,
+                            name: "Testverein",
+                            entstehungsdatum: "2021-01-31",
                             homepage: "http://acme.com",
-                            schlagwoerter: ["JAVASCRIPT"]
-                            titel: {
-                                titel: "Titelcreatemutation",
-                                untertitel: "untertitelcreatemutation"
+                            adresse: {
+                                plz: "Plzcreatemutation",
+                                ort: "Ortcreatemutation"
                             }
                         }
                     )
@@ -248,15 +229,10 @@ describe('GraphQL Mutations', () => {
                         input: {
                             id: "40",
                             version: 0,
-                            isbn: "978-0-007-09732-6",
-                            rating: 5,
-                            art: KINDLE,
-                            preis: 444.44,
-                            rabatt: 0.099,
-                            lieferbar: false,
-                            datum: "2021-04-04",
+                            mitgliedsbeitrag: 444.44,
+                            name: "Test",
+                            entstehungsdatum: "2021-04-04",
                             homepage: "https://update.mutation"
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
                         }
                     )
                 }
@@ -297,26 +273,19 @@ describe('GraphQL Mutations', () => {
                         input: {
                             id: "${id}",
                             version: 0,
-                            isbn: "falsche-ISBN",
-                            rating: -1,
-                            art: KINDLE,
-                            preis: -1,
-                            rabatt: 2,
-                            lieferbar: false,
-                            datum: "12345-123-123",
+                            mitgliedsbeitrag: -1,
+                            name: "anyName",
+                            entstehungsdatum: "12345-123-123",
                             homepage: "anyHomepage",
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"]
                         }
                     )
                 }
             `,
         };
         const expectedMsg = [
-            expect.stringMatching(/^isbn /u),
-            expect.stringMatching(/^rating /u),
-            expect.stringMatching(/^preis /u),
-            expect.stringMatching(/^rabatt /u),
-            expect.stringMatching(/^datum /u),
+            expect.stringMatching(/^mitgliedsbeitrag /u),
+            expect.stringMatching(/^name /u),
+            expect.stringMatching(/^entstehungsdatum /u),
             expect.stringMatching(/^homepage /u),
         ];
 
@@ -363,15 +332,10 @@ describe('GraphQL Mutations', () => {
                         input: {
                             id: "${id}",
                             version: 0,
-                            isbn: "978-0-007-09732-6",
-                            rating: 5,
-                            art: DRUCKAUSGABE,
-                            preis: 99.99,
-                            rabatt: 0.099,
-                            lieferbar: false,
-                            datum: "2021-01-02",
+                            mitgliedsbeitrag: 99.99,
+                            name: "Test",
+                            entstehungsdatum: "2021-01-02",
                             homepage: "https://acme.com",
-                            schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"]
                         }
                     )
                 }
