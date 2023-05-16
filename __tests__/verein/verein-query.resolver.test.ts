@@ -19,13 +19,7 @@
 import { type GraphQLRequest, type GraphQLResponse } from 'apollo-server-types';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import {
-    host,
-    httpsAgent,
-    port,
-    shutdownServer,
-    startServer,
-} from '../testserver.js';
+import { httpsAgent, shutdownServer, startServer } from '../testserver.js';
 import { type VereinDTO } from '../../src/verein/graphql/verein-query.resolver.js';
 import { HttpStatus } from '@nestjs/common';
 
@@ -39,7 +33,7 @@ export type GraphQLResponseBody = Pick<GraphQLResponse, 'data' | 'errors'>;
 // -----------------------------------------------------------------------------
 const idVorhanden = '1';
 
-const adresseVorhanden = 'Alpha';
+const adresseVorhanden = '12345';
 
 const plzVorhanden = 'a';
 
@@ -57,7 +51,7 @@ describe('GraphQL Queries', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
         await startServer();
-        const baseURL = `https://${host}:${port}/`;
+        const baseURL = `https://localhost:3000/`;
         client = axios.create({
             baseURL,
             httpsAgent,
@@ -75,8 +69,9 @@ describe('GraphQL Queries', () => {
                 {
                     verein(id: "${idVorhanden}") {
                         version
+                        name
                         adresse {
-                            adresse
+                            plz
                         }
                     }
                 }
@@ -113,7 +108,7 @@ describe('GraphQL Queries', () => {
                 {
                     verein(id: "${id}") {
                         adresse {
-                            adresse
+                            ort
                         }
                     }
                 }
@@ -152,9 +147,9 @@ describe('GraphQL Queries', () => {
         const body: GraphQLRequest = {
             query: `
                 {
-                    vereine(adresse: "${adresseVorhanden}") {
+                    vereine(postleitzahl: "12345") {
                         adresse {
-                            adresse
+                            plz
                         }
                     }
                 }
@@ -194,7 +189,7 @@ describe('GraphQL Queries', () => {
         const body: GraphQLRequest = {
             query: `
                 {
-                    vereine(adresse: "${plzVorhanden}") {
+                    vereine(postleitzahl: "${plzVorhanden}") {
                         adresse {
                             adresse
                         }

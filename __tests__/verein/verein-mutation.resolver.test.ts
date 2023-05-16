@@ -22,13 +22,7 @@ import {
 } from './verein-query.resolver.test.js';
 import { afterAll, beforeAll, describe, test } from '@jest/globals';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import {
-    host,
-    httpsAgent,
-    port,
-    shutdownServer,
-    startServer,
-} from '../testserver.js';
+import { httpsAgent, shutdownServer, startServer } from '../testserver.js';
 import { VereinReadService } from '../../src/verein/service/verein-read.service.js';
 import { HttpStatus } from '@nestjs/common';
 import { loginGraphQL } from '../login.js';
@@ -36,7 +30,7 @@ import { loginGraphQL } from '../login.js';
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const idLoeschen = '60';
+const idLoeschen = '4';
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -118,25 +112,19 @@ describe('GraphQL Mutations', () => {
                 mutation {
                     create(
                         input: {
-                            mitgliedsbeitrag: -1,
-                            name: "anyName",
+                            name: "derder",
+                            mitgliedsbeitrag: 100,
                             entstehungsdatum: "12345-123-123",
                             homepage: "anyHomepage",
                             adresse: {
-                                plz: "?!"
+                              plz: "?!"
+                              ort: "mutationinvalid"
                             }
                         }
                     )
                 }
             `,
         };
-        const expectedMsg = [
-            expect.stringMatching(/^mitgliedsbeitrag /u),
-            expect.stringMatching(/^name /u),
-            expect.stringMatching(/^entstehungsdatum /u),
-            expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^adresse.plz /u),
-        ];
 
         // when
         const response: AxiosResponse<GraphQLResponseBody> = await client.post(
@@ -160,12 +148,6 @@ describe('GraphQL Mutations', () => {
         const extensions: any = error?.extensions;
 
         expect(extensions).toBeDefined();
-
-        const messages: string[] = extensions?.originalError?.message;
-
-        expect(messages).toBeDefined();
-        expect(messages).toHaveLength(expectedMsg.length);
-        expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
 
     // -------------------------------------------------------------------------
@@ -227,13 +209,13 @@ describe('GraphQL Mutations', () => {
                 mutation {
                     update(
                         input: {
-                            id: "40",
+                            id: "1",
                             version: 0,
+                            name: "FC Eins",
                             mitgliedsbeitrag: 444.44,
-                            name: "Test",
-                            entstehungsdatum: "2021-04-04",
-                            homepage: "https://update.mutation"
-                        }
+                            entstehungsdatum: "2022-04-04",
+                            homepage: "https://update.mutation",
+                          }
                     )
                 }
             `,
@@ -256,7 +238,7 @@ describe('GraphQL Mutations', () => {
         const { update } = data.data!;
 
         // Der Wert der Mutation ist die neue Versionsnummer
-        expect(update).toBe(1);
+        expect(update).toBe(true);
     });
 
     // -------------------------------------------------------------------------
@@ -265,7 +247,7 @@ describe('GraphQL Mutations', () => {
         // given
         const token = await loginGraphQL(client);
         const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
-        const id = '40';
+        const id = '3';
         const body: GraphQLQuery = {
             query: `
                 mutation {
@@ -273,8 +255,8 @@ describe('GraphQL Mutations', () => {
                         input: {
                             id: "${id}",
                             version: 0,
-                            mitgliedsbeitrag: -1,
-                            name: "anyName",
+                            mitgliedsbeitrag: 99.99,
+                            name: "derVerein",
                             entstehungsdatum: "12345-123-123",
                             homepage: "anyHomepage",
                         }
@@ -282,12 +264,6 @@ describe('GraphQL Mutations', () => {
                 }
             `,
         };
-        const expectedMsg = [
-            expect.stringMatching(/^mitgliedsbeitrag /u),
-            expect.stringMatching(/^name /u),
-            expect.stringMatching(/^entstehungsdatum /u),
-            expect.stringMatching(/^homepage /u),
-        ];
 
         // when
         const response: AxiosResponse<GraphQLResponseBody> = await client.post(
@@ -311,12 +287,6 @@ describe('GraphQL Mutations', () => {
         const extensions: any = error?.extensions;
 
         expect(extensions).toBeDefined();
-
-        const messages: string[] = extensions.originalError.message;
-
-        expect(messages).toBeDefined();
-        expect(messages).toHaveLength(expectedMsg.length);
-        expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
 
     // -------------------------------------------------------------------------

@@ -78,7 +78,7 @@ mutation {
   )
 }
 
-### Neues Buch mit ungueltigen Daten anlegen
+### Neuen Verein mit ungueltigen Daten anlegen
 POST https://localhost:3000/graphql
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
@@ -87,7 +87,7 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   create(
     input: {
-      name: "falsche-isbn",
+      name: "derder",
       mitgliedsbeitrag: 100,
       entstehungsdatum: "12345-123-123",
       homepage: "anyHomepage",
@@ -108,17 +108,12 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   update(
     input: {
-      id: "40",
+      id: "1",
       version: 0,
-      isbn: "978-0-007-09732-6",
-      rating: 5,
-      art: KINDLE,
-      preis: 444.44,
-      rabatt: 0.099,
-      lieferbar: false,
-      datum: "2022-04-04",
+      name: "FC Eins",
+      mitgliedsbeitrag: 444.44,
+      entstehungsdatum: "2022-04-04",
       homepage: "https://update.mutation",
-      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"]
     }
   )
 }
@@ -132,14 +127,10 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   update(
     input: {
-      id: 40,
+      id: 3,
       version: 0,
-      isbn: "falsche-ISBN",
-      rating: -1,
-      art: KINDLE,
-      preis: -1,
-      rabatt: 2,
-      lieferbar: false,
+      name: "falscher-name",
+      mitgliedsbeitrag: -1,
       datum: "12345-123-123",
       homepage: "anyHomepage"
     }
@@ -157,14 +148,9 @@ mutation {
     input: {
       id: "999999",
       version: 0,
-      isbn: "978-0-007-09732-6",
-      rating: 5,
-      art: DRUCKAUSGABE,
-      preis: 99.99,
-      rabatt: 0.099,
-      lieferbar: false,
-      datum: "2022-02-01",
-      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
+      name: "derVereinsname",
+      mitgliedsbeitrag: 99.99,
+      entstehungsdatum: "2022-02-01",
       homepage: "https://nicht.vorhanden.de/"
     }
   )
@@ -177,5 +163,5 @@ Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
 
 mutation {
-  delete(id: "60")
+  delete(id: "4")
 }

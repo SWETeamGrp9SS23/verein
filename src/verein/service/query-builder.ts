@@ -88,7 +88,9 @@ export class QueryBuilder {
         // z.B. { postleitzahl: '76351' }
         // "rest properties" fuer anfaengliche WHERE-Klausel: ab ES 2018 https://github.com/tc39/proposal-object-rest-spread
         // type-coverage:ignore-next-line
-        const { postleitzahl } = suchkriterien;
+        const { postleitzahl, ...props } = suchkriterien;
+
+        let useWhere = true;
 
         //toDo Warning loswerden
 
@@ -102,7 +104,23 @@ export class QueryBuilder {
                 `${this.#adresseAlias}.postleitzahl ${ilike} :postleitzahl`,
                 { postleitzahl: `%${postleitzahl}%` },
             );
+            useWhere = false;
         }
+
+        Object.keys(props).forEach((key) => {
+            const param: Record<string, any> = {};
+            param[key] = props[key];
+            queryBuilder = useWhere
+                ? queryBuilder.where(
+                      `${this.#vereinAlias}.${key} = :${key}`,
+                      param,
+                  )
+                : queryBuilder.andWhere(
+                      `${this.#vereinAlias}.${key} = :${key}`,
+                      param,
+                  );
+            useWhere = false;
+        });
 
         this.#logger.debug('build: sql=%s', queryBuilder.getSql());
         return queryBuilder;
