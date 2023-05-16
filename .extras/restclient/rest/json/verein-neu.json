@@ -1,0 +1,10 @@
+{
+  "mitgliedsbeitrag": 99.99,
+  "name": "PSG",
+  "datum": "2022-01-31",
+  "homepage": "https://post.rest",
+  "adresse": {
+    "ort": "Paris",
+    "plz": "78787"
+  }
+}
