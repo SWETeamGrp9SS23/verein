@@ -21,10 +21,10 @@ import {
 } from '@nestjs/common';
 import { type ApolloDriverConfig } from '@nestjs/apollo';
 import { AuthModule } from './security/auth/auth.module.js';
+import { DevModule } from './config/dev/dev.module.js';
 import { VereinGetController } from './verein/rest/verein-get.controller.js';
 import { VereinModule } from './verein/verein.module.js';
 import { VereinWriteController } from './verein/rest/verein-write.controller.js';
-import { DevModule } from './config/dev/dev.module.js';
 import { GraphQLModule } from '@nestjs/graphql';
 import { HealthModule } from './health/health.module.js';
 import { LoggerModule } from './logger/logger.module.js';

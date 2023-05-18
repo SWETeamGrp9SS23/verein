@@ -26,8 +26,8 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type VereinDTO } from '../../src/verein/graphql/verein-query.resolver.js';
 import { HttpStatus } from '@nestjs/common';
+import { type VereinDTO } from '../../src/verein/graphql/verein-query.resolver.js';
 
 /* eslint-disable jest/no-export */
 export type GraphQLQuery = Pick<GraphQLRequest, 'query'>;

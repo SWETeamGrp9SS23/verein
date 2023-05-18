@@ -60,7 +60,7 @@ describe('DELETE /rest/vereine', () => {
         const url = `/rest/${id}`;
         const token = await loginRest(client);
         const headers: Record<string, string> = {
-            Authorization: `Bearer ${token}`, // eslint-disable-line @typescript-eslint/naming-convention
+            Authorization: `Bearer ${token}`,
         };
 
         // when
@@ -95,7 +95,7 @@ describe('DELETE /rest/vereine', () => {
         const url = `/rest/${id}`;
         const token = 'FALSCH';
         const headers: Record<string, string> = {
-            Authorization: `Bearer ${token}`, // eslint-disable-line @typescript-eslint/naming-convention
+            Authorization: `Bearer ${token}`,
         };
 
         // when
