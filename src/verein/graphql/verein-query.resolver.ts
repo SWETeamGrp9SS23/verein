@@ -22,7 +22,10 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { UseInterceptors } from '@nestjs/common';
 import { getLogger } from '../../logger/logger.js';
 
-export type VereinDTO = Omit<Verein, 'abbildungen' | 'aktualisiert' | 'erzeugt'>;
+export type VereinDTO = Omit<
+    Verein,
+    'abbildungen' | 'aktualisiert' | 'erzeugt'
+>;
 export interface IdInput {
     id: number;
 }

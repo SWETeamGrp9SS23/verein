@@ -36,7 +36,6 @@ const geaenderterVerein: VereinDtoOhneRef = {
     mitgliedsbeitrag: 3333,
     entstehungsdatum: '2022-03-03',
     homepage: 'https://geaendert.put.rest',
-    
 };
 const idVorhanden = '30';
 
@@ -63,7 +62,6 @@ const veralteterVerein = {
     entstehungsdatum: '2022-02-04',
     homepage: 'https://acme.de',
     // muss ich hier noch adresse einfügen?
-
 };
 
 // -----------------------------------------------------------------------------

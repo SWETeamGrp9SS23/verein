@@ -57,8 +57,13 @@ mutation {
   login(username: "admin", password: "FALSCH") { token expiresIn roles }
 }
 
+<<<<<<< HEAD
 ### Neues Buch anlegen
 POST {{graphQlUrl}}
+=======
+### Neuer Verein anlegen
+POST https://localhost:3000/graphql
+>>>>>>> cc9b84af893c4710b36615248cc1bac145cb3c54
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.data.login.token}}
 X-REQUEST-TYPE: GraphQL
@@ -66,23 +71,14 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   create(
     input: {
-      isbn: "978-0-321-19368-1",
-      rating: 1,
-      art: KINDLE,
-      preis: 99.99,
-      rabatt: 0.123,
-      lieferbar: true,
-      datum: "2022-01-31",
-      homepage: "https://create.mutation",
-      schlagwoerter: ["JAVASCRIPT", "TYPESCRIPT"],
-      titel: {
-        titel: "Titelcreatemutation",
-        untertitel: "untertitelcreatemutation"
+      name: "FC Augsburg",
+      mitgliedsbeitrag: 99.99,
+      entstehungsdatum: "2022-01-31",
+      homepage: "https://augsburg.mutation",
+      adresse: {
+        plz: "76543",
+        ort: "Augsburg"
       },
-      abbildungen: [{
-        beschriftung: "Abb. 1",
-        contentType: "img/png"
-      }]
     }
   )
 }
@@ -96,18 +92,13 @@ X-REQUEST-TYPE: GraphQL
 mutation {
   create(
     input: {
-      isbn: "falsche-isbn",
-      rating: 999,
-      art: DRUCKAUSGABE,
-      preis: -1,
-      rabatt: 0,
-      lieferbar: true,
-      datum: "12345-123-123",
+      name: "falsche-isbn",
+      mitgliedsbeitrag: 100,
+      entstehungsdatum: "12345-123-123",
       homepage: "anyHomepage",
-      schlagwoerter: ["JAVASCRIPT"],
-      titel: {
-        titel: "?!"
-        untertitel: "mutationinvalid"
+      adresse: {
+        plz: "?!"
+        ort: "mutationinvalid"
       }
     }
   )

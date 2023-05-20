@@ -123,48 +123,12 @@ rules:
   '@typescript-eslint/member-ordering': error
   '@typescript-eslint/method-signature-style': error
   '@typescript-eslint/naming-convention':
-    - error
-    - selector: default
-      format:
-        - camelCase
-    - selector: variable
-      format:
-        - camelCase
-        - UPPER_CASE
-    - selector: parameter
-      format:
-        - camelCase
-      #filter:
-      #  regex: ^_$
-      #  match: true
-      leadingUnderscore: allow
-    - selector: classProperty
-      modifiers:
-        - static
-        - readonly
-      format:
-        - UPPER_CASE
-      leadingUnderscore: allowDouble
-    - selector: objectLiteralProperty
-      format:
-        - camelCase
-      leadingUnderscore: allow
-    - selector: enumMember
-      format:
-        - UPPER_CASE
-    - selector: typeLike
-      format:
-        - PascalCase
-    
-    - linebreak-style:
-      - error
-      - windows
+    - off
   # Weitere Regeln hier
 
-    
   '@typescript-eslint/no-base-to-string':
     - error
-    - ignoredTypeNames: ["RegExp", "boolean", "ObjectID"]
+    - ignoredTypeNames: ['RegExp', 'boolean', 'ObjectID']
   '@typescript-eslint/no-confusing-non-null-assertion': error
   '@typescript-eslint/no-confusing-void-expression':
     - error
@@ -558,7 +522,7 @@ rules:
   no-undef-init: error
   no-underscore-dangle:
     - error
-    - allow: ["_id", "__v"]
+    - allow: ['_id', '__v']
   no-unmodified-loop-condition: error
   no-unneeded-ternary: error
   no-unreachable-loop: error
