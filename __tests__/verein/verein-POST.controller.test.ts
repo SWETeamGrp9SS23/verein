@@ -24,9 +24,9 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
+import { HttpStatus } from '@nestjs/common';
 import { type VereinDTO } from '../../src/verein/rest/vereinDTO.entity.js';
 import { VereinReadService } from '../../src/verein/service/verein-read.service.js';
-import { HttpStatus } from '@nestjs/common';
 import { loginRest } from '../login.js';
 
 // -----------------------------------------------------------------------------
@@ -61,7 +61,7 @@ const neuerVereinInvalid: Record<string, unknown> = {
 describe('POST /rest', () => {
     let client: AxiosInstance;
     const headers: Record<string, string> = {
-        'Content-Type': 'application/json', // eslint-disable-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/json',
     };
 
     // Testserver starten und dabei mit der DB verbinden

@@ -24,8 +24,8 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type VereinDtoOhneRef } from '../../src/verein/rest/vereinDTO.entity.js';
 import { HttpStatus } from '@nestjs/common';
+import { type VereinDtoOhneRef } from '../../src/verein/rest/vereinDTO.entity.js';
 import { loginRest } from '../login.js';
 
 // -----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ const veralteterVerein = {
 describe('PUT /rest/:id', () => {
     let client: AxiosInstance;
     const headers: Record<string, string> = {
-        'Content-Type': 'application/json', // eslint-disable-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/json',
     };
 
     // Testserver starten und dabei mit der DB verbinden

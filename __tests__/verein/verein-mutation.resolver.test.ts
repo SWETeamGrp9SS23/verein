@@ -44,7 +44,7 @@ describe('GraphQL Mutations', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
         await startServer();
-        const baseURL = `https://localhost:3000/`;
+        const baseURL = 'https://localhost:3000/';
         client = axios.create({
             baseURL,
             httpsAgent,
@@ -59,7 +59,7 @@ describe('GraphQL Mutations', () => {
     test('Neuer Verein', async () => {
         // given
         const token = await loginGraphQL(client);
-        const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
+        const authorization = { Authorization: `Bearer ${token}` };
         const body: GraphQLQuery = {
             query: `
                 mutation {
@@ -102,11 +102,10 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    // eslint-disable-next-line max-lines-per-function
     test('Verein mit ungueltigen Werten neu anlegen', async () => {
         // given
         const token = await loginGraphQL(client);
-        const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
+        const authorization = { Authorization: `Bearer ${token}` };
         const body: GraphQLQuery = {
             query: `
                 mutation {
@@ -154,7 +153,7 @@ describe('GraphQL Mutations', () => {
     test('Neuer Verein nur als "admin"/"mitarbeiter"', async () => {
         // given
         const token = await loginGraphQL(client, 'dirk.delta', 'p');
-        const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
+        const authorization = { Authorization: `Bearer ${token}` };
         const body: GraphQLQuery = {
             query: `
                 mutation {
@@ -203,7 +202,7 @@ describe('GraphQL Mutations', () => {
     test('Verein aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
-        const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
+        const authorization = { Authorization: `Bearer ${token}` };
         const body: GraphQLQuery = {
             query: `
                 mutation {
@@ -242,11 +241,10 @@ describe('GraphQL Mutations', () => {
     });
 
     // -------------------------------------------------------------------------
-    // eslint-disable-next-line max-lines-per-function
     test('Verein mit ungueltigen Werten aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
-        const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
+        const authorization = { Authorization: `Bearer ${token}` };
         const id = '3';
         const body: GraphQLQuery = {
             query: `
@@ -293,7 +291,7 @@ describe('GraphQL Mutations', () => {
     test('Nicht-vorhandenen Verein aktualisieren', async () => {
         // given
         const token = await loginGraphQL(client);
-        const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
+        const authorization = { Authorization: `Bearer ${token}` };
         const id = '999999';
         const body: GraphQLQuery = {
             query: `
@@ -346,7 +344,7 @@ describe('GraphQL Mutations', () => {
     test('Verein loeschen', async () => {
         // given
         const token = await loginGraphQL(client);
-        const authorization = { Authorization: `Bearer ${token}` }; // eslint-disable-line @typescript-eslint/naming-convention
+        const authorization = { Authorization: `Bearer ${token}` };
         const body: GraphQLQuery = {
             query: `
                 mutation {

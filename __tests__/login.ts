@@ -37,7 +37,7 @@ export const loginRest = async (
     password = passwordDefault,
 ) => {
     const headers: Record<string, string> = {
-        'Content-Type': 'application/x-www-form-urlencoded', // eslint-disable-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/x-www-form-urlencoded',
     };
     const response: AxiosResponse<LoginResult> = await axiosInstance.post(
         loginPath,

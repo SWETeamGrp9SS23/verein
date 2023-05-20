@@ -25,9 +25,8 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type VereineModel } from '../../src/verein/rest/verein-get.controller.js';
 import { HttpStatus } from '@nestjs/common';
-
+import { type VereineModel } from '../../src/verein/rest/verein-get.controller.js';
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------

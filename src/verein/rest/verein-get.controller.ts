@@ -95,16 +95,16 @@ export interface VereineModel {
 
 /**
  *Die Klasse VereinGetController dient der Formulierung von Abfragen in OpenAPI oder Swagger.
-  Sie erbt von der Basisklasse Verein und überschreibt dabei deren Eigenschaften. 
-  Dabei wird sichergestellt, dass diese Eigenschaften nicht gesetzt oder undefiniert sein können, 
-  um eine flexible Formulierung der Abfragen zu ermöglichen. 
-  Dementsprechend wird bei jeder Eigenschaft auch der Typ undefined angegeben. 
+  Sie erbt von der Basisklasse Verein und überschreibt dabei deren Eigenschaften.
+  Dabei wird sichergestellt, dass diese Eigenschaften nicht gesetzt oder undefiniert sein können,
+  um eine flexible Formulierung der Abfragen zu ermöglichen.
+  Dementsprechend wird bei jeder Eigenschaft auch der Typ undefined angegeben.
   In OpenAPI existiert der Datentyp Date nicht, deshalb wird stattdessen der Typ string verwendet.
  */
 
 /**
- *Die Klasse 'VereinQuery' implementiert das Interface Suchkriterien und definiert verschiedene Eigenschaften wie name, 
- mitgliedsbeitrag, entstehungsdatum, homepage und adresse, die in der Abfrage optional sein können und daher 
+ *Die Klasse 'VereinQuery' implementiert das Interface Suchkriterien und definiert verschiedene Eigenschaften wie name,
+ mitgliedsbeitrag, entstehungsdatum, homepage und adresse, die in der Abfrage optional sein können und daher
  mit { required: false } deklariert werden.
  */
 export class VereinQuery implements Suchkriterien {
@@ -142,11 +142,11 @@ export class VereinGetController {
 
     /**
     Ein Verein wird asynchron anhand seiner ID als Pfadparameter gesucht.
-    Falls es ein solches Verein gibt und If-None-Match im Request-Header 
+    Falls es ein solches Verein gibt und If-None-Match im Request-Header
     auf die aktuelle Version des Vereins gesetzt war, wird der Statuscode
-    304 (Not Modified) zurückgeliefert. Falls If-None-Match nicht gesetzt 
-    ist oder eine veraltete Version enthält, wird das gefundene Verein im Rumpf 
-    des Response als JSON-Datensatz mit Atom-Links für HATEOAS und dem Statuscode 200 (OK) zurückgeliefert. 
+    304 (Not Modified) zurückgeliefert. Falls If-None-Match nicht gesetzt
+    ist oder eine veraltete Version enthält, wird das gefundene Verein im Rumpf
+    des Response als JSON-Datensatz mit Atom-Links für HATEOAS und dem Statuscode 200 (OK) zurückgeliefert
     Falls es kein Verein zur angegebenen ID gibt, wird der Statuscode 404 (Not Found) zurückgeliefert.
 
     @param id Pfad-Parameter id
@@ -156,6 +156,7 @@ export class VereinGetController {
     @param res Leeres Response-Objekt von Express.
     @returns Leeres Promise-Objekt.
      */
+    // eslint-disable-next-line max-params, max-lines-per-function
     @Get(':id')
     @ApiOperation({ summary: 'Suche mit der Verein-ID', tags: ['Suchen'] })
     @ApiParam({
@@ -182,7 +183,9 @@ export class VereinGetController {
         this.#logger.debug(`findById: id=${id}, version=${version}`);
 
         if (req.accepts(['json', 'html']) === false) {
-            this.#logger.debug(`findById: accepted=${req.accepted}`);
+            this.#logger.debug(
+                `findById: accepted=${JSON.stringify(req.accepted)}`,
+            );
             return res.sendStatus(HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -190,7 +193,7 @@ export class VereinGetController {
         try {
             verein = await this.#service.findById({ id });
         } catch (err) {
-            this.#logger.debug(`findById: error=${err}`);
+            this.#logger.debug(`findById: error=${String(err)}`);
             return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -198,8 +201,7 @@ export class VereinGetController {
             this.#logger.debug('findById: NOT_FOUND');
             return res.sendStatus(HttpStatus.NOT_FOUND);
         }
-        this.#logger.debug(`findById(): buch=${verein}`);
-
+        this.#logger.debug(`findById(): buch=${JSON.stringify(verein)}`);
         // ETags
         const versionDb = verein.version;
         if (version === `"${versionDb}"`) {
@@ -211,7 +213,9 @@ export class VereinGetController {
 
         // HATEOAS mit Atom Links und HAL (= Hypertext Application Language)
         const vereinModel = this.#toModel(verein, req);
-        this.#logger.debug(`findById: verinModel=${vereinModel}`);
+        this.#logger.debug(
+            `findById: vereinModel=${JSON.stringify(vereinModel)}`,
+        );
         return res.json(vereinModel);
     }
 
@@ -278,15 +282,15 @@ export class VereinGetController {
             : { self: { href: `${baseUri}/${id}` } };
 
         this.#logger.debug('#toModel: verein=%o, links=%o', verein, links);
-        const adresseModel: AdresseModel = {
-            plz: verein.adresse?.plz ?? 'N/A',
-            ort: verein.adresse?.ort ?? 'N/A',
-        };
+        const { adresse: { plz = 'N/A', ort = 'N/A' } = {} } = verein;
+        const adresseModel: AdresseModel = { plz, ort };
+
+        const { name, mitgliedsbeitrag, entstehungsdatum, homepage } = verein;
         const vereinModel: VereinModel = {
-            name: verein.name,
-            mitgliedsbeitrag: verein.mitgliedsbeitrag,
-            entstehungsdatum: verein.entstehungsdatum,
-            homepage: verein.homepage,
+            name,
+            mitgliedsbeitrag,
+            entstehungsdatum,
+            homepage,
             adresse: adresseModel,
             _links: links,
         };

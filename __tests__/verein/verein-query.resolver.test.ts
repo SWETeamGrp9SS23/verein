@@ -51,7 +51,7 @@ describe('GraphQL Queries', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
         await startServer();
-        const baseURL = `https://localhost:3000/`;
+        const baseURL = 'https://localhost:3000/';
         client = axios.create({
             baseURL,
             httpsAgent,
