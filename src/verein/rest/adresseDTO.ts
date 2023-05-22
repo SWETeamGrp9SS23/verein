@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /*
  * Copyright (C) 2023 - present Juergen Zimmermann, Florian Goebel, Hochschule Karlsruhe
  *
@@ -27,16 +26,20 @@ import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 /**
  * Entity-Klasse für Adresse ohne TypeORM.
  */
+
+const MAX_PLZ_LENGTH = 10;
+const MAX_ORT_LENGTH = 100;
+
 export class AdresseDTO {
     @ApiProperty({ example: '76351' })
     @IsString()
     @IsNotEmpty()
-    @MaxLength(10)
+    @MaxLength(MAX_PLZ_LENGTH)
     readonly plz!: string;
 
     @ApiProperty({ example: 'Linkenheim-Hochstetten' })
     @IsString()
     @IsOptional()
-    @MaxLength(100)
+    @MaxLength(MAX_ORT_LENGTH)
     readonly ort?: string;
 }

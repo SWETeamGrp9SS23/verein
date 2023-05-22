@@ -89,7 +89,7 @@ export class VereinMutationResolver {
 
         const result = await this.#service.update({
             id: Number.parseInt(vereinDTO.id, 10),
-            verein: verein,
+            verein,
             version: versionStr,
         });
         if (typeof result === 'object') {

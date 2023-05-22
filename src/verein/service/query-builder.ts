@@ -20,13 +20,15 @@
  * @packageDocumentation
  */
 
-import { Verein } from '../entity/verein.entity.js';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Adresse } from '../entity/adresse.entity.js';
-import { getLogger } from '../../logger/logger.js';
+
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { typeOrmModuleOptions } from '../../config/db.js';
+import { getLogger } from '../../logger/logger.js';
+import { Adresse } from '../entity/adresse.entity.js';
+import { Verein } from '../entity/verein.entity.js';
 
 /** Typdefinitionen für die Suche mit der Verein-ID. */
 export interface BuildIdParams {
@@ -75,7 +77,6 @@ export class QueryBuilder {
      * @param suchkriterien JSON-Objekt mit Suchkriterien
      * @returns QueryBuilder
      */
-    // eslint-disable-next-line max-lines-per-function
     build(suchkriterien: Record<string, any>) {
         this.#logger.debug('build: suchkriterien=%o', suchkriterien);
 
@@ -108,17 +109,16 @@ export class QueryBuilder {
         }
 
         Object.keys(props).forEach((key) => {
-            const param: Record<string, any> = {};
+            const param: Record<string, unknown> = {};
+            // eslint-disable-next-line security/detect-object-injection
             param[key] = props[key];
-            queryBuilder = useWhere
-                ? queryBuilder.where(
-                      `${this.#vereinAlias}.${key} = :${key}`,
-                      param,
-                  )
-                : queryBuilder.andWhere(
-                      `${this.#vereinAlias}.${key} = :${key}`,
-                      param,
-                  );
+            const whereClause = `${this.#vereinAlias}.${key} = :${key}`;
+            const queryMethod = useWhere
+                ? queryBuilder.where.bind(queryBuilder)
+                : queryBuilder.andWhere.bind(queryBuilder);
+
+            queryMethod(whereClause, param);
+
             useWhere = false;
         });
 

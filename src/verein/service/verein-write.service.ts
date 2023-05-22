@@ -171,7 +171,7 @@ export class VereinWriteService {
         this.#logger.debug('#validateCreate: verein=%o', verein);
 
         const { name } = verein;
-        const vereine = await this.#readService.find({ name }); // eslint-disable-line object-shorthand
+        const vereine = await this.#readService.find({ name });
         if (vereine.length > 0) {
             return { type: 'NameExists', name };
         }
