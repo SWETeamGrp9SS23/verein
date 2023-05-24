@@ -34,5 +34,4 @@ export const graphQlModuleOptions: ApolloDriverConfig = {
     // alternativ: Mercurius (statt Apollo) fuer Fastify (statt Express)
     driver: ApolloDriver,
     playground: true,
-    // TODO formatError und logger konfigurieren, damit UserInputError nicht in der Konsole protokolliert wird
 };

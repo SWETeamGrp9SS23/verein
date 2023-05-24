@@ -118,7 +118,7 @@ export class DbPopulateService implements OnApplicationBootstrap {
         const copyStmt =
             "COPY %TABELLE% FROM '/csv/%TABELLE%.csv' (FORMAT csv, DELIMITER ';', HEADER true);";
         for (const tabelle of this.#tabellen) {
-            await dataSource.query(copyStmt.replaceAll('%TABELLE%', tabelle)); //toDo fix bei Error zu replace
+            await dataSource.query(copyStmt.replaceAll('%TABELLE%', tabelle));
         }
         await dataSource.destroy();
     }

@@ -93,8 +93,6 @@ export class QueryBuilder {
 
         let useWhere = true;
 
-        //toDo Warning loswerden
-
         // Titel in der Query: Teilstring des Titels und "case insensitive"
         // CAVEAT: MySQL hat keinen Vergleich mit "case insensitive"
         // type-coverage:ignore-next-line
