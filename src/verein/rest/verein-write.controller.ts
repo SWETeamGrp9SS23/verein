@@ -259,15 +259,10 @@ export class VereinWriteController {
     }
 
     #handleCreateError(err: CreateError, res: Response) {
-        switch (err.type) {
-            case 'NameExists': {
-                return this.#handleNameExists(err.name, res);
-            }
-
-            default: {
-                return res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        return err.type === 'NameExists'
+            ? this.#handleNameExists(err.name, res)
+            : res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     #handleNameExists(

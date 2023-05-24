@@ -49,6 +49,12 @@ export class VereinUpdateDTO extends VereinDTO {
     @Min(0)
     readonly version!: number;
 }
+
+const ERROR_NAME_EXISTS = {
+    NameExists: 'NameExists',
+    // Add more error types here if needed
+};
+
 @Resolver()
 // alternativ: globale Aktivierung der Guards https://docs.nestjs.com/security/authorization#basic-rbac-implementation
 @UseGuards(JwtAuthGraphQlGuard, RolesGraphQlGuard)
@@ -147,14 +153,11 @@ export class VereinMutationResolver {
     }
 
     #errorMsgCreateVerein(err: CreateError) {
-        switch (err.type) {
-            case 'NameExists': {
-                return `Der Name des Vereins ${err.name} existiert bereits`;
-            }
-            default: {
-                return 'Unbekannter Fehler';
-            }
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (err.type === 'NameExists') {
+            return `Der Name des Vereins ${err.name} existiert bereits`;
         }
+        return 'Unbekannter Fehler';
     }
 
     #errorMsgUpdateVerein(err: UpdateError) {
