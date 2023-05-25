@@ -23,7 +23,7 @@
 # https://docs.docker.com/compose/compose-file/compose-file-v3
 services:
   jenkins-certs:
-    image: docker:24.0.0-beta.1-dind
+    image: docker:24.0.0-beta.2-dind
     volumes:
       - type: bind
         source: C:/Zimmermann/volumes/jenkins/certs
@@ -41,10 +41,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
+          cpus: '1'
           memory: 512M
   jenkins:
-    image: juergenzimmermann/jenkins:2023.1.0
+    image: vereing9/jenkins:1.0.0
     ports:
       - published: 7070
         target: 8080
@@ -66,7 +66,7 @@ services:
     #deploy:
     #  resources:
     #    limits:
-    #      cpus: "4"
-    #      memory: 11240 M
+    #      cpus: "2"
+    #      memory: 4096M
 networks:
   jenkins: {}
