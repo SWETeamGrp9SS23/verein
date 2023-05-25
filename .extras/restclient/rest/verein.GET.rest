@@ -17,46 +17,19 @@
 // N e t z w e r k   -  V e r b i n d u n g   n o t w e n d i g
 //
 
-### Suche alle Buecher
+### Suche alle Vereine
 GET https://localhost:3000/rest
 
-### Suche mit vorhandener Buch-ID
+### Suche mit vorhandener Verein-ID
 GET https://localhost:3000/rest/1
 
-### Suche mit vorhandener Buch-ID und Versionsnummer
+### Suche mit vorhandener Verein-ID und Versionsnummer
 GET https://localhost:3000/rest/1
 If-None-Match: "0"
 
-### Suche mit vorhandener Buch-ID und falscher Versionsnummer
+### Suche mit vorhandener Verein-ID und falscher Versionsnummer
 GET https://localhost:3000/rest/1
-If-None-Match: 0
+If-None-Match: "0"
 
-### Suche mit nicht-vorhandener Buch-ID
+### Suche mit nicht-vorhandener Verein-ID
 GET https://localhost:3000/rest/999999
-
-### Suche mit vorhandenem Titel
-GET https://localhost:3000/rest?postleitzahl=12345
-
-### Suche mit nicht-vorhandenem Titel
-GET https://localhost:3000/rest?postleitzahl=xxx
-
-### Suche mit vorhandener ISBN
-GET https://localhost:3000/rest?name=FC Bayern
-
-### Suche mit vorhandenem Schlagwort "JAVASCRIPT"
-GET https://localhost:3000/rest?javascript=true
-
-### Suche mit vorhandenem Schlagwort "TYPESCRIPT"
-GET https://localhost:3000/rest?typescript=true
-
-### Suche mit vorhandenen Schlagwoertern
-GET https://localhost:3000/rest?javascript=true&typescript=true
-
-### Suche mit nicht-vorhandener Property
-GET https://localhost:3000/rest?php=true
-
-### Suche mit gueltiger Buchart
-GET https://localhost:3000/rest?art=KINDLE
-
-### Suche mit gueltigem Rating
-GET https://localhost:3000/rest?rating=1
