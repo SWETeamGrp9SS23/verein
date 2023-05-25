@@ -32,7 +32,7 @@ Content-Type: application/x-www-form-urlencoded
 username=admin&password=FALSCH
 
 ### Vorhandenes Verein aktualisieren
-PUT https://localhost:3000/rest/2
+PUT https://localhost:3000/rest/1
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.token}}
 If-Match: "0"
@@ -48,32 +48,8 @@ If-Match: "0"
 < .\json\verein-30-put.json
 
 ### Vorhandenes Verein *OHNE* Versionsnummer aktualisieren
-PUT https://localhost:3000/rest/30
+PUT https://localhost:3000/rest/3
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.token}}
 
 < .\json\verein-30-put.json
-
-### Vorhandenes Verein mit falscher Versionsnummer aktualisieren
-PUT https://localhost:3000/rest/30
-Content-Type: application/json
-If-Match: "0"
-Authorization: Bearer {{login.response.body.$.token}}
-
-< .\json\verein-30-put.json
-
-### Vorhandenes Verein mit alter Versionsnummer aktualisieren
-PUT https://localhost:3000/rest/30
-Content-Type: application/json
-If-Match: "-1"
-Authorization: Bearer {{login.response.body.$.token}}
-
-< .\json\verein-30-put.json
-
-### Vorhandenes Verein mit ungueltigen Daten aktualisieren
-PUT https://localhost:3000/rest/2
-Content-Type: application/json
-Authorization: Bearer {{login.response.body.$.token}}
-If-Match: "0"
-
-< .\json\verein-30-put-invalid.json
