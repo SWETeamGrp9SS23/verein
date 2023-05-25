@@ -50,11 +50,6 @@ export class VereinUpdateDTO extends VereinDTO {
     readonly version!: number;
 }
 
-const ERROR_NAME_EXISTS = {
-    NameExists: 'NameExists',
-    // Add more error types here if needed
-};
-
 @Resolver()
 // alternativ: globale Aktivierung der Guards https://docs.nestjs.com/security/authorization#basic-rbac-implementation
 @UseGuards(JwtAuthGraphQlGuard, RolesGraphQlGuard)
