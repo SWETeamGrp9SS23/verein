@@ -19,12 +19,12 @@
  * Das Modul enthält die Konfiguration für den Zugriff auf die DB.
  * @packageDocumentation
  */
-import { Verein } from '../verein/entity/verein.entity.js';
+import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { type DataSourceOptions } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { dbType } from './dbtype.js';
 import { entities } from '../verein/entity/entities.js';
+import { Verein } from '../verein/entity/verein.entity.js';
+import { dbType } from './dbtype.js';
 import { env } from './env.js';
 import { k8sConfig } from './kubernetes.js';
 import { loggerDefaultValue } from './logger.js';
@@ -56,7 +56,6 @@ const logging =
     !loggerDefaultValue;
 const logger = 'advanced-console';
 
-// TODO records als "deeply immutable data structure" (Stage 2)
 // https://github.com/tc39/proposal-record-tuple
 export let typeOrmModuleOptions: TypeOrmModuleOptions;
 switch (dbType) {

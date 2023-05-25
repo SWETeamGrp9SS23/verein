@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-# Aufruf:   docker buildx build --tag juergenzimmermann/buch:2023.1.0 .
+# Aufruf:   docker buildx build --tag vereing9/verein:1.0.0 .
 #           ggf. --no-cache
 #           Get-Content Dockerfile | docker run --rm --interactive hadolint/hadolint:2.12.1-beta-debian
 #           docker network ls
@@ -72,12 +72,10 @@ EOF
 
 COPY --from=builder --chown=app:app /app/package.json /app/.env /app/.npmrc /app/nest-cli.json ./
 COPY --from=builder --chown=app:app /app/dist ./dist
-COPY --from=builder --chown=app:app /app/src/buch/graphql/schema.graphql ./dist/buch/graphql/
+COPY --from=builder --chown=app:app /app/src/verein/graphql/schema.graphql ./dist/verein/graphql/
 COPY --from=builder --chown=app:app /app/src/security/auth/login.graphql ./dist/security/auth/
-COPY --from=builder --chown=app:app /app/src/config/dev/mysql ./dist/config/dev/mysql
 COPY --from=builder --chown=app:app /app/src/config/dev/postgres ./dist/config/dev/postgres
 # better-sqlite3 muss mit Python uebersetzt werden
-COPY --from=builder --chown=app:app /app/src/config/dev/sqlite ./dist/config/dev/sqlite
 COPY --from=builder --chown=app:app /app/src/config/jwt ./dist/config/jwt
 COPY --from=builder --chown=app:app /app/src/config/tls ./dist/config/tls
 

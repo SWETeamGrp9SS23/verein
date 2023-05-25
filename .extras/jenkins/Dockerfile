@@ -15,22 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# Aufruf:   docker buildx build --tag juergenzimmermann/jenkins:2023.1.0 .
+# Aufruf:   docker buildx build --tag vereing9/jenkins:1.0.0 .
 #           Get-Content Dockerfile | docker run --rm --interactive hadolint/hadolint:2.12.1-beta-debian
-#           docker sbom juergenzimmermann/jenkins:2023.1.0
+#           docker sbom vereing9/jenkins:1.0.0
 
 # https://www.jenkins.io/doc/book/installing/docker
 # https://manpages.debian.org/bullseye/apt/apt-get.8.en.html
 
-ARG JENKINS_VERSION=2.397-jdk17
+ARG JENKINS_VERSION=2.402-jdk17
 FROM jenkins/jenkins:${JENKINS_VERSION}
+
 USER root
+
 RUN <<EOF
+set -ex
+
 # https://packages.debian.org/bullseye/lsb-release
 # https://unix.stackexchange.com/questions/217369/clear-apt-get-list
-apt update --yes
-apt install --no-install-recommends --yes --show-progress lsb-release
-apt clean
+apt-get update --yes
+apt-get install --no-install-recommends --yes --show-progress lsb-release
+apt-get upgrade --yes
+apt-get autoremove --yes
+apt-get clean
 rm -rf /var/lib/apt/lists/*
 # GPG-Schluessel fuer Docker hinzufuegen
 # https://www.howtoforge.de/anleitung/so-installierst-du-docker-unter-debian-11
@@ -42,9 +48,11 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docke
 # https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64
 # https://debian.pkgs.org/11/docker-ce-amd64
 # apt-cache policy docker-ce-cli
-apt update --yes
-apt install --no-install-recommends --yes --show-progress docker-ce-cli
-apt clean
+apt-get update --yes
+apt-get install --no-install-recommends --yes --show-progress docker-ce-cli
+apt-get upgrade --yes
+apt-get autoremove --yes
+apt-get clean
 rm -rf /var/lib/apt/lists/*
 EOF
 

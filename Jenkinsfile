@@ -77,7 +77,7 @@ pipeline {
 
                 // https://www.jenkins.io/doc/pipeline/steps/git
                 // "named arguments" statt Funktionsaufruf mit Klammern
-                git url: 'https://github.com/juergenzimmermann/buch', branch: 'main', poll: true
+                git url: 'https://github.com/SWETeamGrp9SS23/verein', branch: 'main', poll: true
             }
         }
 
@@ -171,10 +171,10 @@ pipeline {
                   echo 'TODO: Links fuer Coverage und TypeDoc'
 
                   publishHTML (target : [
-                    reportDir: 'extras/doc/entwicklerhandbuch/html',
-                    reportFiles: 'entwicklerhandbuch.html',
-                    reportName: 'Entwicklerhandbuch',
-                    reportTitles: 'Entwicklerhandbuch'
+                    reportDir: 'extras/doc/entwicklerhandverein/html',
+                    reportFiles: 'entwicklerhandverein.html',
+                    reportName: 'Entwicklerhandverein',
+                    reportTitles: 'Entwicklerhandverein'
                   ])
 
                   publishHTML target : [
@@ -201,14 +201,14 @@ pipeline {
 
                 success {
                     script {
-                        if (fileExists("${env.WORKSPACE}/buch.zip")) {
-                            sh 'rm buch.zip'
+                        if (fileExists("${env.WORKSPACE}/verein.zip")) {
+                            sh 'rm verein.zip'
                         }
                     }
                     // https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/#zip-create-zip-file
-                    zip zipFile: 'buch.zip', archive: false, dir: 'dist'
-                    // jobs/buch/builds/.../archive/buch.zip
-                    archiveArtifacts 'buch.zip'
+                    zip zipFile: 'verein.zip', archive: false, dir: 'dist'
+                    // jobs/verein/builds/.../archive/verein.zip
+                    archiveArtifacts 'verein.zip'
                 }
             }
         }
@@ -217,7 +217,7 @@ pipeline {
             steps {
               echo 'TODO: Docker-Image bauen: dockerd starten, pack installieren'
               // Docker-Installation und laufender Docker-Daemon erforderlich
-              // sh 'docker build --tag juergenzimmermann/buch:1.0.0 .'
+              // sh 'docker buildx build --tag vereing9/verein:1.0.0 .'
             }
         }
 

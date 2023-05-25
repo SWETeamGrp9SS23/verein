@@ -43,24 +43,24 @@ POST https://localhost:3000/rest
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.token}}
 
-< .\json\buch-neu.json
+< .\json\verein-neu.json
 
 ### Neues Buch mit ungueltigen Daten anlegen
 POST https://localhost:3000/rest
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.token}}
 
-< .\json\buch-neu-invalid.json
+< .\json\verein-neu-invalid.json
 
 ### Neues Buch anlegen, aber die ISBN-Nummer existiert bereits
 POST https://localhost:3000/rest
 Content-Type: application/json
 Authorization: Bearer {{login.response.body.$.token}}
 
-< .\json\buch-neu.isbn-exists.json
+< .\json\verein-neu.name-exists.json
 
 ### Neues Buch ohne Login anlegen
 POST https://localhost:3000/rest
 Content-Type: application/json
 
-< .\json\buch-neu.json
+< .\json\verein-neu.json

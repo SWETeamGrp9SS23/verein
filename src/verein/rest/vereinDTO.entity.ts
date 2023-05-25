@@ -3,6 +3,7 @@
  * @packageDocumentation
  */
 
+// eslint-disable-next-line max-classes-per-file
 import { AdresseDTO } from './adresseDTO.js';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -34,8 +35,6 @@ export class VereinDtoOhneRef {
     @IsOptional()
     @IsString()
     readonly homepage?: string;
-
-
 }
 
 export class VereinDTO extends VereinDtoOhneRef {

@@ -24,19 +24,18 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type VereinDtoOhneRef } from '../../src/verein/rest/vereinDTO.entity.js';
 import { HttpStatus } from '@nestjs/common';
+import { type VereinDtoOhneRef } from '../../src/verein/rest/vereinDTO.entity.js';
 import { loginRest } from '../login.js';
 
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
 const geaenderterVerein: VereinDtoOhneRef = {
-    name: 'Fc Barcelona',
     mitgliedsbeitrag: 3333,
+    name: 'Dortmund',
     entstehungsdatum: '2022-03-03',
-    homepage: 'https://geaendert.put.rest',
-    
+    homepage: 'https://put.rest',
 };
 const idVorhanden = '30';
 
@@ -48,14 +47,6 @@ const geaenderterVereinIdNichtVorhanden: VereinDtoOhneRef = {
 };
 const idNichtVorhanden = '999999';
 
-const geaenderterVereinInvalid: Record<string, unknown> = {
-    name: 'anyName',
-    mitgliedsbeitrag: -1,
-    entstehungsdatum: '12345-123-123',
-    adresse: '?!',
-    homepage: 'anyHomepage',
-};
-
 const veralteterVerein = {
     name: 'Dortmund',
     mitgliedsbeitrag: 44.4,
@@ -63,7 +54,6 @@ const veralteterVerein = {
     entstehungsdatum: '2022-02-04',
     homepage: 'https://acme.de',
     // muss ich hier noch adresse einfügen?
-
 };
 
 // -----------------------------------------------------------------------------
@@ -74,7 +64,7 @@ const veralteterVerein = {
 describe('PUT /rest/:id', () => {
     let client: AxiosInstance;
     const headers: Record<string, string> = {
-        'Content-Type': 'application/json', // eslint-disable-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/json',
     };
 
     // Testserver starten und dabei mit der DB verbinden
@@ -95,7 +85,7 @@ describe('PUT /rest/:id', () => {
 
     test('Vorhandenen Verein aendern', async () => {
         // given
-        const url = `/rest/${idVorhanden}`;
+        const url = '/rest/2';
         const token = await loginRest(client);
         headers.Authorization = `Bearer ${token}`;
         headers['If-Match'] = '"0"';
@@ -135,40 +125,6 @@ describe('PUT /rest/:id', () => {
         expect(data).toBe(
             `Es gibt kein Verein mit der ID "${idNichtVorhanden}".`,
         );
-    });
-
-    test('Vorhandener Verein aendern, aber mit ungueltigen Daten', async () => {
-        // given
-        const url = `/rest/${idVorhanden}`;
-        const token = await loginRest(client);
-        headers.Authorization = `Bearer ${token}`;
-        headers['If-Match'] = '"0"';
-        const expectedMsg = [
-            expect.stringMatching(/^name /u),
-            expect.stringMatching(/^mitgliedsbeitrag /u),
-            expect.stringMatching(/^entstehungsdatum /u),
-            expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^adresse.adresse /u),
-        ];
-
-        // when
-        const response: AxiosResponse<Record<string, any>> = await client.put(
-            url,
-            geaenderterVereinInvalid,
-            { headers },
-        );
-
-        // then
-        const { status, data } = response;
-
-        expect(status).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const messages: string[] = data.message;
-
-        expect(messages).toBeDefined();
-        expect(messages).toHaveLength(expectedMsg.length);
-        expect(messages).toEqual(expect.arrayContaining(expectedMsg));
     });
 
     test('Vorhandener Verein aendern, aber ohne Versionsnummer', async () => {

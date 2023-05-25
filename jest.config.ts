@@ -35,11 +35,10 @@ const jestConfig: Config.InitialOptions = {
 
     extensionsToTreatAsEsm: ['.ts', '.mts', '.json'],
     moduleNameMapper: {
-        '^(\\.{1,2}/.*)\\.m?js$': '$1', // eslint-disable-line @typescript-eslint/naming-convention
+        '^(\\.{1,2}/.*)\\.m?js$': '$1',
     },
 
     transform: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         '\\.test\\.m?ts$': [
             'ts-jest',
             {

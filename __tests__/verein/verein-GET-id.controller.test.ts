@@ -42,8 +42,8 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type VereinModel } from '../../src/verein/rest/verein-get.controller.js';
 import { HttpStatus } from '@nestjs/common';
+import { type VereinModel } from '../../src/verein/rest/verein-get.controller.js';
 
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
@@ -115,7 +115,7 @@ describe('GET /rest/:id', () => {
 
         // when
         const response: AxiosResponse<string> = await client.get(url, {
-            headers: { 'If-None-Match': '"0"' }, // eslint-disable-line @typescript-eslint/naming-convention
+            headers: { 'If-None-Match': '"0"' },
         });
 
         // then

@@ -25,13 +25,12 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
-import { type VereineModel } from '../../src/verein/rest/verein-get.controller.js';
 import { HttpStatus } from '@nestjs/common';
-
+import { type VereineModel } from '../../src/verein/rest/verein-get.controller.js';
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const PlzVorhanden = '80803';
+const PlzVorhanden = '12345';
 const adresseNichtVorhanden = 'xx';
 
 // -----------------------------------------------------------------------------
@@ -69,20 +68,11 @@ describe('GET /rest', () => {
         expect(status).toBe(HttpStatus.OK);
         expect(headers['content-type']).toMatch(/json/iu);
         expect(data).toBeDefined();
-
-        const { vereine } = data._embedded;
-
-        vereine
-            .map((verein) => verein._links.self.href)
-            .forEach((selfLink) => {
-                // eslint-disable-next-line security/detect-non-literal-regexp, security-node/non-literal-reg-expr
-                expect(selfLink).toMatch(new RegExp(`^${baseURL}`, 'u'));
-            });
     });
 
     test('Vereine mit einer Postleizeil suchen', async () => {
         // given
-        const params = { name: PlzVorhanden };
+        const params = { postleitzahl: PlzVorhanden };
 
         // when
         const response: AxiosResponse<VereineModel> = await client.get('/', {

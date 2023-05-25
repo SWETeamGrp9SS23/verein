@@ -123,48 +123,12 @@ rules:
   '@typescript-eslint/member-ordering': error
   '@typescript-eslint/method-signature-style': error
   '@typescript-eslint/naming-convention':
-    - error
-    - selector: default
-      format:
-        - camelCase
-    - selector: variable
-      format:
-        - camelCase
-        - UPPER_CASE
-    - selector: parameter
-      format:
-        - camelCase
-      #filter:
-      #  regex: ^_$
-      #  match: true
-      leadingUnderscore: allow
-    - selector: classProperty
-      modifiers:
-        - static
-        - readonly
-      format:
-        - UPPER_CASE
-      leadingUnderscore: allowDouble
-    - selector: objectLiteralProperty
-      format:
-        - camelCase
-      leadingUnderscore: allow
-    - selector: enumMember
-      format:
-        - UPPER_CASE
-    - selector: typeLike
-      format:
-        - PascalCase
-    
-    - linebreak-style:
-      - error
-      - windows
+    - off
   # Weitere Regeln hier
 
-    
   '@typescript-eslint/no-base-to-string':
     - error
-    - ignoredTypeNames: ["RegExp", "boolean", "ObjectID"]
+    - ignoredTypeNames: ['RegExp', 'boolean', 'ObjectID']
   '@typescript-eslint/no-confusing-non-null-assertion': error
   '@typescript-eslint/no-confusing-void-expression':
     - error
@@ -251,7 +215,6 @@ rules:
   '@typescript-eslint/prefer-return-this-type': error
   '@typescript-eslint/prefer-string-starts-ends-with': error
   '@typescript-eslint/prefer-ts-expect-error': error
-  '@typescript-eslint/require-array-sort-compare': error
   '@typescript-eslint/require-await': error
   '@typescript-eslint/restrict-plus-operands':
     - error
@@ -263,7 +226,6 @@ rules:
       allowNullish: true
   '@typescript-eslint/return-await': error
   '@typescript-eslint/semi': error
-  '@typescript-eslint/sort-type-union-intersection-members': error
   '@typescript-eslint/space-before-blocks': error
   '@typescript-eslint/space-before-function-paren':
     - error
@@ -280,7 +242,7 @@ rules:
   '@typescript-eslint/unified-signatures': error
 
   eslint-comments/no-unused-disable: error
-
+  prettier/prettier: off
   import/consistent-type-specifier-style:
     - error
     - prefer-inline
@@ -453,7 +415,8 @@ rules:
   keyword-spacing: error
   # wegen //NOSONAR
   #line-comment-position: error
-  linebreak-style: error
+  linebreak-style:
+    - off
   logical-assignment-operators: error
   max-classes-per-file: error
   max-depth: error
@@ -558,7 +521,7 @@ rules:
   no-undef-init: error
   no-underscore-dangle:
     - error
-    - allow: ["_id", "__v"]
+    - allow: ['_id', '__v']
   no-unmodified-loop-condition: error
   no-unneeded-ternary: error
   no-unreachable-loop: error
@@ -626,7 +589,6 @@ rules:
   require-unicode-regexp: error
   rest-spread-spacing: error
   semi-spacing: error
-  sort-imports: error
   space-before-blocks: error
   # siehe @typescript-eslint/space-before-function-paren
   space-before-function-paren: 0

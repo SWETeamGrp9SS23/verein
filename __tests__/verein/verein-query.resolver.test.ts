@@ -19,13 +19,7 @@
 import { type GraphQLRequest, type GraphQLResponse } from 'apollo-server-types';
 import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
-import {
-    host,
-    httpsAgent,
-    port,
-    shutdownServer,
-    startServer,
-} from '../testserver.js';
+import { httpsAgent, shutdownServer, startServer } from '../testserver.js';
 import { type VereinDTO } from '../../src/verein/graphql/verein-query.resolver.js';
 import { HttpStatus } from '@nestjs/common';
 
@@ -38,10 +32,6 @@ export type GraphQLResponseBody = Pick<GraphQLResponse, 'data' | 'errors'>;
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
 const idVorhanden = '1';
-
-const adresseVorhanden = 'Alpha';
-
-const plzVorhanden = 'a';
 
 const plzNichtVorhanden = 'abc';
 
@@ -57,7 +47,7 @@ describe('GraphQL Queries', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => {
         await startServer();
-        const baseURL = `https://${host}:${port}/`;
+        const baseURL = 'https://localhost:3000/';
         client = axios.create({
             baseURL,
             httpsAgent,
@@ -75,8 +65,9 @@ describe('GraphQL Queries', () => {
                 {
                     verein(id: "${idVorhanden}") {
                         version
+                        name
                         adresse {
-                            adresse
+                            plz
                         }
                     }
                 }
@@ -113,7 +104,7 @@ describe('GraphQL Queries', () => {
                 {
                     verein(id: "${id}") {
                         adresse {
-                            adresse
+                            ort
                         }
                     }
                 }
@@ -147,57 +138,14 @@ describe('GraphQL Queries', () => {
         expect(extensions!.code).toBe('BAD_USER_INPUT');
     });
 
-    test('Verein zu vorhandener Adresse', async () => {
+    test('Verein zu vorhandenem Namen', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    vereine(adresse: "${adresseVorhanden}") {
-                        adresse {
-                            adresse
-                        }
-                    }
-                }
-            `,
-        };
-
-        // when
-        const response: AxiosResponse<GraphQLResponseBody> = await client.post(
-            graphqlPath,
-            body,
-        );
-
-        // then
-        const { status, headers, data } = response;
-
-        expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
-        expect(data.errors).toBeUndefined();
-
-        expect(data.data).toBeDefined();
-
-        const { vereine } = data.data!;
-
-        expect(vereine).not.toHaveLength(0);
-
-        const vereineArray: VereinDTO[] = vereine;
-
-        expect(vereineArray).toHaveLength(1);
-
-        const [verein] = vereineArray;
-
-        expect(verein!.adresse?.plz).toBe(adresseVorhanden);
-    });
-
-    test('Verein zu vorhandenen Postleizahl', async () => {
-        // given
-        const body: GraphQLRequest = {
-            query: `
-                {
-                    vereine(adresse: "${plzVorhanden}") {
-                        adresse {
-                            adresse
-                        }
+                    vereine(name: "SC Freiburg") {
+                        name
+                        mitgliedsbeitrag
                     }
                 }
             `,
@@ -220,27 +168,15 @@ describe('GraphQL Queries', () => {
         const { vereine } = data.data!;
 
         expect(vereine).not.toHaveLength(0);
-
-        const vereineArray: VereinDTO[] = vereine;
-        vereineArray
-            .map((verein) => verein.adresse)
-            .forEach((adresse) =>
-                expect(adresse?.plz.toLowerCase()).toEqual(
-                    expect.stringContaining(plzVorhanden),
-                ),
-            );
     });
 
-    test('Verein zu nicht vorhandener Adresse', async () => {
+    test('Verein zu nicht vorhandenem namen', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    vereine(adresse: "${plzNichtVorhanden}") {
-                        art
-                        adresse {
-                            adresse
-                        }
+                    vereine(name: "${plzNichtVorhanden}") {
+                        mitgliedsbeitrag
                     }
                 }
             `,

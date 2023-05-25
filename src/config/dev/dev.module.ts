@@ -15,12 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { AuthModule } from '../../security/auth/auth.module.js';
-import { Verein } from '../../verein/entity/verein.entity.js';
 import { DbPopulateController } from './db-populate.controller.js';
 import { DbPopulateService } from './db-populate.service.js';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { Verein } from '../../verein/entity/verein.entity.js';
 @Module({
     imports: [TypeOrmModule.forFeature([Verein]), AuthModule],
     controllers: [DbPopulateController],

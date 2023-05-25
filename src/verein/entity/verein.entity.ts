@@ -65,6 +65,7 @@ export class Verein {
     @PrimaryGeneratedColumn()
     id: number | undefined;
     /*eTag*/
+    // eslint-disable-next-line @typescript-eslint/lines-between-class-members
     @VersionColumn()
     readonly version: number | undefined;
 

@@ -22,7 +22,10 @@ import { ResponseTimeInterceptor } from '../../logger/response-time.interceptor.
 import { UseInterceptors } from '@nestjs/common';
 import { getLogger } from '../../logger/logger.js';
 
-export type VereinDTO = Omit<Verein, 'abbildungen' | 'aktualisiert' | 'erzeugt'>;
+export type VereinDTO = Omit<
+    Verein,
+    'abbildungen' | 'aktualisiert' | 'erzeugt'
+>;
 export interface IdInput {
     id: number;
 }
@@ -65,7 +68,7 @@ export class VereinQueryResolver {
             throw new BadUserInputError('Es wurden keine Vereine gefunden.');
         }
 
-        const vereineDTO = vereine.map((buch) => this.#toVereinDTO(buch));
+        const vereineDTO = vereine.map((verein) => this.#toVereinDTO(verein));
         this.#logger.debug('find: buecherDTO=%o', vereineDTO);
         return vereineDTO;
     }

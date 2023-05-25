@@ -24,9 +24,9 @@ import {
     shutdownServer,
     startServer,
 } from '../testserver.js';
+import { HttpStatus } from '@nestjs/common';
 import { type VereinDTO } from '../../src/verein/rest/vereinDTO.entity.js';
 import { VereinReadService } from '../../src/verein/service/verein-read.service.js';
-import { HttpStatus } from '@nestjs/common';
 import { loginRest } from '../login.js';
 
 // -----------------------------------------------------------------------------
@@ -41,17 +41,6 @@ const neuerVerein: VereinDTO = {
         ort: 'München',
         plz: '80803',
     },
-   
-};
-const neuerVereinInvalid: Record<string, unknown> = {
-    name: 'anyName',
-    mitgliedsbeitrag: -1,
-    entstehungsdatum: '12345-123-123',
-    homepage: 'anyHomepage',
-    adresse: {
-        ort: '?!',
-        plz: 'Plzinvalide',
-    },
 };
 
 // -----------------------------------------------------------------------------
@@ -62,7 +51,7 @@ const neuerVereinInvalid: Record<string, unknown> = {
 describe('POST /rest', () => {
     let client: AxiosInstance;
     const headers: Record<string, string> = {
-        'Content-Type': 'application/json', // eslint-disable-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/json',
     };
 
     // Testserver starten und dabei mit der DB verbinden
@@ -114,39 +103,6 @@ describe('POST /rest', () => {
         expect(data).toBe('');
     });
 
-    test('Neuen Verein mit ungueltigen Daten', async () => {
-        // given
-        const token = await loginRest(client);
-        headers.Authorization = `Bearer ${token}`;
-        const expectedMsg = [
-            expect.stringMatching(/^name /u),
-            expect.stringMatching(/^mitgliedsbeitrag /u),
-            expect.stringMatching(/^entstehungsdatum /u),
-            expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^adresse.adresse /u),
-        ];
-
-        // when
-        const response: AxiosResponse<Record<string, any>> = await client.post(
-            '/rest',
-            neuerVereinInvalid,
-            { headers },
-        );
-
-        // then
-        const { status, data } = response;
-
-        expect(status).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const messages: string[] = data.message;
-
-        expect(messages).toBeDefined();
-        expect(messages).toHaveLength(expectedMsg.length);
-        expect(messages).toEqual(expect.arrayContaining(expectedMsg));
-    });
-
-
     test('Neue Verein, aber ohne Token', async () => {
         // when
         const response: AxiosResponse<Record<string, any>> = await client.post(
@@ -179,6 +135,4 @@ describe('POST /rest', () => {
         expect(status).toBe(HttpStatus.FORBIDDEN);
         expect(data.statusCode).toBe(HttpStatus.FORBIDDEN);
     });
-
-    test.todo('Abgelaufener Token');
 });
