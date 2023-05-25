@@ -77,14 +77,14 @@ POST https://localhost:3000/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-query ($titel: String = "Alpha") {
-  buecher(titel: $titel) {
-    art
+query ($name: String = "Alpha") {
+  vereine(name: $name) {
+    mitgliedsbeitrag
   }
 }
 
 {
-  "titel": "Alpha"
+  "name": "Alpha"
 }
 
 ### Suche art, schlagwoerter und titel von Buechern mit vorhandenem Titel

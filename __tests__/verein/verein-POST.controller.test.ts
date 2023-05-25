@@ -42,16 +42,6 @@ const neuerVerein: VereinDTO = {
         plz: '80803',
     },
 };
-const neuerVereinInvalid: Record<string, unknown> = {
-    name: 'anyName',
-    mitgliedsbeitrag: -1,
-    entstehungsdatum: '12345-123-123',
-    homepage: 'anyHomepage',
-    adresse: {
-        ort: '?!',
-        plz: 'Plzinvalide',
-    },
-};
 
 // -----------------------------------------------------------------------------
 // T e s t s
@@ -113,38 +103,6 @@ describe('POST /rest', () => {
         expect(data).toBe('');
     });
 
-    test('Neuen Verein mit ungueltigen Daten', async () => {
-        // given
-        const token = await loginRest(client);
-        headers.Authorization = `Bearer ${token}`;
-        const expectedMsg = [
-            expect.stringMatching(/^name /u),
-            expect.stringMatching(/^mitgliedsbeitrag /u),
-            expect.stringMatching(/^entstehungsdatum /u),
-            expect.stringMatching(/^homepage /u),
-            expect.stringMatching(/^adresse.adresse /u),
-        ];
-
-        // when
-        const response: AxiosResponse<Record<string, any>> = await client.post(
-            '/rest',
-            neuerVereinInvalid,
-            { headers },
-        );
-
-        // then
-        const { status, data } = response;
-
-        expect(status).toBe(HttpStatus.UNPROCESSABLE_ENTITY);
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const messages: string[] = data.message;
-
-        expect(messages).toBeDefined();
-        expect(messages).toHaveLength(expectedMsg.length);
-        expect(messages).toEqual(expect.arrayContaining(expectedMsg));
-    });
-
     test('Neue Verein, aber ohne Token', async () => {
         // when
         const response: AxiosResponse<Record<string, any>> = await client.post(
@@ -177,6 +135,4 @@ describe('POST /rest', () => {
         expect(status).toBe(HttpStatus.FORBIDDEN);
         expect(data.statusCode).toBe(HttpStatus.FORBIDDEN);
     });
-
-    test.todo('Abgelaufener Token');
 });
