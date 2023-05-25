@@ -171,10 +171,10 @@ pipeline {
                   echo 'TODO: Links fuer Coverage und TypeDoc'
 
                   publishHTML (target : [
-                    reportDir: 'extras/doc/entwicklerhandbuch/html',
-                    reportFiles: 'entwicklerhandbuch.html',
-                    reportName: 'Entwicklerhandbuch',
-                    reportTitles: 'Entwicklerhandbuch'
+                    reportDir: 'extras/doc/entwicklerhandverein/html',
+                    reportFiles: 'entwicklerhandverein.html',
+                    reportName: 'Entwicklerhandverein',
+                    reportTitles: 'Entwicklerhandverein'
                   ])
 
                   publishHTML target : [
@@ -207,7 +207,7 @@ pipeline {
                     }
                     // https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/#zip-create-zip-file
                     zip zipFile: 'verein.zip', archive: false, dir: 'dist'
-                    // jobs/verein/builds/.../archive/buch.zip
+                    // jobs/verein/builds/.../archive/verein.zip
                     archiveArtifacts 'verein.zip'
                 }
             }
