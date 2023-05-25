@@ -38,4 +38,4 @@ Content-Type: application/x-www-form-urlencoded
 
 ### Rollen zu einem Token ermitteln
 GET https://localhost:3000/auth/roles
-Authorization: Bearer {{login.response.body.$.token}}
+Authorization: Bearer {login.response.body.$.token}
