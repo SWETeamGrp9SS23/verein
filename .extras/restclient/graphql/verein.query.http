@@ -25,98 +25,23 @@ Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
-  buecher {
+  vereine {
     id
-    version
-    art
-    titel {
-      titel
-    }
+    name
   }
 }
 
-### Suche isbn, version, art und titel von einem Buch mit vorhandener Buch-ID
+### Suche art von Vereins mit vorhandenem Namen
 POST https://localhost:3000/graphql
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
-query ($id: ID! = "1") {
-  buch(id: $id) {
-    isbn
-    version
-    art
-    titel {
-      titel
-    }
-  }
-}
-
-{
-  "id": "1"
-}
-
-### Suche titel von einem Buch mit nicht-vorhandener Buch-ID
-POST https://localhost:3000/graphql
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-
-query ($id: ID! = "999999") {
-  buch(id: $id) {
-    titel {
-      titel
-    }
-  }
-}
-
-{
-  "id": "999999"
-}
-
-### Suche art von Buechern mit vorhandenem Titel
-POST https://localhost:3000/graphql
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-
-query ($name: String = "Alpha") {
+query ($name: String = "Karlsruher SC") {
   vereine(name: $name) {
     mitgliedsbeitrag
   }
 }
 
 {
-  "name": "Alpha"
-}
-
-### Suche art, schlagwoerter und titel von Buechern mit vorhandenem Titel
-POST https://localhost:3000/graphql
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-
-query ($titel: String = "a") {
-  buecher(titel: $titel) {
-    art
-    schlagwoerter
-    titel {
-      titel
-    }
-  }
-}
-
-{
-  "titel": "a"
-}
-
-### Suche art von Buechern mit NICHT-vorhandenem Titel
-POST https://localhost:3000/graphql
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-
-query ($titel: String = "Nichtvorhanden") {
-  buecher(titel: $titel) {
-    art
-  }
-}
-
-{
-  "titel": "Nichtvorhanden"
+  "name": "Karlsruher SC"
 }
