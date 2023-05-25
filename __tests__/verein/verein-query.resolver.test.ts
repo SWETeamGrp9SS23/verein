@@ -33,10 +33,6 @@ export type GraphQLResponseBody = Pick<GraphQLResponse, 'data' | 'errors'>;
 // -----------------------------------------------------------------------------
 const idVorhanden = '1';
 
-const adresseVorhanden = '12345';
-
-const plzVorhanden = 'a';
-
 const plzNichtVorhanden = 'abc';
 
 // -----------------------------------------------------------------------------
@@ -142,57 +138,14 @@ describe('GraphQL Queries', () => {
         expect(extensions!.code).toBe('BAD_USER_INPUT');
     });
 
-    test('Verein zu vorhandener Adresse', async () => {
+    test('Verein zu vorhandenem Namen', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    vereine(postleitzahl: "12345") {
-                        adresse {
-                            plz
-                        }
-                    }
-                }
-            `,
-        };
-
-        // when
-        const response: AxiosResponse<GraphQLResponseBody> = await client.post(
-            graphqlPath,
-            body,
-        );
-
-        // then
-        const { status, headers, data } = response;
-
-        expect(status).toBe(HttpStatus.OK);
-        expect(headers['content-type']).toMatch(/json/iu);
-        expect(data.errors).toBeUndefined();
-
-        expect(data.data).toBeDefined();
-
-        const { vereine } = data.data!;
-
-        expect(vereine).not.toHaveLength(0);
-
-        const vereineArray: VereinDTO[] = vereine;
-
-        expect(vereineArray).toHaveLength(1);
-
-        const [verein] = vereineArray;
-
-        expect(verein!.adresse?.plz).toBe(adresseVorhanden);
-    });
-
-    test('Verein zu vorhandenen Postleizahl', async () => {
-        // given
-        const body: GraphQLRequest = {
-            query: `
-                {
-                    vereine(postleitzahl: "${plzVorhanden}") {
-                        adresse {
-                            adresse
-                        }
+                    vereine(name: "SC Freiburg") {
+                        name
+                        mitgliedsbeitrag
                     }
                 }
             `,
@@ -215,27 +168,15 @@ describe('GraphQL Queries', () => {
         const { vereine } = data.data!;
 
         expect(vereine).not.toHaveLength(0);
-
-        const vereineArray: VereinDTO[] = vereine;
-        vereineArray
-            .map((verein) => verein.adresse)
-            .forEach((adresse) =>
-                expect(adresse?.plz.toLowerCase()).toEqual(
-                    expect.stringContaining(plzVorhanden),
-                ),
-            );
     });
 
-    test('Verein zu nicht vorhandener Adresse', async () => {
+    test('Verein zu nicht vorhandenem namen', async () => {
         // given
         const body: GraphQLRequest = {
             query: `
                 {
-                    vereine(adresse: "${plzNichtVorhanden}") {
-                        art
-                        adresse {
-                            adresse
-                        }
+                    vereine(name: "${plzNichtVorhanden}") {
+                        mitgliedsbeitrag
                     }
                 }
             `,
