@@ -66,7 +66,7 @@ import { paths } from '../../config/paths.js';
 @Controller(paths.rest)
 @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(ResponseTimeInterceptor)
-@ApiTags('Buch API')
+@ApiTags('Verein API')
 @ApiBearerAuth()
 export class VereinWriteController {
     readonly #service: VereinWriteService;
@@ -78,17 +78,17 @@ export class VereinWriteController {
     }
 
     /**
-     * Ein neues Buch wird asynchron angelegt. Das neu anzulegende Buch ist als
+     * Ein neues Verein wird asynchron angelegt. Das neu anzulegende Verein ist als
      * JSON-Datensatz im Request-Objekt enthalten. Wenn es keine
      * Verletzungen von Constraints gibt, wird der Statuscode `201` (`Created`)
      * gesetzt und im Response-Header wird `Location` auf die URI so gesetzt,
-     * dass damit das neu angelegte Buch abgerufen werden kann.
+     * dass damit das neu angelegte Verein abgerufen werden kann.
      *
      * Falls Constraints verletzt sind, wird der Statuscode `400` (`Bad Request`)
      * gesetzt und genauso auch wenn der Titel oder die ISBN-Nummer bereits
      * existieren.
      *
-     * @param buch JSON-Daten für ein Verein im Request-Body.
+     * @param verein JSON-Daten für ein Verein im Request-Body.
      * @param res Leeres Response-Objekt von Express.
      * @returns Leeres Promise-Objekt.
      */
@@ -104,7 +104,7 @@ export class VereinWriteController {
     ): Promise<Response> {
         this.#logger.debug('create: vereinDTO=%o', vereinDTO);
 
-        const verein = this.#buchDtoToBuch(vereinDTO);
+        const verein = this.#vereinDtoToVerein(vereinDTO);
         const result = await this.#service.create(verein);
         if (Object.prototype.hasOwnProperty.call(result, 'type')) {
             return this.#handleCreateError(result as CreateError, res);
@@ -116,11 +116,11 @@ export class VereinWriteController {
     }
 
     /**
-     * Ein vorhandenes Buch wird asynchron aktualisiert.
+     * Ein vorhandenes Verein wird asynchron aktualisiert.
      *
-     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Buches
+     * Im Request-Objekt von Express muss die ID des zu aktualisierenden Verein
      * als Pfad-Parameter enthalten sein. Außerdem muss im Rumpf das zu
-     * aktualisierende Buch als JSON-Datensatz enthalten sein. Damit die
+     * aktualisierende Verein als JSON-Datensatz enthalten sein. Damit die
      * Aktualisierung überhaupt durchgeführt werden kann, muss im Header
      * `If-Match` auf die korrekte Version für optimistische Synchronisation
      * gesetzt sein.
@@ -134,7 +134,7 @@ export class VereinWriteController {
      * Statuscode `400` (`Bad Request`) gesetzt und genauso auch wenn der neue
      * Titel oder die neue ISBN-Nummer bereits existieren.
      *
-     * @param buch Buchdaten im Body des Request-Objekts.
+     * @param verein Vereindaten im Body des Request-Objekts.
      * @param id Pfad-Paramater für die ID.
      * @param version Versionsnummer aus dem Header _If-Match_.
      * @param res Leeres Response-Objekt von Express.
@@ -167,15 +167,15 @@ export class VereinWriteController {
         description: 'Header "If-Match" fehlt',
     })
     async update(
-        @Body() buchDTO: VereinDtoOhneRef,
+        @Body() vereinDTO: VereinDtoOhneRef,
         @Param('id') id: number,
         @Headers('If-Match') version: string | undefined,
         @Res() res: Response,
     ): Promise<Response> {
         this.#logger.debug(
-            'update: id=%s, buchDTO=%o, version=%s',
+            'update: id=%s, vereinDTO=%o, version=%s',
             id,
-            buchDTO,
+            vereinDTO,
             version,
         );
 
@@ -188,7 +188,7 @@ export class VereinWriteController {
                 .send(msg);
         }
 
-        const verein = this.#buchDtoOhneRefToBuch(buchDTO);
+        const verein = this.#vereinDtoOhneRefToVerein(vereinDTO);
         const result = await this.#service.update({ id, verein, version });
         if (typeof result === 'object') {
             return this.#handleUpdateError(result, res);
@@ -199,7 +199,7 @@ export class VereinWriteController {
     }
 
     /**
-     * Ein Buch wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
+     * Ein Verein wird anhand seiner ID-gelöscht, die als Pfad-Parameter angegeben
      * ist. Der zurückgelieferte Statuscode ist `204` (`No Content`).
      *
      * @param id Pfad-Paramater für die ID.
@@ -208,14 +208,14 @@ export class VereinWriteController {
      */
     @Delete(':id')
     @RolesAllowed('admin')
-    @ApiOperation({ summary: 'Buch mit der ID löschen', tags: ['Loeschen'] })
+    @ApiOperation({ summary: 'Verein mit der ID löschen', tags: ['Loeschen'] })
     @ApiHeader({
         name: 'Authorization',
         description: 'Header für JWT',
         required: true,
     })
     @ApiNoContentResponse({
-        description: 'Das Buch wurde gelöscht oder war nicht vorhanden',
+        description: 'Das Verein wurde gelöscht oder war nicht vorhanden',
     })
     async delete(
         @Param('id') id: number,
@@ -233,7 +233,7 @@ export class VereinWriteController {
         return res.sendStatus(HttpStatus.NO_CONTENT);
     }
 
-    #buchDtoToBuch(vereinDTO: VereinDTO): Verein {
+    #vereinDtoToVerein(vereinDTO: VereinDTO): Verein {
         const adresseDTO = vereinDTO.adresse;
         const adresse: Adresse = {
             id: undefined,
@@ -277,7 +277,7 @@ export class VereinWriteController {
             .send(msg);
     }
 
-    #buchDtoOhneRefToBuch(vereinDTO: VereinDtoOhneRef): Verein {
+    #vereinDtoOhneRefToVerein(vereinDTO: VereinDtoOhneRef): Verein {
         return {
             id: undefined,
             version: undefined,

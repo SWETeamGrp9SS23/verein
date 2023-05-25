@@ -201,7 +201,7 @@ export class VereinGetController {
             this.#logger.debug('findById: NOT_FOUND');
             return res.sendStatus(HttpStatus.NOT_FOUND);
         }
-        this.#logger.debug(`findById(): buch=${JSON.stringify(verein)}`);
+        this.#logger.debug(`findById(): verein=${JSON.stringify(verein)}`);
         // ETags
         const versionDb = verein.version;
         if (version === `"${versionDb}"`) {

@@ -68,7 +68,7 @@ export class VereinQueryResolver {
             throw new BadUserInputError('Es wurden keine Vereine gefunden.');
         }
 
-        const vereineDTO = vereine.map((buch) => this.#toVereinDTO(buch));
+        const vereineDTO = vereine.map((verein) => this.#toVereinDTO(verein));
         this.#logger.debug('find: buecherDTO=%o', vereineDTO);
         return vereineDTO;
     }

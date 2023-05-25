@@ -54,7 +54,7 @@ export interface VersionOutdated {
 }
 
 /**
- * Klasse für ein nicht-vorhandenes Buch beim Ändern.
+ * Klasse für ein nicht-vorhandenes Verein beim Ändern.
  */
 export interface VereinNotExists {
     readonly type: 'VereinNotExists';
@@ -62,7 +62,7 @@ export interface VereinNotExists {
 }
 
 /**
- * Union-Type für Fehler beim Ändern eines Buches:
+ * Union-Type für Fehler beim Ändern eines Vereins:
  * - {@linkcode VereinNotExists}
  * - {@linkcode VersionInvalid}
  * - {@linkcode VersionOutdated}
