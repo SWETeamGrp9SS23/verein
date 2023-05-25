@@ -22,7 +22,7 @@
  */
 
 /**
- * Klasse für eine bereits existierende ISBN-Nummer.
+ * Klasse für eine bereits existierenden Namen.
  */
 export interface NameExists {
     readonly type: 'NameExists';
@@ -31,8 +31,8 @@ export interface NameExists {
 }
 
 /**
- * ggf. Union-Type für diverse Fehler beim Neuanlegen eines Buches:
- * - {@linkcode IsbnExists}
+ * ggf. Union-Type für diverse Fehler beim Neuanlegen eines Vereins:
+ * - {@linkcode NameExists}
  */
 export type CreateError = NameExists;
 
@@ -64,7 +64,6 @@ export interface VereinNotExists {
 /**
  * Union-Type für Fehler beim Ändern eines Buches:
  * - {@linkcode VereinNotExists}
- * - {@linkcode ConstraintViolations}
  * - {@linkcode VersionInvalid}
  * - {@linkcode VersionOutdated}
  */

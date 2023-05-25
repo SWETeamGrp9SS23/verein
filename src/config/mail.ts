@@ -37,7 +37,6 @@ const logger = SMTP_LOG?.toLowerCase() === 'true';
 /**
  * Konfiguration für den Mail-Client mit _nodemailer_.
  */
-// TODO records als "deeply immutable data structure" (Stage 2)
 // https://github.com/tc39/proposal-record-tuple
 export const mailConfig: Options = {
     host,
