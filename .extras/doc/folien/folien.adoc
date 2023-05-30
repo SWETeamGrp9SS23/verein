@@ -21,7 +21,7 @@
 
 = Beispiel mit Nest, REST, GraphQL, TypeORM, JWT und Jest
 
-Jürgen Zimmermann <Juergen.Zimmermann@h-ka.de>
+Vincent Puchner <puvi1011@h-ka.de>
 
 == Gliederung
 
